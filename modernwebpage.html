@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Modern Web Page Template</title>
+    
+<style type="text/css">
+
+/* Elements have default values provided by the browser.  To make the
+ * padding and margin consistent, apply 0 padding and margin to ALL
+ * elements using the "*" selector.  This is sometimes considered bad
+ * practice.  Instead, later add a "CSS Reset".  Use Arial by default.
+ */
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: arial;
+}
+
+/* A page can have only a single header and a single footer.  Thus, use
+ * "id" (as opposed to "class").  Id's are specified using "#" in CSS.
+ * This element goes all across the page.
+ */
+
+#myHeader {    
+    height: 80px;
+    background-color: #a3d824;      /* Kind of greenish */
+}
+
+/* This is added to limit the header to 960 px wide, and center the header.
+ */
+#myHeaderWrapper {
+    margin: 0 auto;
+    max-width: 960px;
+}
+
+#myLogo {
+    height: 80px;
+    background: url('b2consulting.jpg');
+    background-repeat: no-repeat;
+}
+
+#myFooter {
+    height: 120px;
+    background-color: #000000;      /* Black, alternatively rgb(0,0,0) */
+}
+
+#myFooter p {                       /* '#myFooter p' applies only to paragraphs in #myFooter. */
+    text-align: center;
+    padding-top: 40px;
+    color: #ffffff;                 /* color: applies to TEXT.  #ffffff is white. */
+}
+
+/* We'll have sections that go across the entire page.  They'll alternate
+ * between two shades of gray.  Since we can multiple of each type of section
+ * we'll use "class" (instead of "id").  Classes' are specified using "." in CSS.
+ * Don't specify the height of the sections.  Let the content determine the height.
+ */
+.mySectionOdd {
+    background-color: #eeeeee;
+}
+
+.mySectionEven {
+    background-color: #dddddd;
+}
+
+/* Sections can have one column on a mobile device (< 480 px wide), or two
+ * columns on a wider desktop up to a maximum of 960 px wide.  Use a wrapper
+ * inside each section to limit the width.
+ *
+ * Note how the myWrapper div is centered using margin: 40px auto.  The first
+ * number, 40, refers to the top and bottom margin.  The second value, auto,
+ * refers to the left and right sides.  When auto is specified, the browser
+ * will automatically determine the left and right margins, effectively
+ * centering the element.
+ */
+
+.myWrapper {
+    margin: 0 auto;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    max-width: 960px;
+}
+
+/* Put columns inside the wrapper.  Depending on the width of the screen,
+ * as determined by "media queries", a column fills either 100% (mobile)
+ * or 50% (desktop) of the wrapper.  Assume mobile by default.
+ *
+ * Note that "float: left" is used to place the columns side-by-side.
+ */
+
+.myColumn {
+    float: none;
+    width: 100%;                    /* One column */
+}
+
+@media (min-width: 481px) {
+
+    .myColumn {
+        float: left;
+        width: 50%;                 /* Two columns */
+    }
+
+}
+
+/* Try changing the size of your browser and notice how the picture
+ * responds.  This is due to the use of center and cover.
+ */
+#myTurtle {
+    color: #ffffff;                 /* Text color.  Any text inside is white. */
+
+    height: 400px;
+    background: url('turtle400x300.jpg');
+    background-position: center;
+    background-size: cover;
+}
+
+/* Within a column, put some spacing around the edges.  The order for
+ * padding is padding: top right bottom left.
+ */
+
+.myContent {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+/* Paragraphs within content */
+.myContent p {
+    font-size: 12px;
+    line-height: 150%;
+    margin-bottom: 20px;            /* Put some space after the paragraphs. */
+    text-align: justify;            /* Line up the right side of columns. */
+}
+
+
+
+/* Miscellaneous */
+ul {
+    list-style-position: inside;    /* Turn this off and see what happens. */
+    font-size: 14px;
+    margin-bottom: 20px;            /* Some space after a ul. */
+}
+
+h1 {
+    margin-bottom: 20px;            /* A little space below h1 elements. */
+}
+</style>
+</head>
+
+<body>
+
+    <div id="myHeader">
+        <div id="myHeaderWrapper">
+            <div id="myLogo"></div>
+        </div>
+    </div>
+
+    <div class="mySectionOdd">
+        <div class="myWrapper">
+
+            <div class="myColumn">
+                <div class="myContent">
+                    <h1>Lorem what?</h1>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eu ligula sed felis sollicitudin pellentesque. Sed fermentum elit non posuere ornare. Suspendisse accumsan sit amet enim mattis finibus. Fusce posuere, nisl id condimentum suscipit, tellus magna molestie lacus, in auctor eros tortor non nunc. Pellentesque hendrerit, urna sit amet dapibus pretium, nunc arcu pretium neque, et lacinia nunc ipsum tempor urna. Maecenas a finibus nisi, ut laoreet metus. Ut quis mi quis lectus maximus porta. Etiam pellentesque faucibus dui nec volutpat. Integer dolor justo, pulvinar commodo massa convallis, dapibus finibus justo. Ut quis feugiat erat. Mauris sed ullamcorper turpis, et mollis velit. Quisque ornare ac metus id pulvinar. Aenean at maximus lorem, semper venenatis metus. Fusce vel lectus mattis dui pulvinar semper. Suspendisse potenti. Aliquam tincidunt metus nisl, eget semper felis vehicula vel.</p>
+                </div>
+            </div>
+
+            <div class="myColumn">
+                <div class="myContent">
+                    <h1>Ipsum</h1>
+                    <p>Pellentesque nec metus libero. Nunc enim ex, accumsan at libero vel, hendrerit sodales neque. Fusce porttitor mollis eleifend. Aliquam id leo enim. In at varius sem. Duis gravida erat scelerisque erat imperdiet, nec porttitor magna gravida. Vivamus vulputate odio et magna imperdiet ornare. Fusce porta neque quis elit sollicitudin tempus. Pellentesque finibus neque mi, a sodales enim dapibus vel. Cras laoreet lacinia enim, non scelerisque magna. Fusce placerat a massa quis elementum. Aliquam lorem ligula, scelerisque at est quis, fringilla consectetur libero. Praesent tempus, neque eu pharetra scelerisque, velit nisi dignissim orci, eleifend convallis lectus ex eu est. Donec eu fringilla urna. Mauris non urna euismod, faucibus mauris ultrices, feugiat enim.</p>
+                </div>
+            </div>
+
+            <!-- This is used to reset the floats. -->
+            <div style="clear: both"></div>
+        </div>
+    </div>
+    
+    <div id="myTurtle">
+        <div class="myWrapper">
+            <h1>I'm cute!</h1>
+        </div>
+    </div>
+
+    <div class="mySectionEven">
+        <div class="myWrapper">
+
+            <div class="myColumn">
+                <div class="myContent">
+                    <h1>HTML tags</h1>
+                    <p>The following html tags are important:</p>
+                    <ul>
+                        <li>html - the entire document</li>
+                        <li>head - stuff that isn't visible</li>
+                        <li>body - stuff that is visible</li>
+                        <li>div - container for content</li>
+                        <li>h1, h2, h3, etc. - headers</li>
+                        <li>a - anchor (hyperlink)</li>
+                    </ul>
+                    
+                    <p>For more information, see <a href="http://www.w3schools.com">W3Schools.com</a>.</p>
+                    <p>Turtle image from <a href="http://www.morguefile.com/archive/display/936481">Morguefile.com</a>.</p>
+
+                </div>
+            </div>
+
+            <div class="myColumn">
+                <div class="myContent">
+                    <h1>Ipsum</h1>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eu ligula sed felis sollicitudin pellentesque. Sed fermentum elit non posuere ornare. Suspendisse accumsan sit amet enim mattis finibus. Fusce posuere, nisl id condimentum suscipit, tellus magna molestie lacus, in auctor eros tortor non nunc. Pellentesque hendrerit, urna sit amet dapibus pretium, nunc arcu pretium neque, et lacinia nunc ipsum tempor urna. Maecenas a finibus nisi, ut laoreet metus. Ut quis mi quis lectus maximus porta. Etiam pellentesque faucibus dui nec volutpat. Integer dolor justo, pulvinar commodo massa convallis, dapibus finibus justo. Ut quis feugiat erat. Mauris sed ullamcorper turpis, et mollis velit. Quisque ornare ac metus id pulvinar. Aenean at maximus lorem, semper venenatis metus. Fusce vel lectus mattis dui pulvinar semper. Suspendisse potenti. Aliquam tincidunt metus nisl, eget semper felis vehicula vel.</p>
+                    <p>Pellentesque nec metus libero. Nunc enim ex, accumsan at libero vel, hendrerit sodales neque. Fusce porttitor mollis eleifend. Aliquam id leo enim. In at varius sem. Duis gravida erat scelerisque erat imperdiet, nec porttitor magna gravida. Vivamus vulputate odio et magna imperdiet ornare. Fusce porta neque quis elit sollicitudin tempus. Pellentesque finibus neque mi, a sodales enim dapibus vel. Cras laoreet lacinia enim, non scelerisque magna. Fusce placerat a massa quis elementum. Aliquam lorem ligula, scelerisque at est quis, fringilla consectetur libero. Praesent tempus, neque eu pharetra scelerisque, velit nisi dignissim orci, eleifend convallis lectus ex eu est. Donec eu fringilla urna. Mauris non urna euismod, faucibus mauris ultrices, feugiat enim.</p>
+                </div>
+            </div>
+
+            <!-- This is used to reset the floats. -->
+            <div style="clear: both"></div>
+
+        </div>
+    </div>
+
+    <div class="mySectionOdd">
+        <div class="myWrapper">
+            <p>Thanks for visiting!</p>
+        </div>
+    </div>
+
+    <div id="myFooter">
+        <p>Copyright 2014</p>
+    </div>
+
+</body>
+</html>

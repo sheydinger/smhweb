@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<head>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<title>Angular Ajax Demonstrations</title>
+
+	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js"></script>
+	<script>
+		var myApp = angular.module("MyApp", []);
+
+		myApp.controller("dateCtrl", function($scope, $http) {
+			$scope.theDate = "";
+
+			$scope.getDate = function() {
+				$http.get("ajaxserver.php?action=date")
+					.success(function(data) {
+						$scope.theDate = data;
+					})
+					.error(function(data) {
+						$scope.theDate = data;
+					});
+			}
+		});
+
+		myApp.controller("sqrtCtrl", function($scope, $http) {
+			$scope.getSqrt = "";
+
+			$scope.getSqrt = function() {
+
+				var theSquare = parseInt($scope.theSquare);
+				if (isNaN(theSquare))
+					theSquare = 0;
+
+				$http.get("ajaxserver.php?action=sqrt&square=" + theSquare)
+					.success(function(data) {
+						$scope.theSqrt = data;
+					});
+			}
+		});
+	</script>
+
+</head>
+<body ng-app="MyApp">
+
+<div id="wrapper">
+
+	<div id="page">
+		<div id="page-bgtop">
+			<div id="content">
+
+				<div id="myhtmldom" class="post">
+					<p>
+					<a href="ajaxcurl.php">PHP cURL</a>,
+					<a target="_blank" href="http://www.w3schools.com/jsref/default.asp">HTML DOM Reference</a>,
+					<a href="ajaxserver.php?showsource=1">Server Source</a>,
+					<a href="ajaxsimple.php?showsource=1">Client Source</a></p>
+
+					<h2>Simple Ajax Examples</h2>
+
+					<div class="entry" ng-controller="dateCtrl">
+						<h3>Date</h3>
+
+						<p><a href="ajaxserver.php?action=date">Raw response</a></p>
+
+						<p>This example sends no data to the server.  The server sends back the date 
+						using the PHP date() function as follows: &lt;?php echo date("l dS \of F Y h:i:s A"); ?&gt;</p>
+
+						<p><b>The date is: {{ theDate }}</b></p>
+
+						<input type="button" value="Get Date" ng-click="getDate();"/>
+					</div>
+
+
+					<div class="entry" ng-controller="sqrtCtrl">
+						<h3>Square Root</h3>
+						<p>This example is slightly more complicated than the Date example in that a number is sent
+						to the server, and the server returns the square root of the number.  It demonstrates how
+						to make the response from the server depend on something sent from the client.</p>
+
+						<p>The processing script is called using onChange.  Once you type a number, you'll need
+						to leave the input field for the ajax scripts to execute.  Other options are onFocus()
+						and onBlur().</p>
+
+						<p><b>The square root is: {{ theSqrt }}</b></p>
+
+						<input type="text" size="5" name="square" ng-model="theSquare" ng-change="getSqrt();" />
+					</div>
+
+					<div class="entry">
+						<h3>Timer</h3>
+						<p>This example demonstrates the asynchronous nature of ajax, including three
+						independent 5 second timers.  Press a button and it will become disabled.
+						Then 5 seconds later it will become reenabled.  The timer executes on the host
+						which delays the response for 5 seconds.  Note that three different request objects
+						are required to keep the three buttons independent.  Try "overlapping" the timers.</p>
+
+						<input type="button" style="xbackground-color: #00ff00" id="timer0" value="Timer 0" onClick="getTimer(0);"/>
+						<input type="button" style="xbackground-color: #00ff00" id="timer1" value="Timer 1" onClick="getTimer(1);"/>
+						<input type="button" style="xbackground-color: #00ff00" id="timer2" value="Timer 2" onClick="getTimer(2);"/>
+					</div>
+
+					<div class="entry">
+						<h3>Adder</h3>
+						<p>This example uses POST instead of GET to send the two addends.</p>
+
+						<p id="theSum"><b>The sum is:</b></p>
+
+						<input type="text" size="5" name="addend1" id="addend1" onChange="getSum();" />
+						<input type="text" size="5" name="addend2" id="addend2" onChange="getSum();" />
+					</div>
+
+					<div class="entry">
+						<h3>Address (XML)</h3>
+
+						<p><a href="ajaxserver.php?action=address">Raw response</a></p>
+
+						<p>This example retrieves multiple pieces of information from the server: a name,
+						street address, city, state and zip for an individual, in XML format.</p>
+
+						<p id="theTextAddress"><b>The text address is:</b></p>
+
+						<p id="theXMLAddress"><b>The XML address is:</b></p>
+
+						<p>
+						<span id="theName">name</span><br />
+						<span id="theStreet">street</span><br />
+						<span id="theCity">city</span>, <span id="theState">state</span>  <span id="theZip">zip</span><br />
+						</p>
+
+						<input type="button" value="Get Address XML" onClick="getAddressXML();"/>
+					</div>
+
+					<div class="entry">
+						<h3>Address (JSON)</h3>
+
+						<p><a href="ajaxserver.php?action=address2">Raw response</a></p>
+
+						<p>This example retrieves multiple pieces of information from the server: a name,
+						street address, city, state and zip for an individual, in JSON format.</p>
+
+						<p id="theTextAddress2"><b>The text address is:</b></p>
+
+						<p id="theXMLAddress2"><b>The XML address is:</b></p>
+
+						<p>
+						<span id="theName2">name</span><br />
+						<span id="theStreet2">street</span><br />
+						<span id="theCity2">city</span>, <span id="theState2">state</span>  <span id="theZip2">zip</span><br />
+						</p>
+
+						<input type="button" value="Get Address JSON" onClick="getAddressJSON();"/>
+					</div>
+				</div>
+
+
+				<div id="myhtmldom" class="post">
+					<h2>XMLHttpRequest Notes</h2>
+
+					<div class="entry">
+						<h3>getAllResponseHeaders()</h3>
+						<p>Note: The "Get Date" function invokes getAllResponseHeaders().  Press the Get Date button above.</p>
+						<div id="responses"></div>
+					</div>
+				</div>
+
+			</div>
+			<!-- end div#content -->
+
+			<div style="clear: both; height: 1px"></div>
+		</div>
+	</div>
+	<!-- end div#page -->
+</div>
+
+</body>
+</html>

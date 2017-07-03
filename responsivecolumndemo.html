@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Responsive Columns</title>
+    
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: url('checkerboard_100.jpg');
+}
+
+p {
+    margin-top: 15px;
+}
+
+
+#content {
+    margin: 0 auto;
+    width: 75%;
+    background-color: #cccccc;
+    height: 400px;
+}
+
+/*
+ * TEST 1
+ * ======
+ * Two column, left fixed width 200px, right floating width fills rest of column.
+ * 
+ */
+
+/* Place the elements in the order:
+ *      rightwrapper
+ *           rightcolum
+ *      leftcolum
+ */
+
+/* rightwrapper fills ENTIRE content area. */
+#rightwrapper1 {
+    float: left;
+    width: 100%;
+    background: #ffeeee;
+}
+
+/* rightcolumn, inside the rightwrapper, leaves room for left column, fills the rest of content.
+ * This is NOT floated, otherwise it would only fill depending on the width of its content.
+*/
+#rightcolumn1 {
+    margin-left: 200px;     /* Fixed left column width. */
+    background: #eeffee;
+}
+
+#leftcolumn1 {
+    float: left;
+    width: 200px;           /* Width of left column. */
+    margin-left: -100%;     /* The left margin is the same size as the containing element. */
+    background: #eeeeff;
+}
+
+    </style>
+</head>
+
+<body>
+
+    <div style="background-color: white; padding: 10px; margin-bottom: 10px">
+        <h3>TEST 1</h3>
+        <h4>Two column, left fixed width 200px, right floating width</h4>
+    </div>
+
+    <div id="content">
+
+        <div id="rightwrapper1">
+            <div id="rightcolumn1">
+                Right column, fills the rest of content.
+            </div>
+        </div>
+
+        <div id="leftcolumn1">
+            Left column, 200px wide.
+        </div>
+
+    </div>
+
+</body>
+</html>

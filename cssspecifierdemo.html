@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>A simple CSS specifier demo</title>
+<style type="text/css">
+
+body
+{
+    color: purple;
+}
+
+h1
+{
+    color: blue;
+}
+
+p
+{
+    color: red;
+}
+
+.myclass
+{
+    color: pink;
+}
+
+p .myclass
+{
+    color: black;
+}
+
+.myclass p
+{
+    color: orange;
+}
+
+p.myclass
+{
+    color: green;
+}
+
+
+/***********************************************/
+
+.classA p
+{
+    color: green;
+}
+
+p
+{
+    color: red;
+}
+
+.classB p
+{
+    color: blue;
+}
+
+/***********************************************/
+
+/* Set the text color */
+
+.class1, .class2
+{
+    color: white;
+}
+
+.class3, .class4
+{
+    color: black;
+}
+
+/* Set the background color */
+
+.class1
+{
+    background-color: red;
+}
+
+.class2
+{
+    background-color: green;
+}
+
+.class3
+{
+    background-color: yellow;
+}
+
+.class1.class2
+{
+    background-color: orange;
+}
+
+.class4 .class1.class2
+{
+    background-color: blue;
+}
+
+.class1.class2 .class4
+{
+    background-color: purple;
+}
+</style>
+</head>
+<body>
+
+    <div style="float: left; width: 50%">
+ 
+        <h3>Text Color</h3>
+        <pre style="color: black">
+body
+{
+    color: purple;
+}
+
+h1
+{
+    color: blue;
+}
+
+p
+{
+    color: red;
+}
+
+.myclass
+{
+    color: pink;
+}
+
+p .myclass
+{
+    color: black;
+}
+
+.myclass p
+{
+    color: orange;
+}
+
+p.myclass
+{
+    color: green;
+}
+        </pre>
+    </div>
+
+    <div style="float: right; width: 50%">
+        <h3>Results</h3>
+        <h1>1) &lt;h1&gt;&lt;/h1&gt;</h1>
+
+        <div class="myclass">2) &lt;div class="myclass"&gt;&lt;/div&gt;</div>
+
+        <div class="myclass">
+            <p>
+                3) &lt;div class="myclass"&gt;&lt;p&gt;&lt;/p&gt;&lt;/div&gt
+            </p>
+        </div>
+
+        <p>4) &lt;p&gt;&lt;/p&gt;</p>
+
+        <p>
+            <span class="myclass">
+                5) &lt;p&gt;&lt;span class="myclass"&gt;&lt;/span&gt&lt;/p&gt;
+            </span>
+        </p>
+
+        <p class="myclass">6) &lt;p class="myclass"&gt;&lt;/p&gt;</p>
+
+        7) (I'm not part of anything!)
+    </div>
+    <div style="clear: both"></div>
+
+    <hr />
+
+    <div style="float: left; width: 25%">
+        <h3>Text Color</h3>
+        <pre style="color: black">
+.class1, .class2
+{
+    color: white;
+}
+
+.class3, class4
+{
+    color: black;
+}
+    </div>
+
+    <div style="float: left; width: 25%">
+        <h3>Background Color</h3>
+        <pre style="color: black">
+.class1
+{
+    background-color: red;
+}
+
+.class2
+{
+    background-color: green;
+}
+
+.class3
+{
+    background-color: yellow;
+}
+
+.class1.class2
+{
+    background-color: orange;
+}
+
+.class4 .class1.class2
+{
+    background-color: blue;
+}
+
+.class1.class2 .class4
+{
+    background-color: purple;
+}
+        </pre>
+    </div>
+
+    <div style="float: right; width: 50%">
+        <h3>Results</h3>
+
+        <p class="class1">A) &lt;p class="class1"&gt;&lt;/p&gt;</p>
+        <p class="class2">B) &lt;p class="class2"&gt;&lt;/p&gt;</p>
+        <p class="class3">C) &lt;p class="class3"&gt;&lt;/p&gt;</p>
+        <p class="class1 class2">D) &lt;p class="class1 class2"&gt;&lt;/p&gt;</p>
+        <p class="class1 class3">E) &lt;p class="class1 class3"&gt;&lt;/p&gt;</p>
+        <p class="class3 class1">F) &lt;p class="class3 class1"&gt;&lt;/p&gt;</p>
+        <div class="class4"><p class="class1 class2">G) &lt;div class="class4"&gt;&lt;p class="class1 class2"&gt;&lt;/p&gt;&lt;/div&gt;</p></div>
+        <div class="class4"><p class="class2 class3">H) &lt;div class="class4"&gt;&lt;p class="class2 class3"&gt;&lt;/p&gt;&lt;/div&gt;</p></div>
+        <div class="class1 class2"><p class="class4">I) &lt;div class="class1 class2"&gt;&lt;p class="class4"&gt;&lt;/p&gt;&lt;/div&gt;</p></div>
+    </div>
+    <div style="clear: both"></div>
+
+</body>
+</html>

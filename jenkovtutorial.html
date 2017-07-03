@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sampleApp">
+<head>
+    <title>AngularJS Routes example</title>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-route.js"></script>
+</head>
+
+<body>
+
+<a href="#/route1">Route 1</a><br/>
+<a href="#/route2">Route 2</a><br/>
+
+
+<div ng-view></div>
+
+<script>
+    //http://tutorials.jenkov.com/angularjs/routes.html
+    var module = angular.module("sampleApp", ['ngRoute']);
+
+//    module.config(['$routeProvider',
+    module.config(
+        function($routeProvider) {
+            $routeProvider.
+                when('/route1', {
+                    templateUrl: 'a.html',
+                    controller: 'RouteController'
+                }).
+                when('/route2', {
+                    templateUrl: 'b.html',
+                    controller: 'RouteController'
+                }).
+                otherwise({
+                    redirectTo: '/'
+                });
+//        }]);
+        });
+
+    module.controller("RouteController", function($scope) {
+
+    })
+</script>
+</body>
+</html>

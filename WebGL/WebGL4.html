@@ -1,0 +1,221 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WebGL4 - Depth and Viewport</title>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+attribute vec3 aVertexPosition;
+attribute vec4 aVertexColor;
+
+// Send out to fragment (pixel) shader, interpolated.
+varying vec4 vVertexColor;
+
+void main(void) {
+    // At a minimum, a vertex shader must set gl_position.
+    // The position has four values (x,y,z) and and appended w=1.
+    gl_Position = vec4(aVertexPosition, 1);
+
+    // Can also output stuff other than vertex positions.  Send
+    // an interpolated color to the fragment shader.
+    vVertexColor = aVertexColor;
+}
+</script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+precision mediump float;
+
+// Interpolated, from the vertex shader.
+varying vec4 vVertexColor;
+
+void main(void) {
+    gl_FragColor = vVertexColor;
+}
+</script>
+
+
+<script src="WebGLTools.js"></script>
+
+<script type="text/javascript">
+    var gl;
+
+    function webGLStart() {
+        var canvas = document.getElementById("myCanvas");
+            gl = canvas.getContext("experimental-webgl");
+
+        // Shaders
+        // =======
+        // Use a common library to load the vertex and fragment (pixel)
+        // shaders into a program.  The ids must be as named above.
+
+        var shaderProgram = loadShaderProgram(gl);
+        gl.useProgram(shaderProgram);
+
+        // Vertices
+        // ========
+
+        // Create a buffer with three vertices.  The numbers must be
+        // in the range of -1.0 to +1.0.
+
+        // Draw the front item (z=-0.5, RGB) first, then the back item,
+        // (z=+0.5, CMY).  If the depth test works the front item (RGB) will
+        // appear.  If it fails, the last drawn item (CMY) will appear.
+
+        var buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                // Negative z is more toward the front.
+                -1.0, -1.0, -0.5,
+                +1.0, -1.0, -0.5,
+                 0.0, +1.0, -0.5,
+
+                // Positive z is more toward the back.
+                -1.0, +1.0, +0.5,
+                +1.0, +1.0, +0.5,
+                 0.0, -1.0, +0.5,
+            ]),
+            gl.STATIC_DRAW);
+
+        // Send the three (x,y) triangle coordinates in the buffer to the vertex shader.
+
+        var positionLocation = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(
+            positionLocation,   // index of the generic vertex attribute to be modified
+            3,                  // number of components per generic vertex attribute
+            gl.FLOAT,           // type of each data component in the array
+            false,              // whether the fixed point data values should be normalized to -1 to 1 when converted to float
+            0,                  // offset between consecutive generic vertex attributes.  0 means tightly packed
+            0);                 // pointer to the first component of the first vertex attribute in the array
+
+        // Colors
+        // ======
+
+        // Create three colors in a buffer.
+
+        var colorBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                1.0, 0.0, 0.0, 1.0, // red
+                0.0, 1.0, 0.0, 1.0, // green
+                0.0, 0.0, 1.0, 1.0, // blue
+
+                0.0, 1.0, 1.0, 1.0, // cyan
+                1.0, 0.0, 1.0, 1.0, // magenta
+                1.0, 1.0, 0.0, 1.0  // yellow
+            ]),
+            gl.STATIC_DRAW);
+
+        // Pass the colors to GL.
+        var colorLocation = gl.getAttribLocation(shaderProgram, "aVertexColor");
+        gl.enableVertexAttribArray(colorLocation);
+        gl.vertexAttribPointer(colorLocation, 4, gl.FLOAT, false, 0, 0);
+
+        // Draw
+        // ====
+
+        // Make the background gray.
+        gl.clearColor(0.5, 0.5, 0.5, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        // If gl.DEPTH_TEST is not enabled the depth test doesn't occur.
+        // Without it, instead of the frontmost (RGB) triangle appearing
+        // the last drawn (CMY) triangle appears instead.
+        gl.enable(gl.DEPTH_TEST);
+
+        // Clear all values in the depth buffer to the specified depth.  The default
+        // is 1.0 (the farthest possible value) and the values are clipped to
+        // the range [0.0, 1.0].  The initial value of the depth buffer is 1 by default.
+        gl.clearDepth(1.0);
+        gl.clear(gl.DEPTH_BUFFER_BIT);
+
+//        gl.depthFunc(gl.GREATER);
+
+        // How to see the effects of changing depthRange?
+//        gl.depthRange(0.49, 0.51); // near=1.0, far=0.0 (reversed)
+
+        // This causes the output to appear in the lower quadrant of the canvas.
+//        gl.viewport(0, 0, 320, 240);
+
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+        // Cleanup
+        // =======
+
+        removeShaderProgram(gl);
+        gl.deleteBuffer(buffer);
+        gl.deleteBuffer(colorBuffer);
+    }
+</script>
+
+</head>
+<body onload="webGLStart();">
+
+    <canvas id="myCanvas" width="640" height="480"></canvas>
+
+    <div style="width: 640px">
+
+        <h1>Background</h1>
+    
+        <p>
+            OpenGL provides an option for a depth "z" buffer to display the closest object in front
+            of more distant objects independent of the order in which the objects are drawn.  In this
+            example, an RGB triangle is first drawn nearer the viewer, followed by a CMY triangle farther
+            back.  The depth test must be enabled to be functional.  Due to use of the depth buffer, the
+            RGB triangle appears in front of the CMY triangle even though the RGB triangle is drawn first.
+        </p>
+
+        <p>
+            When specifying vertices, negative z values are closer and positive z values are farther.
+            Vertices with z values on the range [-1.0, +1.0] are drawn as this represents the range
+            of the clip zone.  However, the front and back clip planes of the z buffer correspond to
+            stored z buffer values of [0.0, 1.0].
+        </p>
+
+        <h1>Experiments</h1>
+
+        <p>
+            Try making the following changes to the source code.  Be sure to restore the state
+            between experiments.  They are not cumulative.
+        </p>
+    
+        <p>
+            1. Remove the call to gl.enable(gl.DEPTH_TEST);.  Note that last drawn object, the CMY
+            triangle, then appears in front of the RGB triangle though the CMY triangle is the farther
+            back of the two.
+        </p>
+
+        <p>
+            2. Change the clearDepth() value to 0.0 and note that nothing is drawn.  By setting
+            the entire depth buffer to 0.0, the depth buffer holds the "closest" depth at all
+            pixel positions.  None of the drawn objects are closer than the closest clipping plane.
+            Recall that vertices are specified on the range [-1.0, 1.0], corresponding to depth
+            buffer values on the range[0.0, 1.0].
+        </p>
+
+        <p>
+            3. Change the clearDepth() value to 0.0 and uncomment the line gl.depthFunc(gl.GREATER);.
+            Note that the CMY triangle appears in front of the RGB triangle.  By default the depthFunc
+            is gl.LESS, meaning that pixels that are less than (i.e. closer) than the present value
+            in the depth buffer are drawn.  With a minimum value of 0.0 in the depth buffer, all vertices
+            between [-1.0, 1.0] correspond to depth values greater than 0.0.
+        </p>
+
+        <p>
+            4. Uncomment the line gl.viewport(0, 0, 320, 240); and note that the two triangles
+            appear in the lower left quarter of the canvas.
+        </p>
+        
+        <h1>Notes</h1>
+            OpenGL uses the concept of normalized device coordinates, with range [-1.0, 1.0] for x, y,
+            and z.  It needs to know how to linearly map these to the device coordinates.  Both x and y
+            mapping are specified via glViewport, and z via glDepthRange.
+        <p>
+            
+        </p>
+    </div>
+</body>
+</html>

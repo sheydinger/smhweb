@@ -1,0 +1,214 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WebGL10 - Animation</title>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+attribute vec2 aVertexPosition;
+
+varying vec2 vVertexPosition;
+
+void main(void) {
+    gl_Position = vec4(aVertexPosition, 0, 1);
+    
+    // Pass the vertex position to the fragment shader
+    // for use in the sin() argument.
+    vVertexPosition = 0.5 * aVertexPosition + 0.5;
+}
+</script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+#define M_PI 3.1415926535897932384626433832795
+
+precision mediump float;
+
+varying vec2 vVertexPosition;
+
+uniform float uPhase;
+
+void main(void) {
+    gl_FragColor = vec4(0.5*sin(vVertexPosition.xy * 2.0*M_PI + uPhase/20.0) + 0.5, 0, 1);
+}
+</script>
+
+
+<script src="WebGLTools.js"></script>
+
+<script type="text/javascript">
+    var gl;
+
+    var buffer;
+
+    var phaseLocation;
+    var phase = 0;
+
+    var interval;
+    var frameNo = 0;
+
+    var startTime;
+
+
+    function resetButtons (si, ci, st, ct)
+    {
+        document.getElementById("setInt15").disabled = si;
+        document.getElementById("setInt30").disabled = si;
+        document.getElementById("setInt60").disabled = si;
+        document.getElementById("setInt120").disabled = si;
+        document.getElementById("setInt240").disabled = si;
+        document.getElementById("setInt360").disabled = si;
+        document.getElementById("clearInt").disabled = ci;
+
+        document.getElementById("setTime1").disabled    = st;
+        document.getElementById("setTime1000").disabled = st;
+        document.getElementById("setTime5000").disabled = st;
+        document.getElementById("clearTime").disabled   = ct;
+    }
+
+    // Interval
+    // ========
+
+    function doIntervalGameLoop()
+    {
+        var nowTime = new Date();
+
+        frameNo++;
+        document.getElementById("frame").innerHTML = "frame = " + frameNo;
+        document.getElementById("time").innerHTML = "time  = " + ((nowTime - startTime) / 1000);
+        document.getElementById("fps").innerHTML = "fps  = " + frameNo / (((nowTime - startTime) / 1000));
+
+        gl.uniform1f(phaseLocation, phase++);
+
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        console.log("frameNo = " + frameNo);
+    }
+
+    function setInt(time)
+    {
+        startTime = new Date();
+        frameNo = 0;
+
+        // Setup animation
+        interval = setInterval(doIntervalGameLoop, 1000/time);
+
+        resetButtons(true, false, true, true);
+    }
+
+    function clearInt()
+    {
+        clearInterval(interval);
+
+        resetButtons(false, true, false, true);
+    }
+
+    // Timeout
+    // =======
+    
+    var timeout;
+
+    function doTimoutGameLoop()
+    {
+        var nowTime = new Date();
+
+        frameNo++;
+        document.getElementById("frame").innerHTML = "frame = " + frameNo;
+        document.getElementById("time").innerHTML = "time  = " + ((nowTime - startTime) / 1000);
+        document.getElementById("fps").innerHTML = "fps  = " + frameNo / (((nowTime - startTime) / 1000));
+
+        gl.uniform1f(phaseLocation, phase++);
+
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        console.log("frameNo = " + frameNo);
+
+        interval = setTimeout(doTimoutGameLoop, timeout);
+    }
+
+    function setTime(time)
+    {
+        startTime = new Date();
+        frameNo = 0;
+        timeout = time;
+
+        // Setup animation
+        doTimoutGameLoop();
+
+        resetButtons(true, true, true, false);
+    }
+
+    function clearTime()
+    {
+        timeout = 0;
+
+        clearTimeout(interval);
+
+        resetButtons(false, true, false, true);
+    }
+
+    function webGLStart() {
+
+        var canvas = document.getElementById("myCanvas");
+        gl = canvas.getContext("experimental-webgl");
+
+        // Shaders
+        // =======
+        // Use a common library to load the vertex and fragment (pixel)
+        // shaders into a program.  The ids must be as named above.
+
+        var shaderProgram = loadShaderProgram(gl);
+        gl.useProgram(shaderProgram);
+
+        // Vertices
+        // ========
+
+        buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                -1.0, -1.0,
+                +1.0, -1.0,
+                -1.0, +1.0,
+                +1.0, +1.0
+            ]),
+            gl.STATIC_DRAW);
+
+        var positionLocation = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(
+            positionLocation,   // index of the generic vertex attribute to be modified
+            2,                  // number of components per generic vertex attribute
+            gl.FLOAT,           // type of each data component in the arrays
+            false,              // whether the fixed point data values should be normalized to -1 to 1 when converted to float
+            0,                  // offset between consecutive generic vertex attributes.  0 means tightly packed
+            0);                 // pointer to the first component of the first vertex attribute in the array
+
+        phaseLocation = gl.getUniformLocation(shaderProgram, "uPhase");
+
+        resetButtons(false, true, false, true);
+    }
+</script>
+
+</head>
+<body onload="webGLStart();">
+
+    <canvas id="myCanvas" width="640" height="480"></canvas>
+    <p id="frame">frame = </p>
+    <p id="time">time = </p>
+    <p id="fps">fps = </p>
+
+    <input id="setInt15"  type="button" value="setInterval (15 fps)"  onclick="setInt(15)" />
+    <input id="setInt30"  type="button" value="setInterval (30 fps)"  onclick="setInt(30)" />
+    <input id="setInt60"  type="button" value="setInterval (60 fps)"  onclick="setInt(60)" />
+    <input id="setInt120" type="button" value="setInterval (120 fps)" onclick="setInt(120)" />
+    <input id="setInt240" type="button" value="setInterval (240 fps)" onclick="setInt(240)" />
+    <input id="setInt360" type="button" value="setInterval (360 fps)" onclick="setInt(360)" />
+    <input id="clearInt" type="button" value="clearInterval" onclick="clearInt()" disabled />
+    
+    <br />
+
+    <input id="setTime1"    type="button" value="setTimeout (1 ms)"    onclick="setTime(1)" />
+    <input id="setTime1000" type="button" value="setTimeout (1000 ms)" onclick="setTime(1000)" />
+    <input id="setTime5000" type="button" value="setTimeout (5000 ms)" onclick="setTime(5000)" />
+    <input id="clearTime" type="button" value="clearTimeout" onclick="clearTime()" disabled />
+
+</body>
+</html>

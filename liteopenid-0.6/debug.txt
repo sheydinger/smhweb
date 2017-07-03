@@ -1,0 +1,363 @@
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+GOOGLE     !openid->mode
+GOOGLE     isset(login)
+openid.php __set(identity, https://www.google.com/accounts/o8/id)
+openid.php authUrl()
+openid.php discover(https://www.google.com/accounts/o8/id)
+openid.php request()
+openid.php request_curl()
+openid.php request()
+openid.php request_curl()
+openid.php    discover() ==> https://www.google.com/accounts/o8/ud
+openid.php authUrl_v2()
+openid.php axParams()
+openid.php build_Url(Array, Array)
+openid.php    authUrl_v2() ==> https://www.google.com/accounts/o8/ud?openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&openid.mode=checkid_setup&openid.return_to=http%3A%2F%2Fwww.theunclassroom.org%2Fsmhweb%2Fliteopenid-0.6%2Fexample-google.php%3Flogin&openid.realm=http%3A%2F%2Fwww.theunclassroom.org&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> id_res
+openid.php __get(mode)
+openid.php    ==> id_res
+GOOGLE     else
+openid.php validate()
+openid.php __get(mode)
+openid.php    ==> id_res
+openid.php discover(https://www.google.com/accounts/o8/id?id=AItOawmnSWYeWeiIAff6ZkX5_LSdnH6IZLL5oik)
+openid.php request()
+openid.php request_curl()
+openid.php request()
+openid.php request_curl()
+openid.php    discover() ==> https://www.google.com/accounts/o8/ud
+openid.php request()
+openid.php request_curl()
+openid.php __get(identity)
+openid.php    ==> https://www.google.com/accounts/o8/id?id=AItOawmnSWYeWeiIAff6ZkX5_LSdnH6IZLL5oik
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> id_res
+openid.php __get(mode)
+openid.php    ==> id_res
+GOOGLE     else
+openid.php validate()
+openid.php __get(mode)
+openid.php    ==> id_res
+openid.php discover(https://www.google.com/accounts/o8/id?id=AItOawmnSWYeWeiIAff6ZkX5_LSdnH6IZLL5oik)
+openid.php request()
+openid.php request_curl()
+openid.php request()
+openid.php request_curl()
+openid.php    discover() ==> https://www.google.com/accounts/o8/ud
+openid.php request()
+openid.php request_curl()
+openid.php __get(identity)
+openid.php    ==> https://www.google.com/accounts/o8/id?id=AItOawmnSWYeWeiIAff6ZkX5_LSdnH6IZLL5oik
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> id_res
+openid.php __get(mode)
+openid.php    ==> id_res
+GOOGLE     else
+openid.php validate()
+openid.php __get(mode)
+openid.php    ==> id_res
+openid.php discover(https://www.google.com/accounts/o8/id?id=AItOawmnSWYeWeiIAff6ZkX5_LSdnH6IZLL5oik)
+openid.php request()
+openid.php request_curl()
+openid.php request()
+openid.php request_curl()
+openid.php    discover() ==> https://www.google.com/accounts/o8/ud
+openid.php request()
+openid.php request_curl()
+openid.php __get(identity)
+openid.php    ==> https://www.google.com/accounts/o8/id?id=AItOawmnSWYeWeiIAff6ZkX5_LSdnH6IZLL5oik
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+GOOGLE     !openid->mode
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+GOOGLE     !openid->mode
+GOOGLE     isset(login)
+openid.php __set(identity, https://www.google.com/accounts/o8/id)
+openid.php authUrl()
+openid.php discover(https://www.google.com/accounts/o8/id)
+openid.php request()
+openid.php request_curl()
+openid.php request()
+openid.php request_curl()
+openid.php    discover() ==> https://www.google.com/accounts/o8/ud
+openid.php authUrl_v2()
+openid.php axParams()
+openid.php build_Url(Array, Array)
+openid.php    authUrl_v2() ==> https://www.google.com/accounts/o8/ud?openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&openid.mode=checkid_setup&openid.return_to=http%3A%2F%2Fwww.theunclassroom.org%2Fsmhweb%2Fliteopenid-0.6%2Fexample-google.php%3Flogin&openid.realm=http%3A%2F%2Fwww.theunclassroom.org&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> id_res
+openid.php __get(mode)
+openid.php    ==> id_res
+GOOGLE     else
+openid.php validate()
+openid.php __get(mode)
+openid.php    ==> id_res
+openid.php discover(https://www.google.com/accounts/o8/id?id=AItOawmnSWYeWeiIAff6ZkX5_LSdnH6IZLL5oik)
+openid.php request()
+openid.php request_curl()
+openid.php request()
+openid.php request_curl()
+openid.php    discover() ==> https://www.google.com/accounts/o8/ud
+openid.php request()
+openid.php request_curl()
+openid.php __get(identity)
+openid.php    ==> https://www.google.com/accounts/o8/id?id=AItOawmnSWYeWeiIAff6ZkX5_LSdnH6IZLL5oik
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+openid.php __set(identity, https://www.google.com/accounts/o8/id)
+openid.php authUrl()
+openid.php discover(https://www.google.com/accounts/o8/id)
+openid.php request()
+openid.php request_curl()
+openid.php request()
+openid.php request_curl()
+openid.php    discover() ==> https://www.google.com/accounts/o8/ud
+openid.php authUrl_v2()
+openid.php axParams()
+openid.php build_Url(Array, Array)
+openid.php    authUrl_v2() ==> https://www.google.com/accounts/o8/ud?openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&openid.mode=checkid_setup&openid.return_to=http%3A%2F%2Fwww.theunclassroom.org%2Fsmhweb%2Fliteopenid-0.6%2Fexample.php&openid.realm=http%3A%2F%2Fwww.theunclassroom.org&openid.ns.ax=http%3A%2F%2Fopenid.net%2Fsrv%2Fax%2F1.0&openid.ax.mode=fetch_request&openid.ax.type.contact_email=http%3A%2F%2Faxschema.org%2Fcontact%2Femail&openid.ax.type.namePerson=http%3A%2F%2Faxschema.org%2FnamePerson&openid.ax.type.namePerson_friendly=http%3A%2F%2Faxschema.org%2FnamePerson%2Ffriendly&openid.ax.required=contact_email&openid.ax.if_available=namePerson%2CnamePerson_friendly&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> cancel
+openid.php __get(mode)
+openid.php    ==> cancel
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+GOOGLE     !openid->mode
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+GOOGLE     !openid->mode
+GOOGLE     isset(login)
+openid.php __set(identity, https://www.google.com/accounts/o8/id)
+openid.php authUrl()
+openid.php discover(https://www.google.com/accounts/o8/id)
+openid.php request()
+openid.php request_curl()
+openid.php request()
+openid.php request_curl()
+openid.php    discover() ==> https://www.google.com/accounts/o8/ud
+openid.php authUrl_v2()
+openid.php axParams()
+openid.php build_Url(Array, Array)
+openid.php    authUrl_v2() ==> https://www.google.com/accounts/o8/ud?openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&openid.mode=checkid_setup&openid.return_to=http%3A%2F%2Fwww.theunclassroom.org%2Fsmhweb%2Fliteopenid-0.6%2Fexample-google.php%3Flogin&openid.realm=http%3A%2F%2Fwww.theunclassroom.org&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> id_res
+openid.php __get(mode)
+openid.php    ==> id_res
+GOOGLE     else
+openid.php validate()
+openid.php __get(mode)
+openid.php    ==> id_res
+openid.php discover(https://www.google.com/accounts/o8/id?id=AItOawn-FfByYb_AcgNeBiX476UFFGGkWZ33PCI)
+openid.php request()
+openid.php request_curl()
+openid.php request()
+openid.php request_curl()
+openid.php    discover() ==> https://www.google.com/accounts/o8/ud
+openid.php request()
+openid.php request_curl()
+openid.php __get(identity)
+openid.php    ==> https://www.google.com/accounts/o8/id?id=AItOawn-FfByYb_AcgNeBiX476UFFGGkWZ33PCI
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+openid.php __set(identity, https://www.google.com/accounts/o8/id)
+openid.php authUrl()
+openid.php discover(https://www.google.com/accounts/o8/id)
+openid.php request()
+openid.php request_curl()
+openid.php request()
+openid.php request_curl()
+openid.php    discover() ==> https://www.google.com/accounts/o8/ud
+openid.php authUrl_v2()
+openid.php axParams()
+openid.php build_Url(Array, Array)
+openid.php    authUrl_v2() ==> https://www.google.com/accounts/o8/ud?openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&openid.mode=checkid_setup&openid.return_to=http%3A%2F%2Fwww.theunclassroom.org%2Fsmhweb%2Fliteopenid-0.6%2Fexample.php&openid.realm=http%3A%2F%2Fwww.theunclassroom.org&openid.ns.ax=http%3A%2F%2Fopenid.net%2Fsrv%2Fax%2F1.0&openid.ax.mode=fetch_request&openid.ax.type.contact_email=http%3A%2F%2Faxschema.org%2Fcontact%2Femail&openid.ax.type.namePerson=http%3A%2F%2Faxschema.org%2FnamePerson&openid.ax.type.namePerson_friendly=http%3A%2F%2Faxschema.org%2FnamePerson%2Ffriendly&openid.ax.required=contact_email&openid.ax.if_available=namePerson%2CnamePerson_friendly&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> id_res
+openid.php __get(mode)
+openid.php    ==> id_res
+openid.php validate()
+openid.php __get(mode)
+openid.php    ==> id_res
+openid.php discover(https://www.google.com/accounts/o8/id?id=AItOawn-FfByYb_AcgNeBiX476UFFGGkWZ33PCI)
+openid.php request()
+openid.php request_curl()
+openid.php request()
+openid.php request_curl()
+openid.php    discover() ==> https://www.google.com/accounts/o8/ud
+openid.php request()
+openid.php request_curl()
+openid.php __get(identity)
+openid.php    ==> https://www.google.com/accounts/o8/id?id=AItOawn-FfByYb_AcgNeBiX476UFFGGkWZ33PCI
+openid.php getAttributes()
+openid.php getAxAttributes()
+openid.php getSregAttributes()
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+openid.php __set(identity, https://extsignon.lexmark.com/amserver/SSORedirect/metaAlias/emplFed/idp)
+openid.php authUrl()
+openid.php discover(https://extsignon.lexmark.com/amserver/SSORedirect/metaAlias/emplFed/idp)
+openid.php request()
+openid.php request_curl()
+openid.php request()
+openid.php request_curl()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+openid.php __set(identity, https://extsignon.lexmark.com/amserver/SSORedirect/metaAlias/emplFed)
+openid.php authUrl()
+openid.php discover(https://extsignon.lexmark.com/amserver/SSORedirect/metaAlias/emplFed)
+openid.php request()
+openid.php request_curl()
+openid.php request()
+openid.php request_curl()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+openid.php __set(identity, https://extsignon.lexmark.com/amserver/SSORedirect/metaAlias)
+openid.php authUrl()
+openid.php discover(https://extsignon.lexmark.com/amserver/SSORedirect/metaAlias)
+openid.php request()
+openid.php request_curl()
+openid.php request()
+openid.php request_curl()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+openid.php __set(identity, https://extsignon.lexmark.com/amserver/SSORedirect)
+openid.php authUrl()
+openid.php discover(https://extsignon.lexmark.com/amserver/SSORedirect)
+openid.php request()
+openid.php request_curl()
+openid.php request()
+openid.php request_curl()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+openid.php __set(identity, https://extsignon.lexmark.com/amserver)
+openid.php authUrl()
+openid.php discover(https://extsignon.lexmark.com/amserver)
+openid.php request()
+openid.php request_curl()
+openid.php request()
+openid.php request_curl()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+openid.php __set(identity, https://extsignon.lexmark.com)
+openid.php authUrl()
+openid.php discover(https://extsignon.lexmark.com/)
+openid.php request()
+openid.php request_curl()
+openid.php request()
+openid.php request_curl()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+openid.php __set(identity, https://extsignon.lexmark.com/)
+openid.php authUrl()
+openid.php discover(https://extsignon.lexmark.com/)
+openid.php request()
+openid.php request_curl()
+openid.php request()
+openid.php request_curl()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php htmlTag()
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 
+openid.php __set(identity, https://www.google.com/accounts/o8/id)
+openid.php authUrl()
+openid.php discover(https://www.google.com/accounts/o8/id)
+openid.php request()
+openid.php request_curl()
+openid.php request()
+openid.php request_curl()
+openid.php    discover() ==> https://www.google.com/accounts/o8/ud
+openid.php authUrl_v2()
+openid.php axParams()
+openid.php build_Url(Array, Array)
+openid.php    authUrl_v2() ==> https://www.google.com/accounts/o8/ud?openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&openid.mode=checkid_setup&openid.return_to=http%3A%2F%2Fwww.theunclassroom.org%2Fsmhweb%2Fliteopenid-0.6%2Fexample.php&openid.realm=http%3A%2F%2Fwww.theunclassroom.org&openid.ns.ax=http%3A%2F%2Fopenid.net%2Fsrv%2Fax%2F1.0&openid.ax.mode=fetch_request&openid.ax.type.contact_email=http%3A%2F%2Faxschema.org%2Fcontact%2Femail&openid.ax.type.namePerson=http%3A%2F%2Faxschema.org%2FnamePerson&openid.ax.type.namePerson_friendly=http%3A%2F%2Faxschema.org%2FnamePerson%2Ffriendly&openid.ax.required=contact_email&openid.ax.if_available=namePerson%2CnamePerson_friendly&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select
+openid.php __construct(www.theunclassroom.org/smhweb)
+openid.php __get(mode)
+openid.php    ==> 

@@ -1,0 +1,543 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WebGL5 - Projection and Rotation</title>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+attribute vec3 aVertexPosition;
+attribute vec4 aVertexColor;
+
+uniform mat4 uGeometryMatrix;
+
+varying vec4 vVertexColor;
+
+void main(void) {
+    gl_Position = uGeometryMatrix * vec4(aVertexPosition, 1);
+
+    vVertexColor = aVertexColor;
+}
+</script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+precision mediump float;
+
+// Interpolated, from the vertex shader.
+varying vec4 vVertexColor;
+
+void main(void) {
+    gl_FragColor = vVertexColor;
+}
+</script>
+
+
+<script src="WebGLTools.js"></script>
+<script src="WebGLMatrix.js"></script>
+
+<script type="text/javascript">
+    var gl;
+
+    function webGLStart() {
+        var canvas = document.getElementById("myCanvas");
+        gl = canvas.getContext("experimental-webgl");
+
+        // Shaders
+        // =======
+        // Use a common library to load the vertex and fragment (pixel)
+        // shaders into a program.  The ids must be as named above.
+
+        var shaderProgram = loadShaderProgram(gl);
+        gl.useProgram(shaderProgram);
+
+        // Perspective/Orthographic
+        // ========================
+        var fov  = parseInt(document.getElementById("fov").value);
+        var near = parseInt(document.getElementById("near").value);
+        var far  = parseInt(document.getElementById("far").value);
+
+        var projectionMatrix;
+        if (document.getElementById("ortho").checked == true) {
+            projectionMatrix = Orthographic4x4(fov, (640.0/480.0), near, far);
+        }
+        else {
+            projectionMatrix = Perspective4x4(fov, (640.0/480.0), near, far);
+        }
+
+        document.getElementById("p00").innerHTML = projectionMatrix[ 0].toFixed(2);
+        document.getElementById("p10").innerHTML = projectionMatrix[ 1].toFixed(2);
+        document.getElementById("p20").innerHTML = projectionMatrix[ 2].toFixed(2);
+        document.getElementById("p30").innerHTML = projectionMatrix[ 3].toFixed(2);
+
+        document.getElementById("p01").innerHTML = projectionMatrix[ 4].toFixed(2);
+        document.getElementById("p11").innerHTML = projectionMatrix[ 5].toFixed(2);
+        document.getElementById("p21").innerHTML = projectionMatrix[ 6].toFixed(2);
+        document.getElementById("p31").innerHTML = projectionMatrix[ 7].toFixed(2);
+
+        document.getElementById("p02").innerHTML = projectionMatrix[ 8].toFixed(2);
+        document.getElementById("p12").innerHTML = projectionMatrix[ 9].toFixed(2);
+        document.getElementById("p22").innerHTML = projectionMatrix[10].toFixed(2);
+        document.getElementById("p32").innerHTML = projectionMatrix[11].toFixed(2);
+
+        document.getElementById("p03").innerHTML = projectionMatrix[12].toFixed(2);
+        document.getElementById("p13").innerHTML = projectionMatrix[13].toFixed(2);
+        document.getElementById("p23").innerHTML = projectionMatrix[14].toFixed(2);
+        document.getElementById("p33").innerHTML = projectionMatrix[15].toFixed(2);
+
+        // Translate
+        // =========
+
+        var translateX = parseInt(document.getElementById("translateX").value);
+        var translateY = parseInt(document.getElementById("translateY").value);
+        var translateZ = parseInt(document.getElementById("translateZ").value);
+
+        var translateMatrix = Translate4x4(translateX, translateY, translateZ);
+
+        document.getElementById("t00").innerHTML = translateMatrix[ 0].toFixed(2);
+        document.getElementById("t10").innerHTML = translateMatrix[ 1].toFixed(2);
+        document.getElementById("t20").innerHTML = translateMatrix[ 2].toFixed(2);
+        document.getElementById("t30").innerHTML = translateMatrix[ 3].toFixed(2);
+
+        document.getElementById("t01").innerHTML = translateMatrix[ 4].toFixed(2);
+        document.getElementById("t11").innerHTML = translateMatrix[ 5].toFixed(2);
+        document.getElementById("t21").innerHTML = translateMatrix[ 6].toFixed(2);
+        document.getElementById("t31").innerHTML = translateMatrix[ 7].toFixed(2);
+
+        document.getElementById("t02").innerHTML = translateMatrix[ 8].toFixed(2);
+        document.getElementById("t12").innerHTML = translateMatrix[ 9].toFixed(2);
+        document.getElementById("t22").innerHTML = translateMatrix[10].toFixed(2);
+        document.getElementById("t32").innerHTML = translateMatrix[11].toFixed(2);
+
+        document.getElementById("t03").innerHTML = translateMatrix[12].toFixed(2);
+        document.getElementById("t13").innerHTML = translateMatrix[13].toFixed(2);
+        document.getElementById("t23").innerHTML = translateMatrix[14].toFixed(2);
+        document.getElementById("t33").innerHTML = translateMatrix[15].toFixed(2);
+
+        // Rotation
+        // ========
+
+        var rotateX = parseInt(document.getElementById("rotateX").value) * 5;
+        var rotateY = parseInt(document.getElementById("rotateY").value) * 5;
+        var rotateZ = parseInt(document.getElementById("rotateZ").value) * 5;
+
+        var rotateMatrix = Rotate4x4(rotateX, rotateY, rotateZ);
+
+        document.getElementById("r00").innerHTML = rotateMatrix[ 0].toFixed(2);
+        document.getElementById("r10").innerHTML = rotateMatrix[ 1].toFixed(2);
+        document.getElementById("r20").innerHTML = rotateMatrix[ 2].toFixed(2);
+        document.getElementById("r30").innerHTML = rotateMatrix[ 3].toFixed(2);
+
+        document.getElementById("r01").innerHTML = rotateMatrix[ 4].toFixed(2);
+        document.getElementById("r11").innerHTML = rotateMatrix[ 5].toFixed(2);
+        document.getElementById("r21").innerHTML = rotateMatrix[ 6].toFixed(2);
+        document.getElementById("r31").innerHTML = rotateMatrix[ 7].toFixed(2);
+
+        document.getElementById("r02").innerHTML = rotateMatrix[ 8].toFixed(2);
+        document.getElementById("r12").innerHTML = rotateMatrix[ 9].toFixed(2);
+        document.getElementById("r22").innerHTML = rotateMatrix[10].toFixed(2);
+        document.getElementById("r32").innerHTML = rotateMatrix[11].toFixed(2);
+
+        document.getElementById("r03").innerHTML = rotateMatrix[12].toFixed(2);
+        document.getElementById("r13").innerHTML = rotateMatrix[13].toFixed(2);
+        document.getElementById("r23").innerHTML = rotateMatrix[14].toFixed(2);
+        document.getElementById("r33").innerHTML = rotateMatrix[15].toFixed(2);
+
+        // Scale
+        // =====
+
+        var scaleX = parseInt(document.getElementById("scaleX").value) / 10;
+        var scaleY = parseInt(document.getElementById("scaleY").value) / 10;
+        var scaleZ = parseInt(document.getElementById("scaleZ").value) / 10;
+
+        var scaleMatrix = Scale4x4(scaleX, scaleY, scaleZ);
+
+        document.getElementById("s00").innerHTML = scaleMatrix[ 0].toFixed(2);
+        document.getElementById("s10").innerHTML = scaleMatrix[ 1].toFixed(2);
+        document.getElementById("s20").innerHTML = scaleMatrix[ 2].toFixed(2);
+        document.getElementById("s30").innerHTML = scaleMatrix[ 3].toFixed(2);
+
+        document.getElementById("s01").innerHTML = scaleMatrix[ 4].toFixed(2);
+        document.getElementById("s11").innerHTML = scaleMatrix[ 5].toFixed(2);
+        document.getElementById("s21").innerHTML = scaleMatrix[ 6].toFixed(2);
+        document.getElementById("s31").innerHTML = scaleMatrix[ 7].toFixed(2);
+
+        document.getElementById("s02").innerHTML = scaleMatrix[ 8].toFixed(2);
+        document.getElementById("s12").innerHTML = scaleMatrix[ 9].toFixed(2);
+        document.getElementById("s22").innerHTML = scaleMatrix[10].toFixed(2);
+        document.getElementById("s32").innerHTML = scaleMatrix[11].toFixed(2);
+
+        document.getElementById("s03").innerHTML = scaleMatrix[12].toFixed(2);
+        document.getElementById("s13").innerHTML = scaleMatrix[13].toFixed(2);
+        document.getElementById("s23").innerHTML = scaleMatrix[14].toFixed(2);
+        document.getElementById("s33").innerHTML = scaleMatrix[15].toFixed(2);
+
+        // Combined Geometry
+        // =================
+
+//        var temp1 = Multiply4x4_4x4(projectionMatrix, translateMatrix);
+//        var geometryMatrix = Multiply4x4_4x4(temp1, rotateMatrix);
+
+        var temp1 = Multiply4x4_4x4(projectionMatrix, translateMatrix);
+        var temp2 = Multiply4x4_4x4(temp1, rotateMatrix);
+        var geometryMatrix = Multiply4x4_4x4(temp2, scaleMatrix);
+
+        var geometryMatrixLocation = gl.getUniformLocation(shaderProgram, "uGeometryMatrix");
+        gl.uniformMatrix4fv(geometryMatrixLocation, false, geometryMatrix);
+
+        document.getElementById("a00").innerHTML = geometryMatrix[ 0].toFixed(2);
+        document.getElementById("a10").innerHTML = geometryMatrix[ 1].toFixed(2);
+        document.getElementById("a20").innerHTML = geometryMatrix[ 2].toFixed(2);
+        document.getElementById("a30").innerHTML = geometryMatrix[ 3].toFixed(2);
+
+        document.getElementById("a01").innerHTML = geometryMatrix[ 4].toFixed(2);
+        document.getElementById("a11").innerHTML = geometryMatrix[ 5].toFixed(2);
+        document.getElementById("a21").innerHTML = geometryMatrix[ 6].toFixed(2);
+        document.getElementById("a31").innerHTML = geometryMatrix[ 7].toFixed(2);
+
+        document.getElementById("a02").innerHTML = geometryMatrix[ 8].toFixed(2);
+        document.getElementById("a12").innerHTML = geometryMatrix[ 9].toFixed(2);
+        document.getElementById("a22").innerHTML = geometryMatrix[10].toFixed(2);
+        document.getElementById("a32").innerHTML = geometryMatrix[11].toFixed(2);
+
+        document.getElementById("a03").innerHTML = geometryMatrix[12].toFixed(2);
+        document.getElementById("a13").innerHTML = geometryMatrix[13].toFixed(2);
+        document.getElementById("a23").innerHTML = geometryMatrix[14].toFixed(2);
+        document.getElementById("a33").innerHTML = geometryMatrix[15].toFixed(2);
+
+        // Vertices
+        // ========
+
+        // Create a buffer with three vertices. 
+
+        var buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                -5, -5, -5,
+                -5, -5, +5,
+                -5, +5, -5,
+                -5, +5, +5,
+                +5, -5, -5,
+                +5, -5, +5,
+                +5, +5, -5,
+                +5, +5, +5,
+            ]),
+            gl.STATIC_DRAW);
+
+        // Send the three (x,y,z) triangle coordinates in the buffer to the vertex shader.
+
+        var positionLocation = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(
+            positionLocation,   // index of the generic vertex attribute to be modified
+            3,                  // number of components per generic vertex attribute
+            gl.FLOAT,           // type of each data component in the array
+            false,              // whether the fixed point data values should be normalized to -1 to 1 when converted to float
+            0,                  // offset between consecutive generic vertex attributes.  0 means tightly packed
+            0);                 // pointer to the first component of the first vertex attribute in the array
+
+        // Colors
+        // ======
+
+        var colorBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                0.0, 0.0, 0.0, 1.0, // black
+                0.0, 0.0, 1.0, 1.0, // blue
+                0.0, 1.0, 0.0, 1.0, // green
+                0.0, 1.0, 1.0, 1.0, // cyan
+                1.0, 0.0, 0.0, 1.0, // red
+                1.0, 0.0, 1.0, 1.0, // magenta
+                1.0, 1.0, 0.0, 1.0, // yellow
+                1.0, 1.0, 1.0, 1.0, // white
+            ]),
+            gl.STATIC_DRAW);
+
+        // Pass the colors to GL.
+        var colorLocation = gl.getAttribLocation(shaderProgram, "aVertexColor");
+        gl.enableVertexAttribArray(colorLocation);
+        gl.vertexAttribPointer(colorLocation, 4, gl.FLOAT, false, 0, 0);
+
+        // Index
+        // =====
+
+        var indexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+        gl.bufferData(
+            gl.ELEMENT_ARRAY_BUFFER,
+            new Uint16Array([
+                0, 1, 2,  2, 1, 3, // Left:   black, blue, cyan, green
+                2, 3, 7,  2, 7, 6, // Top:    green, cyan, white, yellow
+                0, 1, 5,  0, 5, 4, // Bottom: black, blue, magenta, red
+                4, 5, 6,  5, 6, 7, // Right:  red, magenta, yellow, white
+                0, 2, 4,  2, 6, 4, // Back:   black, green, red, yellow
+                1, 3, 5,  3, 7, 5, // Front:  blue, cyan, magenta, white
+            ]),
+            gl.STATIC_DRAW);
+
+        // Draw
+        // ====
+
+        // Make the background gray.
+
+        gl.clearColor(0.5, 0.5, 0.5, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+        gl.enable(gl.DEPTH_TEST);
+
+        gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
+
+        removeShaderProgram(gl);
+        gl.deleteBuffer(buffer);
+        gl.deleteBuffer(colorBuffer);
+        gl.deleteBuffer(indexBuffer);
+    }
+
+    function doChange()
+    {
+        var scaleX = parseInt(document.getElementById("scaleX").value);
+        var scaleY = parseInt(document.getElementById("scaleY").value);
+        var scaleZ = parseInt(document.getElementById("scaleZ").value);
+        document.getElementById("scaleTxt").innerHTML =
+            "Scale: " + (scaleX/10) + ", " + (scaleY/10) + ", " + (scaleZ/10);
+
+        var rotateX = parseInt(document.getElementById("rotateX").value);
+        var rotateY = parseInt(document.getElementById("rotateY").value);
+        var rotateZ = parseInt(document.getElementById("rotateZ").value);
+        document.getElementById("rotateTxt").innerHTML =
+            "Rotate: " + (rotateX*5) + ", " + (rotateY*5) + ", " + (rotateZ*5);
+
+        var translateX = parseInt(document.getElementById("translateX").value);
+        var translateY = parseInt(document.getElementById("translateY").value);
+        var translateZ = parseInt(document.getElementById("translateZ").value);
+        document.getElementById("translateTxt").innerHTML =
+            "Translate: " + translateX + ", " + translateY + ", " + translateZ;
+
+        var fov = parseInt(document.getElementById("fov").value);
+        document.getElementById("fovTxt").innerHTML =
+            "FOV: " + fov;
+
+        var near = parseInt(document.getElementById("near").value);
+        var far = parseInt(document.getElementById("far").value);
+        document.getElementById("nearfarTxt").innerHTML =
+            "near/far: " + near + "/" + far;
+
+        webGLStart();
+    }
+</script>
+
+<style>
+td {
+    width: 50px;
+    text-align: right;
+}
+
+.components {
+    margin-right: 20px;
+    float: left;
+}
+
+.components td {
+    width: 40px;
+    text-align: right;
+}
+</style>
+</head>
+<body onload="webGLStart(); doChange();">
+
+    <canvas id="myCanvas" width="640" height="480" style="float: left; margin-right: 20px"></canvas>
+    
+    <div>
+        <div style="margin-bottom: 20px">
+            <span id="scaleTxt"></span><br />
+            <input type="range" id="scaleX" min="0" max="20" onchange="doChange();" oninput="doChange();"><br />
+            <input type="range" id="scaleY" min="0" max="20" onchange="doChange();" oninput="doChange();"><br />
+            <input type="range" id="scaleZ" min="0" max="20" onchange="doChange();" oninput="doChange();">
+        </div>
+
+        <div style="margin-bottom: 20px">
+            <span id="rotateTxt"></span><br />
+            <input type="range" id="rotateX" min="-36" max="36" onchange="doChange();" oninput="doChange();"><br />
+            <input type="range" id="rotateY" min="-36" max="36" onchange="doChange();" oninput="doChange();"><br />
+            <input type="range" id="rotateZ" min="-36" max="36" onchange="doChange();" oninput="doChange();">
+        </div>
+
+        <div style="margin-bottom: 20px">
+            <span id="translateTxt"></span><br />
+            <input type="range" id="translateX" min="-20" max="20" onchange="doChange();" oninput="doChange();"><br />
+            <input type="range" id="translateY" min="-15" max="15" onchange="doChange();" oninput="doChange();"><br />
+            <input type="range" id="translateZ" min="-50" max="-20" onchange="doChange();" oninput="doChange();">
+        </div>
+
+        <div style="margin-bottom: 10px">
+            <input type="radio" name="mattype" id="ortho" onchange="doChange();" checked>Ortho
+            <input type="radio" name="mattype" id="persp" onchange="doChange();">Persp
+        </div>
+        <div style="margin-bottom: 0px">
+            <span id="fovTxt">FOV:</span><br />
+            <input type="range" id="fov" min="30" max="60" onchange="doChange();" oninput="doChange();"><br />
+            <span id="nearfarTxt">near/far:</span><br />
+            <input type="range" id="near" min="0" max="50" onchange="doChange();" oninput="doChange();"><br />
+            <input type="range" id="far" min="25" max="75" onchange="doChange();" oninput="doChange();"><br />
+        </div>
+
+    </div>
+
+    <div style="clear: both; height: 1px"></div>
+    
+    <div style="float:left; margin-right: 20px">
+        <div class="components">
+            <p>Projection Matrix</p>
+            <table>
+                <tr>
+                    <td id="p00"></td>
+                    <td id="p01"></td>
+                    <td id="p02"></td>
+                    <td id="p03"></td>
+                </tr>
+                <tr>
+                    <td id="p10"></td>
+                    <td id="p11"></td>
+                    <td id="p12"></td>
+                    <td id="p13"></td>
+                </tr>
+                <tr>
+                    <td id="p20"></td>
+                    <td id="p21"></td>
+                    <td id="p22"></td>
+                    <td id="p23"></td>
+                </tr>
+                <tr>
+                    <td id="p30"></td>
+                    <td id="p31"></td>
+                    <td id="p32"></td>
+                    <td id="p33"></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="components">
+            <p>Translate Matrix</p>
+            <table>
+                <tr>
+                    <td id="t00"></td>
+                    <td id="t01"></td>
+                    <td id="t02"></td>
+                    <td id="t03"></td>
+                </tr>
+                <tr>
+                    <td id="t10"></td>
+                    <td id="t11"></td>
+                    <td id="t12"></td>
+                    <td id="t13"></td>
+                </tr>
+                <tr>
+                    <td id="t20"></td>
+                    <td id="t21"></td>
+                    <td id="t22"></td>
+                    <td id="t23"></td>
+                </tr>
+                <tr>
+                    <td id="t30"></td>
+                    <td id="t31"></td>
+                    <td id="t32"></td>
+                    <td id="t33"></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="components">
+            <p>Rotate Matrix</p>
+            <table>
+                <tr>
+                    <td id="r00"></td>
+                    <td id="r01"></td>
+                    <td id="r02"></td>
+                    <td id="r03"></td>
+                </tr>
+                <tr>
+                    <td id="r10"></td>
+                    <td id="r11"></td>
+                    <td id="r12"></td>
+                    <td id="r13"></td>
+                </tr>
+                <tr>
+                    <td id="r20"></td>
+                    <td id="r21"></td>
+                    <td id="r22"></td>
+                    <td id="r23"></td>
+                </tr>
+                <tr>
+                    <td id="r30"></td>
+                    <td id="r31"></td>
+                    <td id="r32"></td>
+                    <td id="r33"></td>
+                </tr>
+            </table>
+        </div>
+
+
+        <div class="components">
+            <p>Scale Matrix</p>
+            <table>
+                <tr>
+                    <td id="s00"></td>
+                    <td id="s01"></td>
+                    <td id="s02"></td>
+                    <td id="s03"></td>
+                </tr>
+                <tr>
+                    <td id="s10"></td>
+                    <td id="s11"></td>
+                    <td id="s12"></td>
+                    <td id="s13"></td>
+                </tr>
+                <tr>
+                    <td id="s20"></td>
+                    <td id="s21"></td>
+                    <td id="s22"></td>
+                    <td id="s23"></td>
+                </tr>
+                <tr>
+                    <td id="s30"></td>
+                    <td id="s31"></td>
+                    <td id="s32"></td>
+                    <td id="s33"></td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+    <p>4x4 Matrix</p>
+
+    <table>
+        <tr>
+            <td id="a00"></td>
+            <td id="a01"></td>
+            <td id="a02"></td>
+            <td id="a03"></td>
+        </tr>
+        <tr>
+            <td id="a10"></td>
+            <td id="a11"></td>
+            <td id="a12"></td>
+            <td id="a13"></td>
+        </tr>
+        <tr>
+            <td id="a20"></td>
+            <td id="a21"></td>
+            <td id="a22"></td>
+            <td id="a23"></td>
+        </tr>
+        <tr>
+            <td id="a30"></td>
+            <td id="a31"></td>
+            <td id="a32"></td>
+            <td id="a33"></td>
+        </tr>
+    </table>
+
+</body>
+</html>

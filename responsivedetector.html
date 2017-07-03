@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>A simple responsive web page detector</title>
+
+<!-- Do this for Apple so that iOS won't automatically scale to fit. -->
+<!--meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/-->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+ 
+<style type="text/css">
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: url('checkerboard_100.jpg');
+}
+
+#container {
+    width: 960px;
+    margin: 0 auto;
+}
+
+#box {
+    width: 100%;
+    height: 100px;
+    background-color: black;
+    margin: 0 auto;
+}
+
+/* May prefer tablet portrait to do same as landscape, so comment out */
+@media only screen and (min-width: 768px) and (max-width: 959px) {
+    #box                    { background-color: red; }
+    #container                                  { width: 748px; }
+}
+
+@media only screen and (max-width: 767px) {
+    #box                    { background-color: blue; }
+    #container { width: 300px; }
+}
+
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+    #box                    { background-color: green; }
+    #container { width: 460px; }
+}
+
+
+/***************************************************************/
+
+
+#portrait {
+    display: none;
+}
+
+@media (orientation:portrait) {
+    #portrait {
+        display: block;
+    }
+}
+
+#landscape {
+    display: none;
+}
+
+@media (orientation:landscape) {
+    #landscape {
+        display: block;
+    }
+}
+
+/***************************************************************/
+
+#res100to199 {
+    display: none;
+}
+
+@media all and (min-resolution: 10dpi) and (max-resolution: 2400dpi) {
+    #res100to199 {
+        display: block;
+    }
+}
+
+#res200to299 {
+    display: none;
+}
+
+@media (min-resolution: 200dpi) and (max-resolution: 299dpi) {
+    #res200to299 {
+        display: block;
+    }
+}
+
+/***************************************************************/
+
+#width320 {
+    display: none;
+}
+
+@media (width: 320px) {
+    #width320 {
+        display: block;
+    }
+}
+
+#width321to479 {
+    display: none;
+}
+
+@media (min-width: 321px) and (max-width: 479px) {
+    #width321to479 {
+        display: block;
+    }
+}
+
+#width480 {
+    display: none;
+}
+
+@media (width: 480px) {
+    #width480 {
+        display: block;
+    }
+}
+
+#width481to599 {
+    display: none;
+}
+
+@media (min-width: 481px) and (max-width: 599px) {
+    #width481to599 {
+        display: block;
+    }
+}
+
+#width600 {
+    display: none;
+}
+
+@media (width: 600px) {
+    #width600 {
+        display: block;
+    }
+}
+
+#width601to639 {
+    display: none;
+}
+
+@media (min-width: 601px) and (max-width: 639px) {
+    #width601to639 {
+        display: block;
+    }
+}
+
+#width640 {
+    display: none;
+}
+
+@media (width: 640px) {
+    #width640 {
+        display: block;
+    }
+}
+
+#width641to799 {
+    display: none;
+}
+
+@media (min-width: 641px) and (max-width: 799px) {
+    #width641to799 {
+        display: block;
+    }
+}
+
+#width800 {
+    display: none;
+}
+
+@media (width: 800px) {
+    #width800 {
+        display: block;
+    }
+}
+
+#width801to959 {
+    display: none;
+}
+
+@media (min-width: 801px) and (max-width: 959px) {
+    #width801to959 {
+        display: block;
+    }
+}
+
+#width960 {
+    display: none;
+}
+
+@media (width: 960px) {
+    #width960 {
+        display: block;
+    }
+}
+
+#width961to1279 {
+    display: none;
+}
+
+@media (min-width: 961px) and (max-width: 1279px) {
+    #width961to1279 {
+        display: block;
+    }
+}
+
+#width1280 {
+    display: none;
+}
+
+@media (width: 1280px) {
+    #width1280 {
+        display: block;
+    }
+}
+
+#width1281 {
+    display: none;
+}
+
+@media (min-width: 1281px) {
+    #width1281 {
+        display: block;
+    }
+}
+
+/***************************************************************/
+
+</style>
+
+<script type="text/javascript">
+    window.onresize = function(event) {
+        document.getElementById('theSize').innerHTML = '';
+
+        document.getElementById('theSize').innerHTML=
+            '<p>' +
+
+            // Javascript Browser Object Model: 
+            // http://www.w3schools.com/js/js_window.asp: IE, Chrome, Firefox, Opera, Safari:
+            'window.innerWidth = '  + window.innerWidth  + '<br />' +
+            'window.innerHeight = ' + window.innerHeight + '<br />' +
+
+            // http://www.w3schools.com/js/js_window.asp: IE 8,7,6,5:
+            'document.documentElement.clientWidth = '  + document.documentElement.clientWidth  + '<br />' +
+            'document.documentElement.clientHeight = ' + document.documentElement.clientHeight + '<br />' +
+            'document.body.clientWidth = '  + document.body.clientWidth  + '<br />' +
+            'document.body.clientHeight = ' + document.body.clientHeight + '<br />' +
+
+            'screen.availWidth  = ' + screen.availWidth  + '<br />' +
+            'screen.availHeight = ' + screen.availHeight + '<br />' +
+
+            'screen.height = ' + screen.height + '<br />' +
+            'screen.width = '  + screen.width  + '</p>';
+
+    }
+</script>
+
+
+</head>
+<body>
+    <div id="container">
+        <div id="theSize">(No size info yet)</div>
+       
+        <div id="portrait">
+            <p>orientation: portrait</p>
+        </div>
+        <div id="landscape">
+            <p>orientation: landscape</p>
+        </div>
+   
+        <hr />
+   
+        <div id="width320">
+            <p>width: 320px</p>
+        </div>
+        <div id="width321to479">
+            <p>(min-width: 321px) and (max-width: 479px)</p>
+        </div>
+        <div id="width480">
+            <p>width: 480px</p>
+        </div>
+        <div id="width481to599">
+            <p>(min-width: 481px) and (max-width: 599px)</p>
+        </div>
+        <div id="width600">
+            <p>width: 600px</p>
+        </div>
+        <div id="width601to639">
+            <p>(min-width: 601px) and (max-width: 639px)</p>
+        </div>
+        <div id="width640">
+            <p>width: 640px</p>
+        </div>
+        <div id="width641to799">
+            <p>(min-width: 641px) and (max-width: 799px)</p>
+        </div>
+        <div id="width800">
+            <p>width: 800px</p>
+        </div>
+        <div id="width801to959">
+            <p>(min-width: 801px) and (max-width: 959px)</p>
+        </div>
+        <div id="width960">
+            <p>width: 960px</p>
+        </div>
+        <div id="width961to1279">
+            <p>(min-width: 961px) and (max-width: 1279px)</p>
+        </div>
+        <div id="width1280">
+            <p>width: 1280px</p>
+        </div>
+        <div id="width1281">
+            <p>(min-width: 1281px)</p>
+        </div>
+       
+        <hr />
+       
+        <div id="res100to199">
+            <p>(min-resolution: 100dpi) and (max-resolution: 199dpi)</p>
+        </div>
+        <div id="res200to299">
+            <p>(min-resolution: 200dpi) and (max-resolution: 299dpi)</p>
+        </div>
+       
+   
+        <div id="box"></div>
+
+        <hr />
+       
+        <a href="http://www.jensbits.com/demos/mq/">media query playground</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,215 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WebGL14 - Multiple Textures</title>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+attribute vec2 aVertexPosition;
+varying   vec2 vTexCoordinate;
+
+void main(void) {
+    vTexCoordinate = 0.5 * aVertexPosition + 0.5;
+
+    gl_Position = vec4(aVertexPosition, 0, 1);
+}
+</script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+precision mediump float;
+
+varying vec2 vTexCoordinate;
+
+// Which is which?  These are bound via glUniform.
+uniform sampler2D texA;
+uniform sampler2D texB;
+
+uniform int uWhichTexture;
+
+void main(void) {
+    // red/green
+    if (uWhichTexture == 0)
+        gl_FragColor = texture2D(texA, vTexCoordinate);
+
+    // cyan/magenta
+    else
+        gl_FragColor = texture2D(texB, vTexCoordinate);
+}
+</script>
+
+
+<script src="WebGLTools.js"></script>
+
+<script type="text/javascript">
+    var gl;
+    var buffer;
+    var textureA;
+    var textureB;
+
+    function webGLStart() {
+        var loc;
+
+        var canvas = document.getElementById("myCanvas");
+        gl = canvas.getContext("experimental-webgl");
+
+        // Shaders
+        // =======
+        // Use a common library to load the vertex and fragment (pixel)
+        // shaders into a program.  The ids must be as named above.
+
+        var shaderProgram = loadShaderProgram(gl);
+        gl.useProgram(shaderProgram);
+
+        // Vertices
+        // ========
+
+        // Create a buffer with three vertices.  The numbers must be
+        // in the range of -1.0 to +1.0.  Make a TRIANGLE.
+
+        buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                -1.0, -1.0,
+                -1.0, +1.0,
+                +1.0, -1.0,
+                +1.0, +1.0,
+            ]),
+            gl.STATIC_DRAW);
+
+        // Send the (x,y) triangle coordinates in the buffer to the vertex shader.
+
+        var positionLocation = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(
+            positionLocation,   // index of the generic vertex attribute to be modified
+            2,                  // number of components per generic vertex attribute
+            gl.FLOAT,           // type of each data component in the array
+            false,              // whether the fixed point data values should be normalized to -1 to 1 when converted to float
+            0,                  // offset between consecutive generic vertex attributes.  0 means tightly packed
+            0);                 // pointer to the first component of the first vertex attribute in the array
+
+        // Create Texture
+        // ==============
+
+        // Make a custom set of mipmaps.  Instead of smaller maps
+        // being interpolated from bigger maps, make each custom
+        // size with a constant color for identification purposes.
+
+        var steps = new Array(0, 51, 102, 153, 204, 255);
+
+        // red/green
+        var pixelsA = new Uint8Array(6*6*4);
+        for (x=0; x<6; x++)
+            for (y=0; y<6; y++)
+            {
+                pixelsA[4*6*y + 4*x + 0] = steps[x];
+                pixelsA[4*6*y + 4*x + 1] = steps[y];
+                pixelsA[4*6*y + 4*x + 2] = 0;
+                pixelsA[4*6*y + 4*x + 3] = 255;
+            }
+
+        // cyan/magenta
+        var pixelsB = new Uint8Array(6*6*4);
+        for (x=0; x<6; x++)
+            for (y=0; y<6; y++)
+            {
+                pixelsB[4*6*y + 4*x + 0] = steps[x];
+                pixelsB[4*6*y + 4*x + 1] = steps[y];
+                pixelsB[4*6*y + 4*x + 2] = 255;
+                pixelsB[4*6*y + 4*x + 3] = 255;
+            }
+
+        // Texture A
+        // =========
+
+        // Create a texture object.
+        textureA = gl.createTexture();
+        console.log("textureA = " + textureA);
+
+        // Specify the active texture unit.  The next bindTexture
+        // call binds to this unit.
+        gl.activeTexture(gl.TEXTURE0);
+
+        // A texture must be bound to operate on it, i.e. to perform
+        // texParameter or texImage2D.
+        gl.bindTexture(gl.TEXTURE_2D, textureA);
+
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 6, 6, 0, gl.RGBA, gl.UNSIGNED_BYTE, pixelsA);
+
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+        loc = gl.getUniformLocation(shaderProgram, "texA");
+        gl.uniform1i(loc, 0);
+
+        // Texture B
+        // =========
+
+        // Create a second texture object.
+        textureB = gl.createTexture();
+        console.log("textureB = " + textureB);
+
+        gl.activeTexture(gl.TEXTURE1);
+
+        gl.bindTexture(gl.TEXTURE_2D, textureB);
+
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 6, 6, 0, gl.RGBA, gl.UNSIGNED_BYTE, pixelsB);
+
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+        loc = gl.getUniformLocation(shaderProgram, "texB");
+        gl.uniform1i(loc, 1);
+
+        // Uniform
+        // =======
+
+        // Tell the shader which texture to use.
+        loc = gl.getUniformLocation(shaderProgram, "uWhichTexture");
+        gl.uniform1i(loc, 0);
+
+        // Draw
+        // ====
+
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+
+    function doTexture(which)
+    {
+        console.log("changing to " + which);
+
+        var loc = gl.getUniformLocation(shaderProgram, "uWhichTexture");
+        gl.uniform1i(loc, which);
+
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+    
+    function webGLEnd()
+    {
+        console.log("webGLEnd()");
+
+        // Since createTexuture creates an object, the object must be deleted.
+        gl.deleteTexture(textureA);
+        gl.deleteTexture(textureB);
+        
+        gl.deleteBuffer(buffer);
+    }
+</script>
+
+</head>
+<body onload="webGLStart();" onunload="webGLEnd();">
+
+    <canvas id="myCanvas" width="128" height="128"></canvas>
+
+    <br />
+
+    <input type="button" value="TEXTURE0" onclick="doTexture(0.0);" />
+    <input type="button" value="TEXTURE1" onclick="doTexture(1.0);" />
+
+</body>
+</html>

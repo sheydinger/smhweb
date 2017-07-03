@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+
+<html id="myHtml">
+<head>
+    <title>Position Demo</title>
+
+<style>
+body {
+    font-family: monospace;
+}
+</style>
+<script>
+</script>
+</head>
+
+<body id="myBody" onload="doit()" style="height: 20px">
+
+<div style="position: static; float: left; width: 400px; height: 200px; background-color: #ccc">
+1<br />
+position: static;<br />
+float: left<br />
+width: 400px<br />
+height: 200px<br />
+background-color: #ccc<br />
+</div>
+
+<div style="position: static; float: left; width: 400px; height: 200px; background-color: #aaa">
+2<br />
+position: static;<br />
+float: left<br />
+width: 400px<br />
+height: 200px<br />
+background-color: #aaa<br />
+</div>
+
+<div style="position: relative; right: 50px; bottom: -50px; float: right; width: 400px; height: 200px; background-color: #ccc">
+3<br />
+position: relative;<br />
+right: 50px;<br />
+bottom: -50px;<br />
+float: right<br />
+width: 400px<br />
+height: 200px<br />
+background-color: #ccc<br />
+<br />
+clear: both;  after!<br />
+</div>
+<div style="clear: both"></div>
+
+<!-- Move this one down, RELATIVE -->
+<div style="position: relative; top: -50px; left: 50px; width: 400px; height: 200px; background-color: #faa">
+4<br />
+position: relative;<br />
+top: -50px<br />
+left: 50px<br />
+width: 400px<br />
+height: 200px<br />
+background-color: #faa<br />
+</div>
+
+<div style="position: static; width: 400px; height: 200px; background-color: #afa">
+5<br />
+position: static;<br />
+width: 400px<br />
+height: 200px<br />
+background-color: #afa<br />
+</div>
+
+<div style="position: absolute; top: 300px; left: 600px; width: 400px; height: 200px; background-color: #aff; opacity: 0.8">
+6<br />
+position: absolute;<br />
+top: 300px;<br />
+left: 600px;<br />
+width: 400px<br />
+height: 200px<br />
+background-color: #aff<br />
+opacity: 0.8<br />
+
+    <!-- Position is relative to 6, not body. -->
+    <div style="position: absolute; top: 100px; left: 200px; width: 400px; height: 200px; background-color: #aaf; opacity: 0.8">
+    6.1<br />
+    position: absolute;<br />
+    top: 100px;<br />
+    left: 200px;<br />
+    width: 400px<br />
+    height: 200px<br />
+    background-color: #aaf<br />
+    opacity: 0.8<br />
+    </div>
+
+    <!-- The "flow context" is WRT 6.  Thus, this appears after "opacity: 0.8". width is WRT parent. -->
+    <div style="position: static; background-color: #aaf; opacity: 0.5">
+    6.2<br />
+    position: static;<br />
+    background-color: #aaf<br />
+    opacity: 0.5<br />
+    </div>
+
+</div>
+
+<div style="position: fixed; top: 500px; left: 600px; width: 400px; height: 200px; background-color: #faf; opacity: 0.8">
+7<br />
+position: fixed;<br />
+top: 500px;<br />
+left: 600px;<br />
+width: 400px<br />
+height: 200px<br />
+background-color: #faf<br />
+opacity: 0.8<br />
+
+    <div style="position: fixed; top: 600px; left: 800px; width: 400px; height: 200px; background-color: #ffa; opacity: 0.8">
+    7.1<br />
+    position: fixed;<br />
+    top: 600px;<br />
+    left: 800px;<br />
+    width: 400px<br />
+    height: 200px<br />
+    background-color: #ffa<br />
+    opacity: 0.8<br />
+    </div>
+
+
+</div>
+
+<div style="position: static; width: 400px; height: 200px; background-color: #ccc">
+8<br />
+position: static;<br />
+width: 400px<br />
+height: 200px<br />
+background-color: #ccc<br />
+</div>
+
+
+<div>
+Reference: <a href="http://www.w3schools.com/cssref/pr_class_position.asp">W3Schools position</a>.
+
+<ul>
+    <li>Affect Flow</li>
+        <ul>
+            <li><b>static</b> -	Default value. Elements render in order, as they appear in the document flow</li>
+            <li><b>relative</b> - The element is positioned relative to its normal position, so "left:20" adds 20 pixels to the element's LEFT position</li>
+        </ul>
+    <li>Don't Affect Flow</li>
+        <ul>
+            <li><b>absolute</b> - The element is positioned relative to its first positioned (not static) ancestor element</li>
+            <li><b>fixed</b> - The element is positioned relative to the browser window</li>
+        </ul>
+</ul>
+</div>
+
+</body>
+</html>

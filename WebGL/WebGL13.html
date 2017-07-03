@@ -1,0 +1,355 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WebGL13 - Mipmap Use</title>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+attribute vec2 aVertexPosition;
+
+attribute vec2 aTexCoordinate;
+varying   vec2 vTexCoordinate;
+
+void main(void) {
+    gl_Position = vec4(aVertexPosition, 0, 1);
+
+    vTexCoordinate = aTexCoordinate;
+
+    // Note: Cannot do the common trick of:
+
+    //    vTexCoordinate = 0.5 * aVertexPosition + 0.5
+
+    // Why? The trick causes vTextCoordinate range to vary, rather
+    // than being [-1.0, +1.0] as caused by passing the coordinates as
+    // below.  Without [-1.0, +1.0] as the range the texture doesn't
+    // really scale and the various levels then never kick in.
+}
+</script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+precision mediump float;
+
+varying vec2 vTexCoordinate;
+
+uniform sampler2D theImage;
+
+void main(void) {
+    gl_FragColor = texture2D(theImage, vTexCoordinate);
+}
+</script>
+
+
+<script src="WebGLTools.js"></script>
+
+<script type="text/javascript">
+    var gl;
+    var mode = 0;
+    var size = 32;
+
+    function setSize(newSize)
+    {
+        size = newSize;
+
+        console.log("newSize = " + newSize);
+
+        webGLStart();
+    }
+
+    function setMapMode(newMode) {
+        switch (newMode)
+        {
+        case 0:
+            mode = gl.NEAREST;
+            document.getElementById("mapMode").innerHTML = "mapmode = NEAREST";
+            break;
+        case 1:
+            mode = gl.LINEAR;
+            document.getElementById("mapMode").innerHTML = "mapmode = LINEAR";
+            break;
+        case 2:
+            mode = gl.NEAREST_MIPMAP_NEAREST;
+            document.getElementById("mapMode").innerHTML = "mapmode = NEAREST_MIPMAP_NEAREST";
+            break;
+        case 3:
+            mode = gl.NEAREST_MIPMAP_LINEAR;
+            document.getElementById("mapMode").innerHTML = "mapmode = NEAREST_MIPMAP_LINEAR";
+            break;
+        case 4:
+            mode = gl.LINEAR_MIPMAP_NEAREST;
+            document.getElementById("mapMode").innerHTML = "mapmode = LINEAR_MIPMAP_NEAREST";
+            break;
+        case 5:
+            mode = gl.LINEAR_MIPMAP_LINEAR;
+            document.getElementById("mapMode").innerHTML = "mapmode = LINEAR_MIPMAP_LINEAR";
+            break;
+        }
+
+        console.log("newMode = " + newMode + ", mode = " + mode);
+
+        webGLStart();
+    }
+
+    function webGLStart() {
+        var canvas = document.getElementById("myCanvas");
+        gl = canvas.getContext("experimental-webgl");
+
+        if ((mode !=  gl.NEAREST)                &&
+            (mode !=  gl.LINEAR)                 &&
+            (mode !=  gl.NEAREST_MIPMAP_NEAREST) &&
+            (mode !=  gl.NEAREST_MIPMAP_LINEAR)  &&
+            (mode !=  gl.LINEAR_MIPMAP_NEAREST)  &&
+            (mode !=  gl.LINEAR_MIPMAP_LINEAR))
+        {
+            mode = gl.NEAREST_MIPMAP_NEAREST;
+        }
+
+        if (size != 1 &&
+            size != 2 &&
+            size != 4 &&
+            size != 8 &&
+            size != 16 &&
+            size != 32 &&
+            size != 64 &&
+            size != 128 &&
+            size != 256 &&
+            size != 512)
+        {
+            size = 32;
+        }
+
+        // Shaders
+        // =======
+        // Use a common library to load the vertex and fragment (pixel)
+        // shaders into a program.  The ids must be as named above.
+
+        var shaderProgram = loadShaderProgram(gl);
+        gl.useProgram(shaderProgram);
+
+        // Textures
+        // ========
+
+        // Two triangles make a square.
+
+        var textureBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                0.0, 0.0,
+                0.0, 1.0,
+                1.0, 0.0,
+                1.0, 1.0,
+            ]),
+            gl.STATIC_DRAW);
+
+        var textureLocation = gl.getAttribLocation(shaderProgram, "aTexCoordinate");
+        gl.enableVertexAttribArray(textureLocation);
+        gl.vertexAttribPointer(textureLocation, 2, gl.FLOAT, false, 0, 0);
+
+        // Vertices
+        // ========
+
+        // Create a buffer with three vertices.  The numbers must be
+        // in the range of -1.0 to +1.0.  Make a TRIANGLE.
+
+        var normalizedSize = size / 512.0;
+
+        var buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                -normalizedSize, -normalizedSize,
+                -normalizedSize, +normalizedSize,
+                +normalizedSize, -normalizedSize,
+                +normalizedSize, +normalizedSize,
+            ]),
+            gl.STATIC_DRAW);
+
+        // Send the (x,y) triangle coordinates in the buffer to the vertex shader.
+
+        var positionLocation = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(
+            positionLocation,   // index of the generic vertex attribute to be modified
+            2,                  // number of components per generic vertex attribute
+            gl.FLOAT,           // type of each data component in the array
+            false,              // whether the fixed point data values should be normalized to -1 to 1 when converted to float
+            0,                  // offset between consecutive generic vertex attributes.  0 means tightly packed
+            0);                 // pointer to the first component of the first vertex attribute in the array
+
+        // Create Texture
+        // ==============
+
+        // Make a custom set of mipmaps.  Instead of smaller maps
+        // being interpolated from bigger maps, make each custom
+        // size with a constant color for identification purposes.
+
+        // 128x128 red
+        var q;
+        var pixels128x128 = new Uint8Array(128*128*4);
+        for (x=0; x<128; x++)
+            for (y=0; y<128; y++)
+            {
+                pixels128x128[4*128*y + 4*x + 0] = 255;
+                var q= Math.floor(x/4) % 2;
+                var r= Math.floor(x/4) % 2;
+//                if ((Math.floor(x/4) % 2) == (Math.floor(y/4) % 2))
+//                {
+                    pixels128x128[4*128*y + 4*x + 1] = 0;
+                    pixels128x128[4*128*y + 4*x + 2] = 0;
+//                }
+//                else
+//                {
+//                    pixels128x128[4*128*y + 4*x + 1] = 255;
+//                    pixels128x128[4*128*y + 4*x + 2] = 255;
+//                }
+                pixels128x128[4*128*y + 4*x + 3] = 255;
+            }
+
+        // 64x64 green
+        var pixels64x64 = new Uint8Array(64*64*4);
+        for (x=0; x<64; x++)
+            for (y=0; y<64; y++)
+            {
+                pixels64x64[4*64*y + 4*x + 0] = 0;
+                pixels64x64[4*64*y + 4*x + 1] = 255;
+                pixels64x64[4*64*y + 4*x + 2] = 0;
+                pixels64x64[4*64*y + 4*x + 3] = 255;
+            }
+
+        // 32x32 blue
+        var pixels32x32 = new Uint8Array(32*32*4);
+        for (x=0; x<32; x++)
+            for (y=0; y<32; y++)
+            {
+                pixels32x32[4*32*y + 4*x + 0] = 0;
+                pixels32x32[4*32*y + 4*x + 1] = 0;
+                pixels32x32[4*32*y + 4*x + 2] = 255;
+                pixels32x32[4*32*y + 4*x + 3] = 255;
+            }
+
+        // 16x16 cyan
+        var pixels16x16 = new Uint8Array(16*16*4);
+        for (x=0; x<16; x++)
+            for (y=0; y<16; y++)
+            {
+                pixels16x16[4*16*y + 4*x + 0] = 0;
+                pixels16x16[4*16*y + 4*x + 1] = 255;
+                pixels16x16[4*16*y + 4*x + 2] = 255;
+                pixels16x16[4*16*y + 4*x + 3] = 255;
+            }
+
+        // 8x8 magenta
+        var pixels8x8 = new Uint8Array(8*8*4);
+        for (x=0; x<8; x++)
+            for (y=0; y<8; y++)
+            {
+                pixels8x8[4*8*y + 4*x + 0] = 255;
+                pixels8x8[4*8*y + 4*x + 1] = 0;
+                pixels8x8[4*8*y + 4*x + 2] = 255;
+                pixels8x8[4*8*y + 4*x + 3] = 255;
+            }
+
+        // 4x4 yellow
+        var pixels4x4 = new Uint8Array(4*4*4);
+        for (x=0; x<4; x++)
+            for (y=0; y<4; y++)
+            {
+                pixels4x4[4*4*y + 4*x + 0] = 255;
+                pixels4x4[4*4*y + 4*x + 1] = 255;
+                pixels4x4[4*4*y + 4*x + 2] = 0;
+                pixels4x4[4*4*y + 4*x + 3] = 255;
+            }
+
+        // 2x2 black
+        var pixels2x2 = new Uint8Array(2*2*4);
+        for (x=0; x<2; x++)
+            for (y=0; y<2; y++)
+            {
+                pixels2x2[4*2*y + 4*x + 0] = 0;
+                pixels2x2[4*2*y + 4*x + 1] = 0;
+                pixels2x2[4*2*y + 4*x + 2] = 0;
+                pixels2x2[4*2*y + 4*x + 3] = 255;
+            }
+
+        // 1x1 black
+        var pixels1x1 = new Uint8Array(1*1*4);
+        for (x=0; x<1; x++)
+            for (y=0; y<1; y++)
+            {
+                pixels1x1[4*1*y + 4*x + 0] = 0;
+                pixels1x1[4*1*y + 4*x + 1] = 0;
+                pixels1x1[4*1*y + 4*x + 2] = 0;
+                pixels1x1[4*1*y + 4*x + 3] = 255;
+            }
+
+        var texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+
+        // Pass the various arrays in as different levels
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 128, 128, 0, gl.RGBA, gl.UNSIGNED_BYTE, pixels128x128);
+        gl.texImage2D(gl.TEXTURE_2D, 1, gl.RGBA, 64,  64,  0, gl.RGBA, gl.UNSIGNED_BYTE, pixels64x64);
+        gl.texImage2D(gl.TEXTURE_2D, 2, gl.RGBA, 32,  32,  0, gl.RGBA, gl.UNSIGNED_BYTE, pixels32x32);
+        gl.texImage2D(gl.TEXTURE_2D, 3, gl.RGBA, 16,  16,  0, gl.RGBA, gl.UNSIGNED_BYTE, pixels16x16);
+        gl.texImage2D(gl.TEXTURE_2D, 4, gl.RGBA, 8,   8,   0, gl.RGBA, gl.UNSIGNED_BYTE, pixels8x8);
+        gl.texImage2D(gl.TEXTURE_2D, 5, gl.RGBA, 4,   4,   0, gl.RGBA, gl.UNSIGNED_BYTE, pixels4x4);
+        gl.texImage2D(gl.TEXTURE_2D, 6, gl.RGBA, 2,   2,   0, gl.RGBA, gl.UNSIGNED_BYTE, pixels2x2);
+        gl.texImage2D(gl.TEXTURE_2D, 7, gl.RGBA, 1,   1,   0, gl.RGBA, gl.UNSIGNED_BYTE, pixels1x1);
+
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, mode);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+        // Draw
+        // ====
+
+        // Make the background magenta.
+        gl.clearColor(0.5, 0.5, 0.5, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        
+        console.log("Drawing size " + size + ", nomalizedSize " + normalizedSize);
+
+        removeShaderProgram(gl);
+        gl.deleteBuffer(buffer);
+        gl.deleteBuffer(textureBuffer);
+        gl.deleteTexture(texture);
+}
+</script>
+
+</head>
+<body onload="webGLStart();">
+
+    <canvas id="myCanvas" width="512" height="512"></canvas>
+
+    <br />
+
+    <input type="button" value="512x512" onclick="setSize(512)" />
+    <input type="button" value="256x256" onclick="setSize(256)" />
+    <input type="button" value="128x128" onclick="setSize(128)" />
+    <input type="button" value="64x64"   onclick="setSize(64)" />
+    <input type="button" value="32x32"   onclick="setSize(32)" />
+    <input type="button" value="16x16"   onclick="setSize(16)" />
+    <input type="button" value="8x8"     onclick="setSize(8)" />
+    <input type="button" value="4x4"     onclick="setSize(4)" />
+    <input type="button" value="2x2"     onclick="setSize(2)" />
+    <input type="button" value="1x1"     onclick="setSize(1)" />
+
+    <p id="mapMode">mapmode = NEAREST_MIPMAP_NEAREST</p>
+
+    <input type="button" value="NEAREST"                onclick="setMapMode(0)" />
+    <input type="button" value="NEAREST_MIPMAP_NEAREST" onclick="setMapMode(2)" />
+    <input type="button" value="NEAREST_MIPMAP_LINEAR"  onclick="setMapMode(3)" />
+    
+    <br />
+
+    <input type="button" value="LINEAR"                 onclick="setMapMode(1)" />
+    <input type="button" value="LINEAR_MIPMAP_NEAREST"  onclick="setMapMode(4)" />
+    <input type="button" value="LINEAR_MIPMAP_LINEAR"   onclick="setMapMode(5)" />
+
+    <p>This canvas is 512x512 pixels.  Press the buttons
+    to draw the square at various pixel sizes.</p>
+</body>
+</html>

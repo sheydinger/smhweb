@@ -1,0 +1,114 @@
+<!doctype html>
+<html ng-app="myApp" lang="en">
+    <head>
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js"></script>
+        <script src="angular-route.min.js"></script>
+
+        <script type="text/javascript">
+            var myAppModule = angular.module("myApp", ["mathcomponent"])
+                .controller("myController", function($scope, domath) {
+
+                    console.log("controller(myApp)");
+
+                    $scope.theresult = 0;
+                    $scope.howmany = 0;
+
+                    // Note: A and B are part of the $scope due to their
+                    // specification in ng-model.  They're passed as
+                    // parameters here for demonstration purposes.
+                    $scope.doAddition = function(y, z) {
+                        console.log("doAddition(" + y + ", " + z + ")");
+                        console.log("I can see A and B!!!  A=" + $scope.A + " B=" + $scope.B);
+                        $scope.theresult = domath.add(y, z);
+                        $scope.howmany = domath.getcount();
+                    }
+
+                    $scope.doSubtraction = function(y, z) {
+                        console.log("doSubtraction(" + y + ", " + z + ")");
+                        $scope.theresult = domath.subtract(y, z);
+                        $scope.howmany = domath.getcount();
+                    }
+
+                    $scope.doIncrement = function(y) {
+                        console.log("doIncrement(" + y + ")");
+                        $scope.theresult = domath.increment(y);
+                        $scope.howmany = domath.getcount();
+                    }
+                })
+
+                // Invoked when the current module has been loaded.
+                .config(function() {
+                    console.log("config(myApp)");
+                })
+
+                // Invokded when all modules have been loaded.
+                .run(function() {
+                    console.log("run(myApp)");
+                });;
+
+            // mathcomponent represents functionality that can be used in
+            // multiple situations.  Though "myApp" is the primary module,
+            // (i.e. ng-app="myApp") it can benefit from mathcomponent.
+            // Note how myApp depends on mathcomponent, and how domath is
+            // injected into the myApp controller.
+            var myComponentModule = angular.module("mathcomponent", [])
+
+                // Use a programmatic rather than hardcoded increment amount
+                // to demonstration how to use Module.value.
+                .value("incramount", 1)
+
+                .factory("domath", function(incramount) {
+
+                    console.log("factory(mathcomponent)");
+
+                    // This is not directly exposed.  Some things can
+                    // be hidden.
+                    var count = 0;
+
+                    return {
+                        add: function(a, b) {
+                            count++;
+                            return parseInt(a) + parseInt(b);
+                        },
+
+                        subtract: function(a, b) {
+                            count++;
+                            return parseInt(a) - parseInt(b);
+                        },
+
+                        increment: function(a) {
+                            count++;
+                            return parseInt(a) + incramount;
+                        },
+
+                        getcount: function() {
+                            return count;
+                        }
+                    }
+                })
+
+                .controller("dummy", function($scope) {
+                    $scope.junk = true;
+                    console.log("controller(mathcomponent)");
+                })
+
+                .config(function() {
+                    console.log("config(mathcomponent)");
+                })
+
+                .run(function() {
+                    console.log("run(mathcomponent)");
+                });
+        </script>
+
+    </head>
+    <body ng-controller="myController">
+        <input ng-model="A" />
+        <input ng-model="B" />
+        <p>{{ A }} {{ B }} = {{ theresult }}  ({{ howmany }} operations)</p>
+        <button ng-click="doAddition(A,B)">Do Addition</button>
+        <button ng-click="doSubtraction(A,B)">Do Subtraction</button>
+        <button ng-click="doIncrement(A)">Do Increment A</button>
+    </body>
+</html>

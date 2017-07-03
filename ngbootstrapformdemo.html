@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Angular Bootstrap Demo</title>
+
+    <!-- Use one or the other of the viewport meta tags below.  The latter is
+         more like a native app, allowing scrolling only. -->
+    <!-- meta name="viewport" content="width=device-width, initial-scale=1" -->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular.min.js"></script>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+    <style>
+        .gray {
+            background-color: #f8f8f8;
+        }
+        
+        .halfwidth {
+            width: 50%;
+        }
+    </style>
+</head>
+<body ng-app="myApp">
+
+    <!-- container or container-fluid -->
+    <div class="container" ng-controller="myController">
+
+        <div class="row">
+            <div class="col-xs-12"><!-- How many 12ths of the width for this column -->
+                <h1>Example form</h1>
+                <p>This page uses <a href="http://getbootstrap.com/">Bootstrap</a> for a form.
+                See also <a href="bootstrapformdemo.html">bootstrapformdemo.html</a> which is just the Bootstrap form.</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12 col-md-8">
+                <h4>We'd like to hear from you!</h4>
+
+                <form novalidate>
+
+                    <div class="form-group halfwidth">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" class="form-control" id="lastName" placeholder="Last Name" ng-model="data.lastName">
+                    </div>
+
+                    <div class="form-group halfwidth">
+                        <label for="firstName">First Name</label>
+                        <input type="text" class="form-control" id="firstName" placeholder="First Name" ng-model="data.firstName">
+                    </div>
+
+                    <div class="form-group halfwidth">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Password" ng-model="data.password">
+                    </div>
+
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" ng-model="data.agree">I agree to the terms and conditions.
+                            <span ng-show="data.agree"> Thanks!</span>
+                            <span ng-show="!data.agree"> (You must agree)</span>
+                        </label>
+                    </div>
+
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="radios" id="optionA" value="optionA" checked ng-model="data.radios">Option A
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="radios" id="optionB" value="optionB"  ng-model="data.radios">Option B
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" ng-click="submitMyForm();">Learn More</button>
+                </form>
+            </div>
+            <div class="col-xs-12 col-md-4">
+                <h4>Model values</h4>
+                <p>{{ data | json}}</p>
+                <p>Hi, {{ data.firstName }}!</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        var myApp = angular.module("myApp", []);
+        
+        myApp.controller("myController", function($scope) {
+            $scope.data = {};
+            $scope.data.firstName = "Billy";
+            $scope.data.lastName  = "Bob";
+            $scope.data.agree = true;
+            $scope.data.radios = "optionB";
+            
+            $scope.submitMyForm = function() {
+                alert('Congratulations, your form is submitted.');
+            };
+        } );
+    </script>
+
+</body>
+</html>

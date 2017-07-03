@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>WebGL3 - Index Points</title>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+attribute vec2 aVertexPosition;
+attribute vec4 aVertexColor;
+
+// Send out to fragment (pixel) shader, interpolated.
+varying vec4 vVertexColor;
+
+void main(void) {
+    // At a minimum, a vertex shader must set gl_position.
+    // The position has four values (x,y,z) and and appended w=1.
+    gl_Position = vec4(aVertexPosition, 0, 1);
+
+    // Can also output stuff other than vertex positions.  Send
+    // an interpolated color to the fragment shader.
+    vVertexColor = aVertexColor;
+}
+</script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+precision mediump float;
+
+// Interpolated, from the vertex shader.
+varying vec4 vVertexColor;
+
+void main(void) {
+    gl_FragColor = vVertexColor;
+}
+</script>
+
+
+<script src="WebGLTools.js"></script>
+
+<script type="text/javascript">
+    function webGLStart() {
+        var canvas = document.getElementById("myCanvas");
+        var gl = canvas.getContext("experimental-webgl");
+
+        // Shaders
+        // =======
+        // Use a common library to load the vertex and fragment (pixel)
+        // shaders into a program.  The ids must be as named above.
+
+        var shaderProgram = loadShaderProgram(gl);
+        gl.useProgram(shaderProgram);
+
+        // Vertices
+        // ========
+
+        // Create a buffer with three vertices.  The numbers must be
+        // in the range of -1.0 to +1.0.
+
+        var vertexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                -1.0, -1.0,
+                +1.0, -1.0,
+                 0.0, +1.0,
+            ]),
+            gl.STATIC_DRAW);
+
+        // Send the three (x,y,z) triangle coordinates in the buffer to the vertex shader.
+
+        var positionLocation = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(
+            positionLocation,   // index of the generic vertex attribute to be modified
+            2,                  // number of components per generic vertex attribute
+            gl.FLOAT,           // type of each data component in the array
+            false,              // whether the fixed point data values should be normalized to -1 to 1 when converted to float
+            0,                  // offset between consecutive generic vertex attributes.  0 means tightly packed
+            0);                 // pointer to the first component of the first vertex attribute in the array
+
+        // Colors
+        // ======
+
+        // Create three colors in a buffer.
+
+        var colorBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                0.0, 0.0, 1.0, 1.0, // blue
+                0.0, 1.0, 0.0, 1.0, // green
+                1.0, 0.0, 0.0, 1.0, // red
+            ]),
+            gl.STATIC_DRAW);
+
+        // Pass the colors to GL.
+        var colorLocation = gl.getAttribLocation(shaderProgram, "aVertexColor");
+        gl.enableVertexAttribArray(colorLocation);
+        gl.vertexAttribPointer(colorLocation, 4, gl.FLOAT, false, 0, 0);
+
+        // Index
+        // =====
+
+        // Use ELEMENT_ARRAY_BUFFER instead of ARRAY_BUFFER to pass
+        // indexes into a color array.  Also use drawElements()
+        // instead of drawArrays().
+        var indexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+        gl.bufferData(
+            gl.ELEMENT_ARRAY_BUFFER,
+            new Uint16Array([
+                0, 1, 2
+            ]),
+            gl.STATIC_DRAW);
+
+        // Draw
+        // ====
+
+        // Make the background magenta.
+
+        gl.clearColor(1.0, 0.0, 1.0, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        // Use drawElements() instead of drawArrays() to specify the indices.
+        gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0);
+
+        // Cleanup
+        // =======
+
+        removeShaderProgram(gl);
+        gl.deleteBuffer(vertexBuffer);
+        gl.deleteBuffer(colorBuffer);
+        gl.deleteBuffer(indexBuffer);
+}
+</script>
+
+</head>
+<body onload="webGLStart();">
+
+    <canvas id="myCanvas" width="640" height="480"></canvas>
+
+</body>
+</html>

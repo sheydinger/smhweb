@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <title><!-- Insert your title here --></title>
+</head>
+<body>
+<script>
+//  navigator.getUserMedia = (navigator.getUserMedia ||
+//                            navigator.webkitGetUserMedia ||
+//                            navigator.mozGetUserMedia || 
+//                            navigator.msGetUserMedia);
+    if (navigator.getUserMedia)
+        alert("getUserMedia");
+    else if (navigator.webkitGetUserMedia)
+        alert("webkitGetUserMedia");
+    else if (navigator.mozGetUserMedia)
+        alert("mozGetUserMedia");
+    else if (navigator.msGetUserMedia)
+        alert("msGetUserMedia");
+    else
+        alert("sorry, no camera support");
+</script>
+
+</body>
+</html>

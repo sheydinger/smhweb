@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>CSS Popup Demo</title>
+
+	<!-- Do this for Apple so that iOS won't automatically scale to fit. -->
+	<!--meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/-->
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<style>
+* {
+    margin: 0;
+    font-family: arial;
+}
+
+/*
+ * When a modal dialog is active, we need to inhibit interaction
+ * with items outside (behind) the dialog.  The technique is to
+ * use z-index.  By default, the regular screen items are at
+ * z-index=0.  We'll fill the screen with a div called "overlay"
+ * at z-index=10, i.e., over top of the regular items, and put
+ * the dialog at z-index=11, over the overlay.  Preferably the
+ * overlay is not completely opaque so as to suggest that we
+ * haven't navigated away from the page.
+ *
+ * To fill the screen with <div id="overlay"></div> we need
+ * to set the height.  As a block level element the default width
+ * is all the way across the page.  Therefore we set the height
+ * of "overlay" to 100%, which is 100% of the body.  This dictates
+ * that the body fills the screen, so set its height to 100%,
+ * which is relative to <html>.  Further, set <html> to have
+ * height 100%, which is 100% relative to the screen.  Done!
+ */
+html, body, .image {
+    height: 100%;
+}
+
+/*
+ * The page is a minimum of 320px wide.  The splash page is a minimum
+ * of 300px tall.
+ */
+body {
+    min-width: 320px;
+}
+
+/*
+ * The image is 100% of the height of the screen.  Combined with the
+ * background* properties below, the entire background of the initial
+ * splash screen is covered, by the splash image.  Cool!
+ */
+.image {
+    height: 100%;
+    min-height: 300px;
+
+    background: url('turtle400x300.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/*
+ * Make this larger than 100% height.  Some mobile browsers,
+ * i.e. Android on an HTC Thunderbolt, appear to report the initial
+ * height to NOT include the top navigation bar.  However, when the
+ * user scrolls down, the navigation bar scrolls off the top of the
+ * screen and the height becomes greater than 100% of the original
+ * height.  A height of 200% causes the extra space at the bottom
+ * to be covered.
+ *
+ * Both overlay and dialog are position: fixed to cause them to be
+ * on the screen when shown, rather than off the top if the page is
+ * scrolled up.
+ */
+#overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 200%;
+    z-index: 10;
+
+    background-color: #000000;
+    opacity: 0.5;
+}
+
+/*
+ * Mobile is the default.
+ *
+ * Note that the even the background of the dialog (as opposed
+ * to just the overaly) is partially transparent.  This is achieved
+ * by using rgba(.., opacity) on the background.  An alternative that
+ * doesn't work is to set an opacity on the entire #dialog because
+ * that causes ALL of the elements in the dialog to be partially
+ * transparent.
+ */
+#dialog {
+    display: none;
+    position: fixed;
+    top: 10%;
+    bottom: 10%;
+    left: 5%;
+    right: 5%;
+    z-index: 20;
+
+    padding: 20px;
+    border: 1px solid #f00;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    
+    overflow-y: auto;
+}
+
+/*
+ * This is the desktop case.  If larger than 480 wide and 300 tall,
+ * use this block.
+ */
+@media (min-width: 480px) and (min-height: 300px) {
+    
+    #dialog {
+        width: 400px;
+        height: 250px;
+        margin-left: -221px; /* Don't forget padding, border! */
+        margin-top: -146px;
+        top: 50%;
+        left: 50%;
+    }
+
+}
+
+/* Looks nice! */
+button {
+    border: none;
+    outline: none;
+    margin: 30px 0px 0px 30px;
+    background-color: #ff4b01;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
+    display: inline-block;
+    cursor: pointer;
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 12px 24px;
+    text-decoration: none;
+}
+
+#dialog button {
+    margin: 20px 0px 0px 0px;
+    font-size: 18px;
+    padding: 9px 18px;
+}
+
+p {
+    margin-bottom: 10px;
+    line-height: 150%;
+    font-size: 12px;
+}
+</style>
+<script>
+openDialog = function()
+{
+    console.log('openDialog');
+    document.getElementById("dialog").style.setProperty("display", "block", null);
+    document.getElementById("overlay").style.setProperty("display", "block", null);
+}
+
+closeDialog = function()
+{
+    document.getElementById("dialog").style.setProperty("display", "none", null);
+    document.getElementById("overlay").style.setProperty("display", "none", null);
+}
+</script>
+</head>
+
+<body>
+
+    <!-- overlay and dialog are position: fixed. -->
+    <div id="overlay"></div>
+    <div id="dialog">
+
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. </p>
+
+        <!-- If the dialog box content doesn't fit, it scrolls.  Turn the content below on and see... -->
+        <!--
+        <p>Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus, iaculis vel, suscipit quis, luctus non, massa. Fusce ac turpis quis ligula lacinia aliquet.</p>
+        <p>Mauris ipsum. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nam nec ante. Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing diam, a cursus ipsum ante quis turpis. Nulla facilisi. Ut fringilla. Suspendisse potenti. Nunc feugiat mi a tellus consequat imperdiet. Vestibulum sapien. Proin quam. Etiam ultrices. Suspendisse in justo eu magna luctus suscipit. </p>
+        -->
+
+        <button class="dialogbutton" onclick="closeDialog();">Close</button>
+
+    </div>
+
+
+    <div class="image">
+        <button onclick="openDialog();"  style="position: absolute; bottom: 3%; right: 3%">Click here to open</button>
+        <p>Top marketing content goes here.</p>
+        <a href="http://www.yahoo.com">Yahoo!</a>
+    </div>
+
+    <div class="more">
+        <p>Further product details here.</p>
+        <button onclick="openDialog();">Click here to open</button>
+        <p>a</p><p>b</p><p>c</p><p>d</p><p>e</p><p>f</p><p>g</p><p>h</p><p>i</p><p>j</p><p>k</p><p>l</p><p>m</p><p>n</p><p>o</p><p>p</p><p>q</p><p>r</p><p>s</p><p>t</p><p>u</p><p>v</p><p>w</p><p>x</p><p>y</p><p>z</p><p>a</p><p>b</p><p>c</p><p>d</p><p>e</p><p>f</p><p>g</p><p>h</p><p>i</p><p>j</p><p>k</p><p>l</p><p>m</p><p>n</p><p>o</p><p>p</p><p>q</p><p>r</p><p>s</p><p>t</p><p>u</p><p>v</p><p>w</p><p>x</p><p>y</p><p>z</p>
+        <button onclick="openDialog();">Click here to open</button>
+    </div>
+
+</body>
+</html>

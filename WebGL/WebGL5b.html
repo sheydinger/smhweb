@@ -1,0 +1,256 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WebGL5 - Homography</title>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+attribute vec2 aVertexPosition;
+attribute vec4 aVertexColor;
+
+uniform mat3 uGeometryMatrix;
+
+varying vec4 vVertexColor;
+
+void main(void) {
+    vec3 temp = uGeometryMatrix * vec3(aVertexPosition, 1);
+
+//    gl_Position.x = temp.x / temp.z;
+//    gl_Position.y = temp.y / temp.z;
+//    gl_Position.z = temp.z / temp.z;
+   
+    gl_Position = vec4(temp.x/temp.z, temp.y/temp.z, temp.z/temp.z, 1);
+ 
+//    gl_Position = uGeometryMatrix * vec4(aVertexPosition, 0, 1);
+//    gl_Position = vec4(aVertexPosition, 0, 1);
+
+    vVertexColor = aVertexColor;
+}
+</script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+precision mediump float;
+
+varying vec4 vVertexColor;
+
+void main(void) {
+    gl_FragColor = vVertexColor;
+}
+</script>
+
+
+<script src="WebGLTools.js"></script>
+<script src="WebGLMatrix.js"></script>
+
+<script type="text/javascript">
+    var gl;
+
+    function webGLStart() {
+        var canvas = document.getElementById("myCanvas");
+        gl = canvas.getContext("experimental-webgl");
+
+        // Shaders
+        // =======
+        // Use a common library to load the vertex and fragment (pixel)
+        // shaders into a program.  The ids must be as named above.
+
+        var shaderProgram = loadShaderProgram(gl);
+        gl.useProgram(shaderProgram);
+
+        // Combined Geometry
+        // =================
+
+        var rotate      = document.getElementById("rotate").value;
+        var translateX  = document.getElementById("translateX").value;
+        var translateY  = document.getElementById("translateY").value;
+        var scaleX      = document.getElementById("scaleX").value;
+        var scaleY      = document.getElementById("scaleY").value;
+        var scaleAngle  = document.getElementById("scaleAngle").value;
+        var projection1 = document.getElementById("projection1").value;
+        var projection2 = document.getElementById("projection2").value;
+
+        rotate = rotate * 5;
+
+        scaleX = scaleX / 10;
+        scaleY = scaleY / 10;
+
+        scaleAngle = scaleAngle * 3;
+
+        translateX = translateX / 10;
+        translateY = translateY / 10;
+
+        projection1 = projection1 / 10;
+        projection2 = projection2 / 10;
+
+        var geometryMatrixLocation = gl.getUniformLocation(shaderProgram, "uGeometryMatrix");
+        var projectionMatrix = Projection3x3(
+            rotate, scaleAngle, translateX, translateY, scaleX, scaleY, projection1, projection2);
+        gl.uniformMatrix3fv(geometryMatrixLocation, false, projectionMatrix);
+
+        document.getElementById("a00").innerHTML = projectionMatrix[0].toFixed(2);
+        document.getElementById("a10").innerHTML = projectionMatrix[1].toFixed(2);
+        document.getElementById("a20").innerHTML = projectionMatrix[2].toFixed(2);
+
+        document.getElementById("a01").innerHTML = projectionMatrix[3].toFixed(2);
+        document.getElementById("a11").innerHTML = projectionMatrix[4].toFixed(2);
+        document.getElementById("a21").innerHTML = projectionMatrix[5].toFixed(2);
+
+        document.getElementById("a02").innerHTML = projectionMatrix[6].toFixed(2);
+        document.getElementById("a12").innerHTML = projectionMatrix[7].toFixed(2);
+        document.getElementById("a22").innerHTML = projectionMatrix[8].toFixed(2);
+
+        // Vertices
+        // ========
+
+        // Create a buffer with three vertices.  The numbers must be
+        // in the range of -1.0 to +1.0.
+
+        var buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                -0.5, -0.5,
+                +0.5, -0.5,
+                +0.5, +0.5,
+                +0.5, +0.5,
+                -0.5, +0.5,
+                -0.5, -0.5,
+            ]),
+            gl.STATIC_DRAW);
+
+        // Send the three (x,y) triangle coordinates in the buffer to the vertex shader.
+
+        var positionLocation = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(
+            positionLocation,   // index of the generic vertex attribute to be modified
+            2,                  // number of components per generic vertex attribute
+            gl.FLOAT,           // type of each data component in the array
+            false,              // whether the fixed point data values should be normalized to -1 to 1 when converted to float
+            0,                  // offset between consecutive generic vertex attributes.  0 means tightly packed
+            0);                 // pointer to the first component of the first vertex attribute in the array
+
+        // Colors
+        // ======
+
+        // Create three colors in a buffer.
+
+        var colorBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                1.0, 0.0, 0.0, 1.0, // red
+                1.0, 1.0, 0.0, 1.0, // yellow
+                0.0, 1.0, 0.0, 1.0, // green
+                0.0, 1.0, 0.0, 1.0, // green
+                0.0, 0.0, 1.0, 1.0, // blue
+                1.0, 0.0, 0.0, 1.0  // red
+            ]),
+            gl.STATIC_DRAW);
+
+        // Pass the colors to GL.
+        var colorLocation = gl.getAttribLocation(shaderProgram, "aVertexColor");
+        gl.enableVertexAttribArray(colorLocation);
+        gl.vertexAttribPointer(colorLocation, 4, gl.FLOAT, false, 0, 0);
+
+        // Draw
+        // ====
+
+        // Make the background gray.
+
+        gl.clearColor(0.5, 0.5, 0.5, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+        // Cleanup
+        // =======
+
+        removeShaderProgram(gl);
+        gl.deleteBuffer(buffer);
+        gl.deleteBuffer(colorBuffer);
+    }
+
+    function doChange()
+    {
+        var rotate = document.getElementById("rotate").value;
+        document.getElementById("rotateTxt").innerHTML = "Rotate: " + (rotate*5);
+
+        var translateX = document.getElementById("translateX").value;
+        var translateY = document.getElementById("translateY").value;
+        document.getElementById("translateTxt").innerHTML = "Translate: " + (translateX/10) + ", " + (translateY/10);
+
+        var scaleX = document.getElementById("scaleX").value;
+        var scaleY = document.getElementById("scaleY").value;
+        document.getElementById("scaleTxt").innerHTML = "Scale: " + (scaleX/10) + ", " + (scaleY/10);
+
+        var scaleAngle = document.getElementById("scaleAngle").value;
+        document.getElementById("scaleAngleTxt").innerHTML = "Scale Angle: " + (scaleAngle*3);
+
+        var projection1 = document.getElementById("projection1").value;
+        var projection2 = document.getElementById("projection2").value;
+        document.getElementById("projectionTxt").innerHTML =
+            "Projection: " + (projection1/10) + ", " + (projection2/10);
+
+        webGLStart();
+    }
+</script>
+
+<style>
+td {
+    width: 50px;
+    text-align: right;
+}
+</style>
+</head>
+<body onload="webGLStart(); doChange();">
+
+    <canvas id="myCanvas" width="512" height="512" style="float: left; margin-right: 20px"></canvas>
+
+    <div>
+        <div style="margin-bottom: 20px">
+            <span id="rotateTxt"></span><br />
+            <input type="range" id="rotate" min="-36" max="36" onchange="doChange();" oninput="doChange();">
+        </div>
+        <div style="margin-bottom: 20px">
+            <span id="translateTxt"></span><br />
+            <input type="range" id="translateX" min="-10" max="10" onchange="doChange();" oninput="doChange();"><br />
+            <input type="range" id="translateY" min="-10" max="10" onchange="doChange();" oninput="doChange();"><br />
+        </div>
+        <div style="margin-bottom: 20px">
+            <span id="scaleTxt"></span><br />
+            <input type="range" id="scaleX" min="0" max="20" onchange="doChange();" oninput="doChange();"><br />
+            <input type="range" id="scaleY" min="0" max="20" onchange="doChange();" oninput="doChange();"><br />
+        </div>
+        <div style="margin-bottom: 20px">
+            <span id="scaleAngleTxt"></span><br />
+            <input type="range" id="scaleAngle" min="-15" max="15" onchange="doChange();" oninput="doChange();">
+        </div>
+        <div style="margin-bottom: 20px">
+            <span id="projectionTxt"></span><br />
+            <input type="range" id="projection1" min="-5" max="5" onchange="doChange();" oninput="doChange();"><br />
+            <input type="range" id="projection2" min="-5" max="5" onchange="doChange();" oninput="doChange();"><br />
+        </div>
+        <table>
+            <span>3x3 Matrix</span><br />
+            <tr>
+                <td id="a00"></td>
+                <td id="a01"></td>
+                <td id="a02"></td>
+            </tr>
+            <tr>
+                <td id="a10"></td>
+                <td id="a11"></td>
+                <td id="a12"></td>
+            </tr>
+            <tr>
+                <td id="a20"></td>
+                <td id="a21"></td>
+                <td id="a22"></td>
+            </tr>
+        </table>
+    </div>
+
+</body>
+</html>

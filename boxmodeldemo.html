@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>A simple box model web page demo</title>
+
+<style type="text/css">
+
+* {
+    margin: 0px;    /* Give EVERYTHING a margin of 0 */
+    color: white;   /* Make all text white */
+}
+
+body {
+    background-color: silver; 
+}
+
+.outerbox {
+    margin-bottom: 20px;
+    height: 200px;
+    width: 420px;
+    background-color: lightgray;
+    border: dotted 1px black;
+}
+
+#innerbox1 {
+    background-color: purple;
+}
+
+#innerbox2 {
+    background-color: purple;
+    height: 200px;
+    width: 420px;
+}
+
+#innerbox3 {
+    background-color: purple;
+    border-radius: 15px;
+    height: 100%;
+    width: 100%;
+}
+
+#innerbox4 {
+    background-color: purple;
+    height: 180px;
+    width: 400px;
+    padding: 10px;
+}
+
+#innerbox5 {
+    background-color: purple;
+    height: 180px;
+    width: 400px;
+    margin: 10px;
+}
+
+#innerbox6 {
+    background-color: purple;
+    height: 192px;
+    width: 412px;
+    border: dotted 4px red;
+}
+
+#innerbox7 {
+    background-color: purple;
+    border-radius: 15px;
+    height: 140px;
+    width: 360px;
+    margin: 20px;
+    padding: 8px;
+    border: solid 2px red;
+}
+</style>
+
+</head>
+<body>
+    <div class="outerbox">
+    </div>
+
+    <div class="outerbox">
+        <div id="innerbox1">
+            <p>innerbox1</p>
+            <p>background-color: purple</p>
+        </div>
+    </div>
+
+    <div class="outerbox">
+        <div id="innerbox2">
+            <p>innerbox2</p>
+            <p>background-color: purple<br />
+            height: 200px;<br />
+            width: 420px;
+            </p>
+        </div>
+    </div>
+
+    <div class="outerbox">
+        <div id="innerbox3">
+            <p>innerbox3</p>
+            <p>background-color: purple<br />
+            border-radius: 15px;<br />
+            height: 100%;<br />
+            width: 100%;
+            </p>
+        </div>
+    </div>
+
+    <div class="outerbox">
+        <div id="innerbox4">
+            <p>innerbox4</p>
+            <p>background-color: purple;<br />
+            height: 180px;<br />
+            width: 400px;<br />
+            padding: 10px;
+            </p>
+        </div>
+    </div>
+
+    <div class="outerbox">
+        <div id="innerbox5">
+            <p>innerbox5</p>
+            <p>background-color: purple;<br />
+            height: 180px;<br />
+            width: 400px;<br />
+            margin: 10px;
+            </p>
+        </div>
+    </div>
+
+    <div class="outerbox">
+        <div id="innerbox6">
+            <p>innerbox6</p>
+            <p>
+            background-color: purple;<br />
+            height: 192px;<br />
+            width: 412px;<br />
+            border: dotted 4px red;
+            </p>
+        </div>
+    </div>
+
+    <div class="outerbox">
+        <div id="innerbox7">
+            <p>innerbox7</p>
+            <p>
+            background-color: purple;<br />
+            border-radius: 15px;<br />
+            height: 140px;<br />
+            width: 360px;<br />
+            margin: 20px;<br />
+            padding: 8px;<br />
+            border: solid 2px red;
+        </p>
+        </div>
+    </div>
+
+</body>
+</html>

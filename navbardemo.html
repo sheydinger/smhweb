@@ -1,0 +1,548 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd"
+    >
+<html lang="en">
+<head>
+<title>Navigation Bar Demo</title>
+   
+<style type="text/css">
+h2 {
+    background-color: gray;
+    color: white;
+}
+
+ul {
+    background: url('redchecker.jpg');
+}
+
+li {
+    background: url('grnchecker.jpg');
+}
+
+a {
+    background: url('bluchecker.jpg');
+}
+
+a:hover {
+    background: url('blucheckersel.jpg');
+}
+
+.fail {
+    background-color: red;
+    color: white;
+    padding-left: 30px;
+    padding-right: 30px;
+    display: inline;
+}
+
+.succeed {
+    background-color: green;
+    color: white;
+    padding-left: 30px;
+    padding-right: 30px;
+    display: inline;
+}
+
+#try2 ul {
+    list-style: none;
+    height: 70px;
+}
+
+#try2 li {
+    display: inline;
+}
+
+
+#try3 ul {
+    list-style: none;
+    height: 70px;
+}
+
+#try3 li {
+    display: inline;
+    height: 60px;
+    width: 160px;
+    margin-right: 20px;
+}
+
+
+#try4 ul {
+    list-style: none;
+    height: 70px;
+}
+
+#try4 li {
+    display: inline;
+}
+
+#try4 a {
+    height: 60px;
+    width: 160px;
+    margin-right: 20px;
+}
+
+
+#try5 ul {
+    list-style: none;
+    height: 70px;
+}
+
+#try5 li {
+    float: left;
+}
+
+#try5 a {
+    height: 60px;
+    width: 160px;
+    margin-right: 20px;
+}
+
+
+#try6 ul {
+    list-style: none;
+    height: 70px;
+}
+
+#try6 li {
+    float: left;
+    height: 60px;
+    width: 160px;
+    margin-right: 20px;
+}
+
+
+#try7 ul {
+    list-style: none;
+    height: 70px;
+}
+
+#try7 a {
+    float: left;
+    height: 60px;
+    width: 160px;
+    margin-right: 20px;
+}
+
+
+#try8 ul {
+    list-style: none;
+    height: 70px;
+}
+
+#try8 li {
+    float: left;
+}
+
+#try8 a {
+    display: block;
+    height: 60px;
+    width: 160px;
+    margin-right: 20px;
+}
+
+
+#try9 ul {
+    list-style: none;
+    height: 70px;
+}
+
+#try9 li {
+    float: left;
+    margin-right: 20px;
+}
+
+#try9 a {
+    display: block;
+    height: 60px;
+    width: 160px;
+}
+
+
+#try10 ul {
+    list-style: none;
+    height: 70px;
+}
+
+#try10 li {
+    float: left;
+    margin-right: 20px;
+}
+
+#try10 a {
+    display: block;
+    height: 60px;
+    width: 160px;
+    margin: 5px;
+}
+
+#one {
+    background: url('navbardemo.jpg') -10px -10px;
+}
+
+#one:hover {
+    background: url('navbardemo.jpg') -10px -70px;
+}
+
+#two {
+    background: url('navbardemo.jpg') -170px -10px;
+}
+
+#two:hover {
+    background: url('navbardemo.jpg') -170px -70px;
+}
+
+#three {
+    background: url('navbardemo.jpg') -330px -10px;
+}
+
+#three:hover {
+    background: url('navbardemo.jpg') -330px -70px;
+}
+</style>
+
+</head>
+<body>
+
+<h1>Navigation Bar Demonstration</h1>
+<p>To help identify the parts of the document, the ul, li and a elements are colored using the following CSS:</p>
+<pre>
+ul {
+    background: url('redchecker.jpg');
+}
+
+li {
+    background: url('grnchecker.jpg');
+}
+
+a {
+    background: url('bluchecker.jpg');
+}
+
+a:hover {
+    background: url('blucheckersel.jpg');
+}
+</pre>
+
+<h1>Examples</h1>
+<div id="try1">
+    <h2>Try #1</h2>
+    <p>This is a simple unordered list with no formatting.  By default, &lt;ul&gt; and &lt;li&gt; are block elements,
+    &lt;a&gt; is an inline element.</p>
+    <ul>
+        <li><a href="http://www.yahoo.com">One</a></li>
+        <li><a href="http://www.yahoo.com">Two</a></li>
+        <li><a href="http://www.yahoo.com">Three</a></li>
+    </ul>
+</div>
+
+<div id="try2">
+    <h2>Try #2</h2>
+    <p>We need to get rid of the bullets and make the navigation buttons align horizontally.  list-style: none removes the bullets.
+    To make the &lt;li&gt; elements horizontal, they can be changed to inline instead of block elements.</p>
+    <pre>
+    ul {
+        list-style: none;
+        height: 70px;
+    }
+
+    li {
+        display: inline;
+    }
+    </pre>
+    <ul>
+        <li><a href="http://www.yahoo.com">One</a></li>
+        <li><a href="http://www.yahoo.com">Two</a></li>
+        <li><a href="http://www.yahoo.com">Three</a></li>
+    </ul>
+</div>
+
+
+<div id="try3">
+    <h2>Try #3</h2>
+    <p class="fail">FAIL</p>
+    <p>Now we want to adjust the width of the buttons and put some horizontal space between them.  All of this <b>cannot</b> be done!
+    We can only put the space between the buttons.  Why? According to the CSS specification:</p>
+   
+    <p><b>Inline elements:</b> The width is as long as the text or the containing image, and cannot be manipulated.  Further,
+    height, line-height, and top and bottom margins/padding cannot be manipulated.  However, left and right margins/padding
+    can be manipulated.  By default, &lt;a&gt is an inline element.</p>
+   
+    <p><b>Block elements:</b> The width of a block element is by default 100% of the containing element unless a width is
+    specified.  Futher, height, line-height, and top and bottom margins/padding can be maniuplated.  By default, &lt;ul&gt and &lt;li&gt
+    are block elements.</p>
+   
+    <p>Note that the margins are shown in red, i.e. the color of the item behind the list item, since the list item margin is transparent.<p>
+   
+    <pre>
+    ul {
+        list-style: none;
+        height: 70px;
+    }
+
+    li {
+        display: inline;
+        height: 60px;
+        width: 160px;
+        margin-right: 20px;
+    }
+    </pre>
+    <ul>
+        <li><a href="http://www.yahoo.com">One</a></li>
+        <li><a href="http://www.yahoo.com">Two</a></li>
+        <li><a href="http://www.yahoo.com">Three</a></li>
+    </ul>
+</div>
+
+
+<div id="try4">
+    <h2>Try #4</h2>
+    <p class="fail">FAIL</p>
+    <p>Similarly, we'll try to adjust the height and width of the buttons using the anchor tag instead of the list tag.
+    Because the anchor tag is an inline element by default, this approach fails for the same reasons as above.</p>
+   
+    <p>Note that the margin area to the right of the button is shown in green, the color of the list item rather than the color
+    of the anchor item which actually has the margin.  This is because a margin is transparent and therefore shows the margin in
+    the color of the thing behind it (the list item).  In contrast, padding is not transparent.  Try changing margin-right to
+    padding-right and note that the margin color changes to blue, the color of the anchor.</p>
+   
+    <pre>
+    ul {
+        list-style: none;
+        height: 70px;
+    }
+
+    li {
+        display: inline;
+    }
+
+    a {
+        height: 60px;
+        width: 160px;
+        margin-right: 20px;  // Try padding-right: 20px instead!
+    }
+    </pre>
+    <ul>
+        <li><a href="http://www.yahoo.com">One</a></li>
+        <li><a href="http://www.yahoo.com">Two</a></li>
+        <li><a href="http://www.yahoo.com">Three</a></li>
+    </ul>
+</div>
+
+
+<div id="try5">
+    <h2>Try #5</h2>
+    <p class="fail">FAIL</p>
+    <p>The previous failures in adjusting the height and width of the navigation buttons relate to the use of inline elements, namely
+    the anchor tag which is inline by default, and by declaring the list item tag as inline.  Instead of using inline list items to
+    cause the buttons to be arranged horizontally, we'll use float: left.  The question then becomes, "what gets floated, the list
+    item or the anchor?"  First, try the list item as shown below</p>
+
+    <p>This method provides the desired horizontal arrangement of the buttons, but the width and height specifiers are placed on
+    the anchor tag which is still an inline element.  The size of the buttons is not correct.</p>
+
+    <pre>
+    ul {
+        list-style: none;
+        height: 70px;
+    }
+
+    li {
+        float: left;
+    }
+
+    a {
+        height: 60px;
+        width: 160px;
+        margin-right: 20px;
+    }
+    </pre>
+    <ul>
+        <li><a href="http://www.yahoo.com">One</a></li>
+        <li><a href="http://www.yahoo.com">Two</a></li>
+        <li><a href="http://www.yahoo.com">Three</a></li>
+    </ul>
+    <div style="clear: both"></div>
+</div>
+
+
+<div id="try6">
+    <h2>Try #6</h2>
+    <p class="fail">FAIL</p>
+    <p>Instead of placing the height and width specifiers on the inline anchor tag, move them to the list item.  Now,
+    everything is visually in the proper place but the buttons themselves aren't the proper size, i.e. the green
+    areas should be blue.  Even though the list items (block elements) are the proper width, the anchors (inline elements)
+    are only as wide as their containing text.</p>
+
+    <pre>
+    ul {
+        list-style: none;
+        height: 70px;
+    }
+
+    li {
+        float: left;
+        height: 60px;
+        width: 160px;
+        margin-right: 20px;
+    }
+    </pre>
+    <ul>
+        <li><a href="http://www.yahoo.com">One</a></li>
+        <li><a href="http://www.yahoo.com">Two</a></li>
+        <li><a href="http://www.yahoo.com">Three</a></li>
+    </ul>
+    <div style="clear: both"></div>
+</div>
+
+
+
+<div id="try7">
+    <h2>Try #7</h2>
+    <p class="succeed">SUCCEED (Mysterious)</p>
+    <p>Alternatively, float the anchor element.  This appears to automatically turn the anchor from a default inline element
+    into a block element.  Mysteriously, the buttons appear horizontally even though the list items aren't floated.  Why
+    does this work?</p>
+   
+    <pre>
+    ul {
+        list-style: none;
+        height: 70px;
+    }
+
+    a {
+        float: left;
+        height: 60px;
+        width: 160px;
+        margin-right: 20px;
+    }
+    </pre>
+    <ul>
+        <li><a href="http://www.yahoo.com">One</a></li>
+        <li><a href="http://www.yahoo.com">Two</a></li>
+        <li><a href="http://www.yahoo.com">Three</a></li>
+    </ul>
+    <div style="clear: both"></div>
+</div>
+
+
+<div id="try8">
+    <h2>Try #8</h2>
+    <p class="succeed">SUCCEED</p>
+    <p>One way to solve the problem is to continue floating the list item, and specifying the size of the anchor element
+    along with explicitly making the anchor into a block item.</p>
+   
+    <pre>
+    ul {
+        list-style: none;
+        height: 70px;
+    }
+
+    li {
+        float: left;
+    }
+
+    a {
+        display: block;
+        height: 60px;
+        width: 160px;
+        margin-right: 20px;
+    }
+    </pre>
+    <ul>
+        <li><a href="http://www.yahoo.com">One</a></li>
+        <li><a href="http://www.yahoo.com">Two</a></li>
+        <li><a href="http://www.yahoo.com">Three</a></li>
+    </ul>
+    <div style="clear: both"></div>
+</div>
+
+
+<div id="try9">
+    <h2>Try #9</h2>
+    <p class="succeed">SUCCEED</p>
+    <p>A slight alternative is to move margin-right: from the anchor to the list item.</p>
+   
+    <pre>
+    ul {
+        list-style: none;
+        height: 70px;
+    }
+
+    li {
+        float: left;
+        margin-right: 20px;
+    }
+
+    a {
+        display: block;
+        height: 60px;
+        width: 160px;
+    }
+    </pre>
+    <ul>
+        <li><a href="http://www.yahoo.com">One</a></li>
+        <li><a href="http://www.yahoo.com">Two</a></li>
+        <li><a href="http://www.yahoo.com">Three</a></li>
+    </ul>
+    <div style="clear: both"></div>
+</div>
+
+
+<div id="try10">
+    <h2>Try #10</h2>
+    <p class="succeed">SUCCEED</p>
+    <p>Try with an image sprite, 500px wide by 140px tall.  The squares are 20px by 20px.</p>
+    <img src="navbardemo.jpg" />
+
+    <pre>
+    ul {
+        list-style: none;
+        height: 70px;
+    }
+
+    li {
+        float: left;
+        margin-right: 20px;
+    }
+
+    a {
+        display: block;
+        height: 60px;
+        width: 160px;
+        margin: 5px;  // Try padding: 5px instead.  Fails - shows too much background!
+    }
+
+    #one {
+        background: url('navbardemo.jpg') -10px -10px;
+    }
+
+    #one:hover {
+        background: url('navbardemo.jpg') -10px -70px;
+    }
+
+    #two {
+        background: url('navbardemo.jpg') -170px -10px;
+    }
+
+    #two:hover {
+        background: url('navbardemo.jpg') -170px -70px;
+    }
+
+    #three {
+        background: url('navbardemo.jpg') -330px -10px;
+    }
+
+    #three:hover {
+        background: url('navbardemo.jpg') -330px -70px;
+    }
+    </pre>
+    <ul>
+        <li><a id="one"   href="http://www.yahoo.com">One</a></li>
+        <li><a id="two"   href="http://www.yahoo.com">Two</a></li>
+        <li><a id="three" href="http://www.yahoo.com">Three</a></li>
+    </ul>
+    <div style="clear: both"></div>
+</div>
+
+</body>
+</html>

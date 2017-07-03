@@ -1,0 +1,364 @@
+<html>
+<head>
+<title>WebGLShadersAndProgram</title>
+
+<script src="WebGLContextStringConstants.js"></script>
+
+<script type="text/javascript">
+    var gl;
+    var program;
+    var shader;
+
+    function ShowStatus() {
+
+        // Since ShowStatus is called right after calling an OpenGL function it will
+        // report the desired error.  Just in case one of the function calls below generates an
+        // error, call getError() again below to reset the error log.
+        var err = gl.getError();
+        document.getElementById("error").innerHTML = err + ' = ' + ErrorToString(err);
+
+        // getShaderParameter is the WebGL equivalent to glGetShaderiv
+        document.getElementById("shadertype").innerHTML = 
+            ConstantToString(gl.getShaderParameter(shader, gl.SHADER_TYPE));
+
+        document.getElementById("shadercompilestatus").innerHTML = 
+            BooleanToString(gl.getShaderParameter(shader, gl.COMPILE_STATUS));
+
+        document.getElementById("shaderdeletestatus").innerHTML = 
+            BooleanToString(gl.getShaderParameter(shader, gl.DELETE_STATUS));
+
+        // getProgramParameter is the WebGL equivalent to glGetProgramiv
+        document.getElementById("programdeletestatus").innerHTML = 
+            BooleanToString(gl.getProgramParameter(program, gl.DELETE_STATUS));
+
+        document.getElementById("programlinkstatus").innerHTML = 
+            BooleanToString(gl.getProgramParameter(program, gl.LINK_STATUS));
+
+        document.getElementById("programvalidatestatus").innerHTML =  
+            BooleanToString(gl.getProgramParameter(program, gl.VALIDATE_STATUS));
+
+        document.getElementById("programattachedshaders").innerHTML = 
+            + gl.getProgramParameter(program, gl.ATTACHED_SHADERS);
+
+        document.getElementById("programactiveattributes").innerHTML = 
+            + gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
+
+        document.getElementById("programactiveuniforms").innerHTML = 
+            + gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
+
+        document.getElementById("shaderinfolog").innerHTML = gl.getShaderInfoLog(shader);
+
+        document.getElementById("programinfolog").innerHTML = gl.getProgramInfoLog(program);
+
+        document.getElementById("shadersource").innerHTML = '<code>' + gl.getShaderSource(shader) + '</code>';
+
+        var attributes="", attribute;
+        for (var i=0; i<gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES); i++)
+        {
+            attribute = gl.getActiveAttrib(program, i);
+            attributes +=  attribute.name + ", " + attribute.size + ", " + ConstantToString(attribute.type) + "<br />";
+        }
+        document.getElementById("activeattributes").innerHTML = attributes;
+
+        var uniforms="", uniform;
+        for (var i=0; i<gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS); i++)
+        {
+            uniform = gl.getActiveUniform(program, i);
+            uniforms +=  uniform.name + ", " + uniform.size + ", " + ConstantToString(uniform.type) + "<br />";
+
+        }
+        document.getElementById("activeuniforms").innerHTML = uniforms;
+    }
+
+    function webGLStart() {
+        var canvas = document.getElementById("myCanvas");
+        gl = canvas.getContext("experimental-webgl");
+
+        ShowStatus();
+    }
+
+    function CreateProgram() {
+        gl.getError();
+        program  = gl.createProgram();
+
+        ShowStatus();
+    }
+    
+    function CreateShader(which) {
+        // which is gl.VERTEX_SHADER or gl.FRAGMENT_SHADER
+        gl.getError();
+        shader = gl.createShader(which);
+
+        ShowStatus();
+    }
+    
+    function ShaderSource(id) {
+        var shaderScript = document.getElementById(id);
+
+        // Put the contents of the script shader tags into the "str" variable.
+        var str = "";
+        var k = shaderScript.firstChild;
+        while (k) {
+            if (k.nodeType == 3) {
+                str += k.textContent;
+            }
+            k = k.nextSibling;
+        }
+
+        gl.getError();
+        gl.shaderSource(shader, str);
+
+        ShowStatus();
+    }
+
+    function CompileShader() {
+        gl.getError();
+        gl.compileShader(shader);
+
+        ShowStatus();
+    }
+
+    function AttachShader() {
+        gl.getError();
+        gl.attachShader(program, shader);
+
+        ShowStatus();
+    }
+
+    function DeleteShader() {
+        gl.getError();
+        gl.deleteShader(shader);
+
+        ShowStatus();
+    }
+
+    function LinkProgram() {
+        gl.getError();
+        gl.linkProgram(program);
+
+        ShowStatus();
+    }
+
+    function ValidateProgram() {
+        gl.getError();
+        gl.validateProgram(program);
+
+        ShowStatus();
+    }
+
+    function UseProgram() {
+        gl.getError();
+        gl.useProgram(program);
+
+        ShowStatus();
+    }
+
+    function DeleteProgram() {
+        gl.getError();
+        gl.deleteProgram(program);
+
+        ShowStatus();
+    }
+</script>
+
+<script id="vertex1" type="x-shader/x-vertex">
+attribute vec2 aVertexPosition;
+attribute vec4 aColor;
+
+uniform mat4 uModelView;
+
+varying vec4 vColor;
+
+void main(void) {
+    gl_Position = uModelView * vec4(aVertexPosition, 0, 1);
+    vColor = aColor;
+}
+</script>
+
+<script id="fragment1" type="x-shader/x-fragment">
+precision mediump float;
+
+varying vec4 vColor;
+
+void main(void) {
+    gl_FragColor = vColor;
+}
+</script>
+
+<style>
+.customers
+{
+    font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+//    width:100%;
+    border-collapse:collapse;
+    margin-bottom: 20px;
+}
+.customers td, .customers th 
+{
+//    font-size:1em;
+    font-size: 12px;
+    border:1px solid #98bf21;
+    padding:3px 7px 2px 7px;
+}
+.customers th 
+{
+//    font-size:1.1em;
+    text-align:left;
+    padding-top:5px;
+    padding-bottom:4px;
+    background-color:#A7C942;
+    color:#ffffff;
+}
+.customers tr.alt td 
+{
+    color:#000000;
+    background-color:#EAF2D3;
+}
+</style>
+
+</head>
+<body onload="webGLStart();">
+
+    <canvas id="myCanvas" width="160" height="120" style="background-color: gray"></canvas>
+
+    <h2>Vertex Shaders</h2>
+    <div style="margin: 20px">
+        <code>
+            attribute vec2 aVertexPosition;<br />
+            attribute vec4 aColor;<br />
+            <br />
+            uniform mat4 uModelView;<br />
+            <br />
+            varying vec4 vColor;<br />
+            <br />
+            void main(void) {<br />
+            &nbsp;&nbsp;&nbsp;gl_Position = uModelView * vec4(aVertexPosition, 0, 1);<br />
+            &nbsp;&nbsp;&nbsp;vColor = aColor;<br />
+            }<br />
+        </code>
+    </div>
+
+    <h2>Fragment Shaders</h2>
+    <div style="margin: 20px">
+        <code>
+            precision mediump float;<br />
+            <br />
+            varying vec4 vColor;<br />
+            <br />
+            void main(void) {<br />
+            &nbsp;&nbsp;&nbsp;gl_FragColor = vColor;<br />
+            }<br />
+        </code>
+    </div>
+
+    <table class="customers">
+        <tr>
+            <th style="width: 200px">Function</th>
+            <th style="width: 500px">Value</th>
+        </tr>
+        <tr class="alt">
+            <td>gl.getError()</td>
+            <td id="error"></td>
+        </tr>
+    </table>
+
+    <table class="customers" style="float: left">
+        <tr>
+            <th style="width: 200px">Function</th>
+            <th style="width: 500px">Value</th>
+        </tr>
+        <tr class="alt">
+            <td>gl.getShaderParameter()</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;gl.SHADER_TYPE</td>
+            <td id="shadertype"></td>
+        </tr>
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;gl.COMPILE_STATUS</td>
+            <td id="shadercompilestatus"></td>
+        </tr>
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;gl.DELETE_STATUS</td>
+            <td id="shaderdeletestatus"></td>
+        </tr>
+        <tr class="alt">
+            <td>gl.getShaderInfoLog()</td>
+            <td id="shaderinfolog"></td>
+        </tr>
+        <tr class="alt">
+            <td>gl.getShaderSource()</td>
+            <td id="shadersource"></td>
+        </tr>
+    </table>
+
+    <div>
+        <input type="button" value="gl.createShader(gl.VERTEX_SHADER)" onClick="CreateShader(gl.VERTEX_SHADER);" />
+            <input type="button" value="gl.createShader(gl.FRAGMENT_SHADER)" onClick="CreateShader(gl.FRAGMENT_SHADER);" /><br />
+        <input type="button" value="gl.shaderSource(Vertex1)" onClick="ShaderSource('vertex1');" />
+            <input type="button" value="gl.shaderSource(Fragment1)" onClick="ShaderSource('fragment1');" /><br />
+        <input type="button" value="gl.compileShader()" onClick="CompileShader();" /><br />
+        <input type="button" value="gl.attachShader()" onClick="AttachShader();" /><br />
+        <input type="button" value="gl.deleteShader()" onClick="DeleteShader();" />
+    </div>
+    <div style="clear: both"></div>
+
+    <table class="customers" style="float: left">
+        <tr>
+            <th style="width: 200px">Function</th>
+            <th style="width: 500px">Value</th>
+        </tr>
+        <tr class="alt">
+            <td>gl.getProgramParameter()</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;gl.LINK_STATUS</td>
+            <td id="programlinkstatus"></td>
+        </tr>
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;gl.VALIDATE_STATUS</td>
+            <td id="programvalidatestatus"></td>
+        </tr>
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;gl.DELETE_STATUS</td>
+            <td id="programdeletestatus"></td>
+        </tr>
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;gl.ATTACHED_SHADERS</td>
+            <td id="programattachedshaders"></td>
+        </tr>
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;gl.ACTIVE_ATTRIBUTES</td>
+            <td id="programactiveattributes"></td>
+        </tr>
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;gl.ACTIVE_UNIFORMS</td>
+            <td id="programactiveuniforms"></td>
+        </tr>
+        <tr class="alt">
+            <td>gl.getProgramInfoLog()</td>
+            <td id="programinfolog"></td>
+        </tr>
+        <tr class="alt">
+            <td>gl.getActiveAttrib()</td>
+            <td id="activeattributes"></td>
+        </tr>
+        <tr class="alt">
+            <td>gl.getActiveUniform()</td>
+            <td id="activeuniforms"></td>
+        </tr>
+    </table>
+
+    <div>
+        <input type="button" value="gl.createProgram()" onClick="CreateProgram();" /><br />
+        <input type="button" value="gl.linkProgram()" onClick="LinkProgram();" /><br />
+        <input type="button" value="gl.validateProgram()" onClick="ValidateProgram();" /><br />
+        <input type="button" value="gl.useProgram()" onClick="UseProgram();" /><br />
+        <input type="button" value="gl.deleteProgram()" onClick="DeleteProgram();" />
+    </div>
+    <div style="clear: both"></div>
+
+</body>
+</html>

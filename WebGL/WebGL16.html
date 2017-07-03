@@ -1,0 +1,1042 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WebGL16 - Stereo Generation</title>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+attribute vec3 aVertexPosition;
+attribute vec4 aVertexColor;
+
+uniform mat4 uGeometryMatrix;
+
+varying vec4 vVertexColor;
+
+void main(void) {
+    gl_Position = uGeometryMatrix * vec4(aVertexPosition, 1);
+
+    vVertexColor = aVertexColor;
+}
+</script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+precision mediump float;
+
+// Interpolated, from the vertex shader.
+varying vec4 vVertexColor;
+
+void main(void) {
+    gl_FragColor = vVertexColor;
+}
+</script>
+
+
+<script src="WebGLTools.js"></script>
+<script src="WebGLMatrix.js"></script>
+
+<script type="text/javascript">
+    var glL, glR;
+
+    function webGLStart() {
+        var canvasL = document.getElementById("myCanvasL");
+        glL = canvasL.getContext("experimental-webgl");
+
+        var canvasR = document.getElementById("myCanvasR");
+        glR = canvasR.getContext("experimental-webgl");
+
+        // Shaders
+        // =======
+        // Use a common library to load the vertex and fragment (pixel)
+        // shaders into a program.  The ids must be as named above.
+
+        var shaderProgramL = loadShaderProgram(glL);
+        glL.useProgram(shaderProgramL);
+
+        var shaderProgramR = loadShaderProgram(glR);
+        glR.useProgram(shaderProgramR);
+
+        // Perspective/Orthographic
+        // ========================
+        var fov  = parseInt(document.getElementById("fov").value);
+        var near = parseInt(document.getElementById("near").value);
+        var far  = parseInt(document.getElementById("far").value);
+
+        var projectionMatrix;
+        if (document.getElementById("ortho").checked == true) {
+            projectionMatrix = Orthographic4x4(fov, (640.0/480.0), near, far);
+        }
+        else {
+            projectionMatrix = Perspective4x4(fov, (640.0/480.0), near, far);
+        }
+
+        document.getElementById("p00").innerHTML = projectionMatrix[ 0].toFixed(2);
+        document.getElementById("p10").innerHTML = projectionMatrix[ 1].toFixed(2);
+        document.getElementById("p20").innerHTML = projectionMatrix[ 2].toFixed(2);
+        document.getElementById("p30").innerHTML = projectionMatrix[ 3].toFixed(2);
+
+        document.getElementById("p01").innerHTML = projectionMatrix[ 4].toFixed(2);
+        document.getElementById("p11").innerHTML = projectionMatrix[ 5].toFixed(2);
+        document.getElementById("p21").innerHTML = projectionMatrix[ 6].toFixed(2);
+        document.getElementById("p31").innerHTML = projectionMatrix[ 7].toFixed(2);
+
+        document.getElementById("p02").innerHTML = projectionMatrix[ 8].toFixed(2);
+        document.getElementById("p12").innerHTML = projectionMatrix[ 9].toFixed(2);
+        document.getElementById("p22").innerHTML = projectionMatrix[10].toFixed(2);
+        document.getElementById("p32").innerHTML = projectionMatrix[11].toFixed(2);
+
+        document.getElementById("p03").innerHTML = projectionMatrix[12].toFixed(2);
+        document.getElementById("p13").innerHTML = projectionMatrix[13].toFixed(2);
+        document.getElementById("p23").innerHTML = projectionMatrix[14].toFixed(2);
+        document.getElementById("p33").innerHTML = projectionMatrix[15].toFixed(2);
+
+        // Translate
+        // =========
+
+        var translateX = parseInt(document.getElementById("translateX").value);
+        var translateY = parseInt(document.getElementById("translateY").value);
+        var translateZ = parseInt(document.getElementById("translateZ").value);
+
+        var translateMatrix = Translate4x4(translateX, translateY, translateZ);
+
+        document.getElementById("t00").innerHTML = translateMatrix[ 0].toFixed(2);
+        document.getElementById("t10").innerHTML = translateMatrix[ 1].toFixed(2);
+        document.getElementById("t20").innerHTML = translateMatrix[ 2].toFixed(2);
+        document.getElementById("t30").innerHTML = translateMatrix[ 3].toFixed(2);
+
+        document.getElementById("t01").innerHTML = translateMatrix[ 4].toFixed(2);
+        document.getElementById("t11").innerHTML = translateMatrix[ 5].toFixed(2);
+        document.getElementById("t21").innerHTML = translateMatrix[ 6].toFixed(2);
+        document.getElementById("t31").innerHTML = translateMatrix[ 7].toFixed(2);
+
+        document.getElementById("t02").innerHTML = translateMatrix[ 8].toFixed(2);
+        document.getElementById("t12").innerHTML = translateMatrix[ 9].toFixed(2);
+        document.getElementById("t22").innerHTML = translateMatrix[10].toFixed(2);
+        document.getElementById("t32").innerHTML = translateMatrix[11].toFixed(2);
+
+        document.getElementById("t03").innerHTML = translateMatrix[12].toFixed(2);
+        document.getElementById("t13").innerHTML = translateMatrix[13].toFixed(2);
+        document.getElementById("t23").innerHTML = translateMatrix[14].toFixed(2);
+        document.getElementById("t33").innerHTML = translateMatrix[15].toFixed(2);
+
+        // Rotate
+        // ======
+
+        var rotateX = parseInt(document.getElementById("rotateX").value) * 5;
+        var rotateY = parseInt(document.getElementById("rotateY").value) * 5;
+        var rotateZ = parseInt(document.getElementById("rotateZ").value) * 5;
+
+        var rotateMatrix = Rotate4x4(rotateX, rotateY, rotateZ);
+
+        document.getElementById("r00").innerHTML = rotateMatrix[ 0].toFixed(2);
+        document.getElementById("r10").innerHTML = rotateMatrix[ 1].toFixed(2);
+        document.getElementById("r20").innerHTML = rotateMatrix[ 2].toFixed(2);
+        document.getElementById("r30").innerHTML = rotateMatrix[ 3].toFixed(2);
+
+        document.getElementById("r01").innerHTML = rotateMatrix[ 4].toFixed(2);
+        document.getElementById("r11").innerHTML = rotateMatrix[ 5].toFixed(2);
+        document.getElementById("r21").innerHTML = rotateMatrix[ 6].toFixed(2);
+        document.getElementById("r31").innerHTML = rotateMatrix[ 7].toFixed(2);
+
+        document.getElementById("r02").innerHTML = rotateMatrix[ 8].toFixed(2);
+        document.getElementById("r12").innerHTML = rotateMatrix[ 9].toFixed(2);
+        document.getElementById("r22").innerHTML = rotateMatrix[10].toFixed(2);
+        document.getElementById("r32").innerHTML = rotateMatrix[11].toFixed(2);
+
+        document.getElementById("r03").innerHTML = rotateMatrix[12].toFixed(2);
+        document.getElementById("r13").innerHTML = rotateMatrix[13].toFixed(2);
+        document.getElementById("r23").innerHTML = rotateMatrix[14].toFixed(2);
+        document.getElementById("r33").innerHTML = rotateMatrix[15].toFixed(2);
+
+        // Scale
+        // =====
+
+        var scaleX = parseInt(document.getElementById("scaleX").value) / 10;
+        var scaleY = parseInt(document.getElementById("scaleY").value) / 10;
+        var scaleZ = parseInt(document.getElementById("scaleZ").value) / 10;
+
+        var scaleMatrix = Scale4x4(scaleX, scaleY, scaleZ);
+
+        document.getElementById("s00").innerHTML = scaleMatrix[ 0].toFixed(2);
+        document.getElementById("s10").innerHTML = scaleMatrix[ 1].toFixed(2);
+        document.getElementById("s20").innerHTML = scaleMatrix[ 2].toFixed(2);
+        document.getElementById("s30").innerHTML = scaleMatrix[ 3].toFixed(2);
+
+        document.getElementById("s01").innerHTML = scaleMatrix[ 4].toFixed(2);
+        document.getElementById("s11").innerHTML = scaleMatrix[ 5].toFixed(2);
+        document.getElementById("s21").innerHTML = scaleMatrix[ 6].toFixed(2);
+        document.getElementById("s31").innerHTML = scaleMatrix[ 7].toFixed(2);
+
+        document.getElementById("s02").innerHTML = scaleMatrix[ 8].toFixed(2);
+        document.getElementById("s12").innerHTML = scaleMatrix[ 9].toFixed(2);
+        document.getElementById("s22").innerHTML = scaleMatrix[10].toFixed(2);
+        document.getElementById("s32").innerHTML = scaleMatrix[11].toFixed(2);
+
+        document.getElementById("s03").innerHTML = scaleMatrix[12].toFixed(2);
+        document.getElementById("s13").innerHTML = scaleMatrix[13].toFixed(2);
+        document.getElementById("s23").innerHTML = scaleMatrix[14].toFixed(2);
+        document.getElementById("s33").innerHTML = scaleMatrix[15].toFixed(2);
+
+        // ===========
+        // LEFT CAMERA
+        // ===========
+
+        // When translating the camera instead of the object, negate the
+        // camera translate and rotate values.
+
+        // Translate
+        // =========
+
+        var translateXL = -parseInt(document.getElementById("translateXL").value);
+        var translateYL = -parseInt(document.getElementById("translateYL").value);
+        var translateZL = -parseInt(document.getElementById("translateZL").value);
+
+        var translateMatrixL = Translate4x4(translateXL, translateYL, translateZL);
+
+        document.getElementById("t00L").innerHTML = translateMatrixL[ 0].toFixed(2);
+        document.getElementById("t10L").innerHTML = translateMatrixL[ 1].toFixed(2);
+        document.getElementById("t20L").innerHTML = translateMatrixL[ 2].toFixed(2);
+        document.getElementById("t30L").innerHTML = translateMatrixL[ 3].toFixed(2);
+
+        document.getElementById("t01L").innerHTML = translateMatrixL[ 4].toFixed(2);
+        document.getElementById("t11L").innerHTML = translateMatrixL[ 5].toFixed(2);
+        document.getElementById("t21L").innerHTML = translateMatrixL[ 6].toFixed(2);
+        document.getElementById("t31L").innerHTML = translateMatrixL[ 7].toFixed(2);
+
+        document.getElementById("t02L").innerHTML = translateMatrixL[ 8].toFixed(2);
+        document.getElementById("t12L").innerHTML = translateMatrixL[ 9].toFixed(2);
+        document.getElementById("t22L").innerHTML = translateMatrixL[10].toFixed(2);
+        document.getElementById("t32L").innerHTML = translateMatrixL[11].toFixed(2);
+
+        document.getElementById("t03L").innerHTML = translateMatrixL[12].toFixed(2);
+        document.getElementById("t13L").innerHTML = translateMatrixL[13].toFixed(2);
+        document.getElementById("t23L").innerHTML = translateMatrixL[14].toFixed(2);
+        document.getElementById("t33L").innerHTML = translateMatrixL[15].toFixed(2);
+
+        // Rotate
+        // ======
+
+        var rotateXL = -parseInt(document.getElementById("rotateXL").value) * 5;
+        var rotateYL = -parseInt(document.getElementById("rotateYL").value) * 5;
+        var rotateZL = -parseInt(document.getElementById("rotateZL").value) * 5;
+
+        var rotateMatrixL = Rotate4x4(rotateXL, rotateYL, rotateZL);
+
+        document.getElementById("r00L").innerHTML = rotateMatrixL[ 0].toFixed(2);
+        document.getElementById("r10L").innerHTML = rotateMatrixL[ 1].toFixed(2);
+        document.getElementById("r20L").innerHTML = rotateMatrixL[ 2].toFixed(2);
+        document.getElementById("r30L").innerHTML = rotateMatrixL[ 3].toFixed(2);
+
+        document.getElementById("r01L").innerHTML = rotateMatrixL[ 4].toFixed(2);
+        document.getElementById("r11L").innerHTML = rotateMatrixL[ 5].toFixed(2);
+        document.getElementById("r21L").innerHTML = rotateMatrixL[ 6].toFixed(2);
+        document.getElementById("r31L").innerHTML = rotateMatrixL[ 7].toFixed(2);
+
+        document.getElementById("r02L").innerHTML = rotateMatrixL[ 8].toFixed(2);
+        document.getElementById("r12L").innerHTML = rotateMatrixL[ 9].toFixed(2);
+        document.getElementById("r22L").innerHTML = rotateMatrixL[10].toFixed(2);
+        document.getElementById("r32L").innerHTML = rotateMatrixL[11].toFixed(2);
+
+        document.getElementById("r03L").innerHTML = rotateMatrixL[12].toFixed(2);
+        document.getElementById("r13L").innerHTML = rotateMatrixL[13].toFixed(2);
+        document.getElementById("r23L").innerHTML = rotateMatrixL[14].toFixed(2);
+        document.getElementById("r33L").innerHTML = rotateMatrixL[15].toFixed(2);
+
+        // ============
+        // RIGHT CAMERA
+        // ============
+
+        // Translate
+        // =========
+
+        var translateXR = -parseInt(document.getElementById("translateXR").value);
+        var translateYR = -parseInt(document.getElementById("translateYR").value);
+        var translateZR = -parseInt(document.getElementById("translateZR").value);
+
+        var translateMatrixR = Translate4x4(translateXR, translateYR, translateZR);
+
+        document.getElementById("t00R").innerHTML = translateMatrixR[ 0].toFixed(2);
+        document.getElementById("t10R").innerHTML = translateMatrixR[ 1].toFixed(2);
+        document.getElementById("t20R").innerHTML = translateMatrixR[ 2].toFixed(2);
+        document.getElementById("t30R").innerHTML = translateMatrixR[ 3].toFixed(2);
+
+        document.getElementById("t01R").innerHTML = translateMatrixR[ 4].toFixed(2);
+        document.getElementById("t11R").innerHTML = translateMatrixR[ 5].toFixed(2);
+        document.getElementById("t21R").innerHTML = translateMatrixR[ 6].toFixed(2);
+        document.getElementById("t31R").innerHTML = translateMatrixR[ 7].toFixed(2);
+
+        document.getElementById("t02R").innerHTML = translateMatrixR[ 8].toFixed(2);
+        document.getElementById("t12R").innerHTML = translateMatrixR[ 9].toFixed(2);
+        document.getElementById("t22R").innerHTML = translateMatrixR[10].toFixed(2);
+        document.getElementById("t32R").innerHTML = translateMatrixR[11].toFixed(2);
+
+        document.getElementById("t03R").innerHTML = translateMatrixR[12].toFixed(2);
+        document.getElementById("t13R").innerHTML = translateMatrixR[13].toFixed(2);
+        document.getElementById("t23R").innerHTML = translateMatrixR[14].toFixed(2);
+        document.getElementById("t33R").innerHTML = translateMatrixR[15].toFixed(2);
+
+        // Rotate
+        // ======
+
+        var rotateXR = -parseInt(document.getElementById("rotateXR").value) * 5;
+        var rotateYR = -parseInt(document.getElementById("rotateYR").value) * 5;
+        var rotateZR = -parseInt(document.getElementById("rotateZR").value) * 5;
+
+        var rotateMatrixR = Rotate4x4(rotateXR, rotateYR, rotateZR);
+
+        document.getElementById("r00R").innerHTML = rotateMatrixR[ 0].toFixed(2);
+        document.getElementById("r10R").innerHTML = rotateMatrixR[ 1].toFixed(2);
+        document.getElementById("r20R").innerHTML = rotateMatrixR[ 2].toFixed(2);
+        document.getElementById("r30R").innerHTML = rotateMatrixR[ 3].toFixed(2);
+
+        document.getElementById("r01R").innerHTML = rotateMatrixR[ 4].toFixed(2);
+        document.getElementById("r11R").innerHTML = rotateMatrixR[ 5].toFixed(2);
+        document.getElementById("r21R").innerHTML = rotateMatrixR[ 6].toFixed(2);
+        document.getElementById("r31R").innerHTML = rotateMatrixR[ 7].toFixed(2);
+
+        document.getElementById("r02R").innerHTML = rotateMatrixR[ 8].toFixed(2);
+        document.getElementById("r12R").innerHTML = rotateMatrixR[ 9].toFixed(2);
+        document.getElementById("r22R").innerHTML = rotateMatrixR[10].toFixed(2);
+        document.getElementById("r32R").innerHTML = rotateMatrixR[11].toFixed(2);
+
+        document.getElementById("r03R").innerHTML = rotateMatrixR[12].toFixed(2);
+        document.getElementById("r13R").innerHTML = rotateMatrixR[13].toFixed(2);
+        document.getElementById("r23R").innerHTML = rotateMatrixR[14].toFixed(2);
+        document.getElementById("r33R").innerHTML = rotateMatrixR[15].toFixed(2);
+
+
+
+        // Combined Geometry
+        // =================
+
+//        var temp1L = Multiply4x4_4x4(projectionMatrix, translateMatrix);
+//        var temp2L = Multiply4x4_4x4(temp1L, rotateMatrix);
+//        var geometryMatrixL = Multiply4x4_4x4(temp2L, scaleMatrix);
+
+        var temp1L = Multiply4x4_4x4(rotateMatrix, scaleMatrix);
+        var temp2L = Multiply4x4_4x4(translateMatrix, temp1L);
+        var temp3L = Multiply4x4_4x4(translateMatrixL, temp2L);
+        var temp4L = Multiply4x4_4x4(rotateMatrixL, temp3L);
+        var geometryMatrixL = Multiply4x4_4x4(projectionMatrix, temp4L);
+
+        var geometryMatrixLocationL = glL.getUniformLocation(shaderProgramL, "uGeometryMatrix");
+        glL.uniformMatrix4fv(geometryMatrixLocationL, false, geometryMatrixL);
+
+
+        // P(T[RS])
+        var temp1R = Multiply4x4_4x4(rotateMatrix, scaleMatrix);
+        var temp2R = Multiply4x4_4x4(translateMatrix, temp1R);
+        var temp3R = Multiply4x4_4x4(translateMatrixR, temp2R);
+        var temp4R = Multiply4x4_4x4(rotateMatrixR, temp3R);
+        var geometryMatrixR = Multiply4x4_4x4(projectionMatrix, temp4R);
+
+        var geometryMatrixLocationR = glR.getUniformLocation(shaderProgramR, "uGeometryMatrix");
+        glR.uniformMatrix4fv(geometryMatrixLocationR, false, geometryMatrixR);
+
+
+        document.getElementById("a00L").innerHTML = geometryMatrixL[ 0].toFixed(2);
+        document.getElementById("a10L").innerHTML = geometryMatrixL[ 1].toFixed(2);
+        document.getElementById("a20L").innerHTML = geometryMatrixL[ 2].toFixed(2);
+        document.getElementById("a30L").innerHTML = geometryMatrixL[ 3].toFixed(2);
+
+        document.getElementById("a01L").innerHTML = geometryMatrixL[ 4].toFixed(2);
+        document.getElementById("a11L").innerHTML = geometryMatrixL[ 5].toFixed(2);
+        document.getElementById("a21L").innerHTML = geometryMatrixL[ 6].toFixed(2);
+        document.getElementById("a31L").innerHTML = geometryMatrixL[ 7].toFixed(2);
+
+        document.getElementById("a02L").innerHTML = geometryMatrixL[ 8].toFixed(2);
+        document.getElementById("a12L").innerHTML = geometryMatrixL[ 9].toFixed(2);
+        document.getElementById("a22L").innerHTML = geometryMatrixL[10].toFixed(2);
+        document.getElementById("a32L").innerHTML = geometryMatrixL[11].toFixed(2);
+
+        document.getElementById("a03L").innerHTML = geometryMatrixL[12].toFixed(2);
+        document.getElementById("a13L").innerHTML = geometryMatrixL[13].toFixed(2);
+        document.getElementById("a23L").innerHTML = geometryMatrixL[14].toFixed(2);
+        document.getElementById("a33L").innerHTML = geometryMatrixL[15].toFixed(2);
+
+
+        document.getElementById("a00R").innerHTML = geometryMatrixR[ 0].toFixed(2);
+        document.getElementById("a10R").innerHTML = geometryMatrixR[ 1].toFixed(2);
+        document.getElementById("a20R").innerHTML = geometryMatrixR[ 2].toFixed(2);
+        document.getElementById("a30R").innerHTML = geometryMatrixR[ 3].toFixed(2);
+
+        document.getElementById("a01R").innerHTML = geometryMatrixR[ 4].toFixed(2);
+        document.getElementById("a11R").innerHTML = geometryMatrixR[ 5].toFixed(2);
+        document.getElementById("a21R").innerHTML = geometryMatrixR[ 6].toFixed(2);
+        document.getElementById("a31R").innerHTML = geometryMatrixR[ 7].toFixed(2);
+
+        document.getElementById("a02R").innerHTML = geometryMatrixR[ 8].toFixed(2);
+        document.getElementById("a12R").innerHTML = geometryMatrixR[ 9].toFixed(2);
+        document.getElementById("a22R").innerHTML = geometryMatrixR[10].toFixed(2);
+        document.getElementById("a32R").innerHTML = geometryMatrixR[11].toFixed(2);
+
+        document.getElementById("a03R").innerHTML = geometryMatrixR[12].toFixed(2);
+        document.getElementById("a13R").innerHTML = geometryMatrixR[13].toFixed(2);
+        document.getElementById("a23R").innerHTML = geometryMatrixR[14].toFixed(2);
+        document.getElementById("a33R").innerHTML = geometryMatrixR[15].toFixed(2);
+
+
+
+        // Vertices
+        // ========
+
+        // Create a buffer with three vertices. 
+
+        var PointsCube  = new Float32Array([
+            -5, -5, -5,
+            -5, -5, +5,
+            -5, +5, -5,
+            -5, +5, +5,
+            +5, -5, -5,
+            +5, -5, +5,
+            +5, +5, -5,
+            +5, +5, +5,
+        ]);
+
+        // Chessboard - (Some corners are white AND black.  Need "duplicate" corners.)
+        var PointsChessboard = new Float32Array([
+            // Black squares
+            -6, -6,  0,     -4, -6,  0,     -2, -6,  0,     0, -6,  0,      2, -6,  0,      4, -6,  0,      6, -6,  0,
+            -6, -4,  0,     -4, -4,  0,     -2, -4,  0,     0, -4,  0,      2, -4,  0,      4, -4,  0,      6, -4,  0,
+            -6, -2,  0,     -4, -2,  0,     -2, -2,  0,     0, -2,  0,      2, -2,  0,      4, -2,  0,      6, -2,  0,
+            -6,  0,  0,     -4,  0,  0,     -2,  0,  0,     0,  0,  0,      2,  0,  0,      4,  0,  0,      6,  0,  0,
+            -6,  2,  0,     -4,  2,  0,     -2,  2,  0,     0,  2,  0,      2,  2,  0,      4,  2,  0,      6,  2,  0,
+            -6,  4,  0,     -4,  4,  0,     -2,  4,  0,     0,  4,  0,      2,  4,  0,      4,  4,  0,      6,  4,  0,
+            -6,  6,  0,     -4,  6,  0,     -2,  6,  0,     0,  6,  0,      2,  6,  0,      4,  6,  0,      6,  6,  0,
+
+            // White squares
+            -6, -6,  0,     -4, -6,  0,     -2, -6,  0,     0, -6,  0,      2, -6,  0,      4, -6,  0,      6, -6,  0,
+            -6, -4,  0,     -4, -4,  0,     -2, -4,  0,     0, -4,  0,      2, -4,  0,      4, -4,  0,      6, -4,  0,
+            -6, -2,  0,     -4, -2,  0,     -2, -2,  0,     0, -2,  0,      2, -2,  0,      4, -2,  0,      6, -2,  0,
+            -6,  0,  0,     -4,  0,  0,     -2,  0,  0,     0,  0,  0,      2,  0,  0,      4,  0,  0,      6,  0,  0,
+            -6,  2,  0,     -4,  2,  0,     -2,  2,  0,     0,  2,  0,      2,  2,  0,      4,  2,  0,      6,  2,  0,
+            -6,  4,  0,     -4,  4,  0,     -2,  4,  0,     0,  4,  0,      2,  4,  0,      4,  4,  0,      6,  4,  0,
+            -6,  6,  0,     -4,  6,  0,     -2,  6,  0,     0,  6,  0,      2,  6,  0,      4,  6,  0,      6,  6,  0,
+        ]);
+
+        var Points = PointsChessboard;
+            
+        var bufferL = glL.createBuffer();
+        glL.bindBuffer(glL.ARRAY_BUFFER, bufferL);
+        glL.bufferData(glL.ARRAY_BUFFER, Points, glL.STATIC_DRAW);
+
+        var bufferR = glR.createBuffer();
+        glR.bindBuffer(glR.ARRAY_BUFFER, bufferR);
+        glR.bufferData(glR.ARRAY_BUFFER, Points, glR.STATIC_DRAW);
+
+        // Send the three (x,y,z) triangle coordinates in the buffer to the vertex shader.
+
+        var positionLocationL = glL.getAttribLocation(shaderProgramL, "aVertexPosition");
+        glL.enableVertexAttribArray(positionLocationL);
+        glL.vertexAttribPointer(
+            positionLocationL,  // index of the generic vertex attribute to be modified
+            3,                  // number of components per generic vertex attribute
+            glL.FLOAT,          // type of each data component in the array
+            false,              // whether the fixed point data values should be normalized to -1 to 1 when converted to float
+            0,                  // offset between consecutive generic vertex attributes.  0 means tightly packed
+            0);                 // pointer to the first component of the first vertex attribute in the array
+
+        var positionLocationR = glR.getAttribLocation(shaderProgramR, "aVertexPosition");
+        glR.enableVertexAttribArray(positionLocationR);
+        glR.vertexAttribPointer(
+            positionLocationR,  // index of the generic vertex attribute to be modified
+            3,                  // number of components per generic vertex attribute
+            glR.FLOAT,          // type of each data component in the array
+            false,              // whether the fixed point data values should be normalized to -1 to 1 when converted to float
+            0,                  // offset between consecutive generic vertex attributes.  0 means tightly packed
+            0);                 // pointer to the first component of the first vertex attribute in the array
+
+        // Colors
+        // ======
+
+/*
+        // X=red, Y=green, Z=blue
+        var Colors = new Float32Array([
+                0.0, 0.0, 0.0, 1.0, // black
+                0.0, 0.0, 1.0, 1.0, // blue
+                0.0, 1.0, 0.0, 1.0, // green
+                0.0, 1.0, 1.0, 1.0, // cyan
+                1.0, 0.0, 0.0, 1.0, // red
+                1.0, 0.0, 1.0, 1.0, // magenta
+                1.0, 1.0, 0.0, 1.0, // yellow
+                1.0, 1.0, 1.0, 1.0, // white
+            ]);
+*/
+        // X=red, Y=blue, Z=green (Similar to cardboard color cube)
+        var ColorsCube = new Float32Array([
+                0.0, 0.0, 0.0, 1.0, // black
+                0.0, 1.0, 0.0, 1.0, // green
+                0.0, 0.0, 1.0, 1.0, // blue
+                0.0, 1.0, 1.0, 1.0, // cyan
+                1.0, 0.0, 0.0, 1.0, // red
+                1.0, 1.0, 0.0, 1.0, // yellow
+                1.0, 0.0, 1.0, 1.0, // magenta
+                1.0, 1.0, 1.0, 1.0, // white
+            ]);
+
+        var ColorsChessboard = new Float32Array([
+                // 49 Black Corners
+                0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,
+                0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,
+                0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,
+                0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,
+                0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,
+                0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,
+                0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,    0.0,0.0,0.0,1.0,
+
+                // 49 White Corners
+                1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,
+                1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,
+                1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,
+                1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,
+                1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,
+                1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,
+                1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,    1.0,1.0,1.0,1.0,
+            ]);
+
+        var Colors = ColorsChessboard;
+
+        var colorBufferL = glL.createBuffer();
+        glL.bindBuffer(glL.ARRAY_BUFFER, colorBufferL);
+        glL.bufferData(glL.ARRAY_BUFFER, Colors, glL.STATIC_DRAW);
+
+        var colorBufferR = glR.createBuffer();
+        glR.bindBuffer(glR.ARRAY_BUFFER, colorBufferR);
+        glR.bufferData(glR.ARRAY_BUFFER, Colors, glR.STATIC_DRAW);
+
+        // Pass the colors to GL.
+        var colorLocationL = glL.getAttribLocation(shaderProgramL, "aVertexColor");
+        glL.enableVertexAttribArray(colorLocationL);
+        glL.vertexAttribPointer(colorLocationL, 4, glL.FLOAT, false, 0, 0);
+
+        var colorLocationR = glR.getAttribLocation(shaderProgramR, "aVertexColor");
+        glR.enableVertexAttribArray(colorLocationR);
+        glR.vertexAttribPointer(colorLocationR, 4, glR.FLOAT, false, 0, 0);
+
+        // Index
+        // =====
+
+        var TrianglesCube = new Uint16Array([
+                0, 1, 2,  2, 1, 3, // Left:   black, blue, cyan, green
+                2, 3, 7,  2, 7, 6, // Top:    green, cyan, white, yellow
+                0, 1, 5,  0, 5, 4, // Bottom: black, blue, magenta, red
+                4, 5, 6,  5, 6, 7, // Right:  red, magenta, yellow, white
+                0, 2, 4,  2, 6, 4, // Back:   black, green, red, yellow
+                1, 3, 5,  3, 7, 5, // Front:  blue, cyan, magenta, white
+            ]);
+
+        // 72 Triangles
+        var TrianglesChessboard = new Uint16Array([
+             0, 1, 8,    8, 7, 0,   50,51,58,   58,57,50,    2, 3,10,   10, 9, 2,   52,53,60,   60,59,52,    4, 5,12,   12,11, 4,   54,55,62,   62,61,54,
+            56,57,64,   64,63,56,    8, 9,16,   16,15, 8,   58,59,66,   66,65,58,   10,11,18,   18,17,10,   60,61,68,   68,67,60,   12,13,20,   20,19,12,
+            14,15,22,   22,21,14,   64,65,72,   72,71,64,   16,17,24,   24,23,16,   66,67,74,   74,73,66,   18,19,26,   26,25,18,   68,69,76,   76,75,68,
+            70,71,78,   78,77,70,   22,23,30,   30,29,22,   72,73,80,   80,79,72,   24,25,32,   32,31,24,   74,75,82,   82,81,74,   26,27,34,   34,33,26,
+            28,29,36,   36,35,28,   78,79,86,   86,85,78,   30,31,38,   38,37,30,   80,81,88,   88,87,80,   32,33,40,   40,39,32,   82,83,90,   90,89,82,
+            84,85,92,   92,91,84,   36,37,44,   44,43,36,   86,87,94,   94,93,86,   38,39,46,   46,45,38,   88,89,96,   96,95,88,   40,41,48,   48,47,40,
+        ]);
+
+        var Triangles = TrianglesChessboard;
+
+        var indexBufferL = glL.createBuffer();
+        glL.bindBuffer(glL.ELEMENT_ARRAY_BUFFER, indexBufferL);
+        glL.bufferData(glL.ELEMENT_ARRAY_BUFFER, Triangles, glL.STATIC_DRAW);
+
+        var indexBufferR = glR.createBuffer();
+        glR.bindBuffer(glR.ELEMENT_ARRAY_BUFFER, indexBufferR);
+        glR.bufferData(glR.ELEMENT_ARRAY_BUFFER, Triangles, glR.STATIC_DRAW);
+
+        // Draw
+        // ====
+
+        // Make the background gray.
+
+        // Left
+        //-----
+        glL.clearColor(0.5, 0.5, 0.5, 1.0);
+        glL.clear(glL.COLOR_BUFFER_BIT | glL.DEPTH_BUFFER_BIT);
+
+        glL.enable(glL.DEPTH_TEST);
+
+        glL.drawElements(glL.TRIANGLES, 216, glL.UNSIGNED_SHORT, 0);
+
+        removeShaderProgram(glL);
+        glL.deleteBuffer(bufferL);
+        glL.deleteBuffer(colorBufferL);
+        glL.deleteBuffer(indexBufferL);
+
+        // Right
+        //-----
+        glR.clearColor(0.5, 0.5, 0.5, 1.0);
+        glR.clear(glR.COLOR_BUFFER_BIT | glR.DEPTH_BUFFER_BIT);
+
+        glR.enable(glR.DEPTH_TEST);
+
+        glR.drawElements(glR.TRIANGLES, 216, glR.UNSIGNED_SHORT, 0);
+
+        removeShaderProgram(glR);
+        glR.deleteBuffer(bufferR);
+        glR.deleteBuffer(colorBufferR);
+        glR.deleteBuffer(indexBufferR);
+    }
+
+    function doChange()
+    {
+        var scaleX = parseInt(document.getElementById("scaleX").value);
+        var scaleY = parseInt(document.getElementById("scaleY").value);
+        var scaleZ = parseInt(document.getElementById("scaleZ").value);
+        document.getElementById("scaleTxt").innerHTML =
+            "Scale: " + (scaleX/10) + ", " + (scaleY/10) + ", " + (scaleZ/10);
+
+        var rotateX = parseInt(document.getElementById("rotateX").value);
+        var rotateY = parseInt(document.getElementById("rotateY").value);
+        var rotateZ = parseInt(document.getElementById("rotateZ").value);
+        document.getElementById("rotateTxt").innerHTML =
+            "Rotate: " + (rotateX*5) + ", " + (rotateY*5) + ", " + (rotateZ*5);
+
+        var translateX = parseInt(document.getElementById("translateX").value);
+        var translateY = parseInt(document.getElementById("translateY").value);
+        var translateZ = parseInt(document.getElementById("translateZ").value);
+        document.getElementById("translateTxt").innerHTML =
+            "Translate: " + (translateX) + ", " + (translateY) + ", " + (translateZ);
+
+        var fov = parseInt(document.getElementById("fov").value);
+        document.getElementById("fovTxt").innerHTML =
+            "FOV: " + fov;
+
+        var near = parseInt(document.getElementById("near").value);
+        var far = parseInt(document.getElementById("far").value);
+        document.getElementById("nearfarTxt").innerHTML =
+            "near/far: " + near + "/" + far;
+
+        // Camera LEFT
+        // -----------
+        var translateXL = parseInt(document.getElementById("translateXL").value);
+        var translateYL = parseInt(document.getElementById("translateYL").value);
+        var translateZL = parseInt(document.getElementById("translateZL").value);
+        document.getElementById("translateTxtL").innerHTML =
+            "Translate: " + translateXL + ", " + translateYL + ", " + translateZL;
+
+        var rotateXL = parseInt(document.getElementById("rotateXL").value);
+        var rotateYL = parseInt(document.getElementById("rotateYL").value);
+        var rotateZL = parseInt(document.getElementById("rotateZL").value);
+        document.getElementById("rotateTxtL").innerHTML =
+            "Rotate: " + (rotateXL*5) + ", " + (rotateYL*5) + ", " + (rotateZL*5);
+
+        // Camera RIGHT
+        // ------------
+        var translateXR = parseInt(document.getElementById("translateXR").value);
+        var translateYR = parseInt(document.getElementById("translateYR").value);
+        var translateZR = parseInt(document.getElementById("translateZR").value);
+        document.getElementById("translateTxtR").innerHTML =
+            "Translate: " + translateXR + ", " + translateYR + ", " + translateZR;
+
+        var rotateXR = parseInt(document.getElementById("rotateXR").value);
+        var rotateYR = parseInt(document.getElementById("rotateYR").value);
+        var rotateZR = parseInt(document.getElementById("rotateZR").value);
+        document.getElementById("rotateTxtR").innerHTML =
+            "Rotate: " + (rotateXR*5) + ", " + (rotateYR*5) + ", " + (rotateZR*5);
+
+        webGLStart();
+    }
+</script>
+
+<style>
+td {
+    width: 50px;
+    text-align: right;
+}
+
+.components {
+    margin-right: 20px;
+    float: left;
+}
+
+.components td {
+    width: 40px;
+    text-align: right;
+}
+</style>
+</head>
+<body onload="webGLStart(); doChange();">
+
+    <div style="float: left; margin-right: 20px">
+        <canvas id="myCanvasL" width="640" height="480"></canvas>
+        <div style="margin-top: 20px;">
+            <div class="components">
+                <span id="translateTxtL"></span><br />
+                <input type="range" id="translateXL" min="-20" max="20" onchange="doChange();" oninput="doChange();"><br />
+                <input type="range" id="translateYL" min="-15" max="15" onchange="doChange();" oninput="doChange();"><br />
+                <input type="range" id="translateZL" min="-50" max="50" value="35" onchange="doChange();" oninput="doChange();">
+            </div>
+
+            <div class="components">
+                <span id="rotateTxtL"></span><br />
+                <input type="range" id="rotateXL" min="-36" max="36" onchange="doChange();" oninput="doChange();"><br />
+                <input type="range" id="rotateYL" min="-36" max="36" onchange="doChange();" oninput="doChange();"><br />
+                <input type="range" id="rotateZL" min="-36" max="36" onchange="doChange();" oninput="doChange();">
+            </div>
+            <div style="clear: both"></div>
+
+            <div class="components">
+                <p>Camera Translate Matrix</p>
+                <table>
+                    <tr>
+                        <td id="t00L"></td>
+                        <td id="t01L"></td>
+                        <td id="t02L"></td>
+                        <td id="t03L"></td>
+                    </tr>
+                    <tr>
+                        <td id="t10L"></td>
+                        <td id="t11L"></td>
+                        <td id="t12L"></td>
+                        <td id="t13L"></td>
+                    </tr>
+                    <tr>
+                        <td id="t20L"></td>
+                        <td id="t21L"></td>
+                        <td id="t22L"></td>
+                        <td id="t23L"></td>
+                    </tr>
+                    <tr>
+                        <td id="t30L"></td>
+                        <td id="t31L"></td>
+                        <td id="t32L"></td>
+                        <td id="t33L"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="components">
+                <p>Camera Rotate Matrix</p>
+                <table>
+                    <tr>
+                        <td id="r00L"></td>
+                        <td id="r01L"></td>
+                        <td id="r02L"></td>
+                        <td id="r03L"></td>
+                    </tr>
+                    <tr>
+                        <td id="r10L"></td>
+                        <td id="r11L"></td>
+                        <td id="r12L"></td>
+                        <td id="r13L"></td>
+                    </tr>
+                    <tr>
+                        <td id="r20L"></td>
+                        <td id="r21L"></td>
+                        <td id="r22L"></td>
+                        <td id="r23L"></td>
+                    </tr>
+                    <tr>
+                        <td id="r30L"></td>
+                        <td id="r31L"></td>
+                        <td id="r32L"></td>
+                        <td id="r33L"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="components">
+                <p>4x4 Matrix</p>
+                <table>
+                    <tr>
+                        <td id="a00L"></td>
+                        <td id="a01L"></td>
+                        <td id="a02L"></td>
+                        <td id="a03L"></td>
+                    </tr>
+                    <tr>
+                        <td id="a10L"></td>
+                        <td id="a11L"></td>
+                        <td id="a12L"></td>
+                        <td id="a13L"></td>
+                    </tr>
+                    <tr>
+                        <td id="a20L"></td>
+                        <td id="a21L"></td>
+                        <td id="a22L"></td>
+                        <td id="a23L"></td>
+                    </tr>
+                    <tr>
+                        <td id="a30L"></td>
+                        <td id="a31L"></td>
+                        <td id="a32L"></td>
+                        <td id="a33L"></td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+    </div>
+    
+    <div style="float: left; margin-right: 20px">
+        <canvas id="myCanvasR" width="640" height="480""></canvas>
+        <div style="margin-top: 20px;">
+            <div class="components">
+                <span id="translateTxtR"></span><br />
+                <input type="range" id="translateXR" min="-50" max="50" onchange="doChange();" oninput="doChange();"><br />
+                <input type="range" id="translateYR" min="-50" max="50" onchange="doChange();" oninput="doChange();"><br />
+                <input type="range" id="translateZR" min="-50" max="50" value="35" onchange="doChange();" oninput="doChange();">
+            </div>
+
+            <div class="components">
+                <span id="rotateTxtR"></span><br />
+                <input type="range" id="rotateXR" min="-36" max="36" onchange="doChange();" oninput="doChange();"><br />
+                <input type="range" id="rotateYR" min="-36" max="36" onchange="doChange();" oninput="doChange();"><br />
+                <input type="range" id="rotateZR" min="-36" max="36" onchange="doChange();" oninput="doChange();">
+            </div>
+            <div style="clear: both"></div>
+
+            <div class="components">
+                <p>Camera Translate Matrix</p>
+                <table>
+                    <tr>
+                        <td id="t00R"></td>
+                        <td id="t01R"></td>
+                        <td id="t02R"></td>
+                        <td id="t03R"></td>
+                    </tr>
+                    <tr>
+                        <td id="t10R"></td>
+                        <td id="t11R"></td>
+                        <td id="t12R"></td>
+                        <td id="t13R"></td>
+                    </tr>
+                    <tr>
+                        <td id="t20R"></td>
+                        <td id="t21R"></td>
+                        <td id="t22R"></td>
+                        <td id="t23R"></td>
+                    </tr>
+                    <tr>
+                        <td id="t30R"></td>
+                        <td id="t31R"></td>
+                        <td id="t32R"></td>
+                        <td id="t33R"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="components">
+                <p>Camera Rotate Matrix</p>
+                <table>
+                    <tr>
+                        <td id="r00R"></td>
+                        <td id="r01R"></td>
+                        <td id="r02R"></td>
+                        <td id="r03R"></td>
+                    </tr>
+                    <tr>
+                        <td id="r10R"></td>
+                        <td id="r11R"></td>
+                        <td id="r12R"></td>
+                        <td id="r13R"></td>
+                    </tr>
+                    <tr>
+                        <td id="r20R"></td>
+                        <td id="r21R"></td>
+                        <td id="r22R"></td>
+                        <td id="r23R"></td>
+                    </tr>
+                    <tr>
+                        <td id="r30R"></td>
+                        <td id="r31R"></td>
+                        <td id="r32R"></td>
+                        <td id="r33R"></td>
+                    </tr>
+                </table>
+            </div>
+
+
+            <div class="components">
+                <p>4x4 Matrix</p>
+                <table>
+                    <tr>
+                        <td id="a00R"></td>
+                        <td id="a01R"></td>
+                        <td id="a02R"></td>
+                        <td id="a03R"></td>
+                    </tr>
+                    <tr>
+                        <td id="a10R"></td>
+                        <td id="a11R"></td>
+                        <td id="a12R"></td>
+                        <td id="a13R"></td>
+                    </tr>
+                    <tr>
+                        <td id="a20R"></td>
+                        <td id="a21R"></td>
+                        <td id="a22R"></td>
+                        <td id="a23R"></td>
+                    </tr>
+                    <tr>
+                        <td id="a30R"></td>
+                        <td id="a31R"></td>
+                        <td id="a32R"></td>
+                        <td id="a33R"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div>
+        <div style="margin-bottom: 20px">
+            <span id="scaleTxt"></span><br />
+            <input type="range" id="scaleX" min="0" max="25" value="10" onchange="doChange();" oninput="doChange();"><br />
+            <input type="range" id="scaleY" min="0" max="25" value="10" onchange="doChange();" oninput="doChange();"><br />
+            <input type="range" id="scaleZ" min="0" max="25" value="10" onchange="doChange();" oninput="doChange();">
+        </div>
+
+        <div style="margin-bottom: 20px">
+            <span id="rotateTxt"></span><br />
+            <input type="range" id="rotateX" min="-36" max="36" onchange="doChange();" oninput="doChange();"><br />
+            <input type="range" id="rotateY" min="-36" max="36" onchange="doChange();" oninput="doChange();"><br />
+            <input type="range" id="rotateZ" min="-36" max="36" onchange="doChange();" oninput="doChange();">
+        </div>
+
+        <div style="margin-bottom: 20px">
+            <span id="translateTxt"></span><br />
+            <input type="range" id="translateX" min="-20" max="20" onchange="doChange();" oninput="doChange();"><br />
+            <input type="range" id="translateY" min="-15" max="15" onchange="doChange();" oninput="doChange();"><br />
+            <input type="range" id="translateZ" min="-20" max="20" onchange="doChange();" oninput="doChange();">
+        </div>
+
+        <div style="margin-bottom: 10px">
+            <input type="radio" name="mattype" id="ortho" onchange="doChange();">Ortho
+            <input type="radio" name="mattype" id="persp" onchange="doChange();" checked>Persp
+        </div>
+        <div style="margin-bottom: 0px">
+            <span id="fovTxt">FOV:</span><br />
+            <input type="range" id="fov" min="30" max="60" onchange="doChange();" oninput="doChange();"><br />
+            <span id="nearfarTxt">near/far:</span><br />
+            <input type="range" id="near" min="0" max="50" onchange="doChange();" oninput="doChange();"><br />
+            <input type="range" id="far" min="25" max="75" onchange="doChange();" oninput="doChange();"><br />
+        </div>
+    </div>
+    <div style="clear: both; height: 1px"></div>
+
+    <div style="float:left; margin-right: 20px">
+        <div class="components">
+            <p>Projection Matrix</p>
+            <table>
+                <tr>
+                    <td id="p00"></td>
+                    <td id="p01"></td>
+                    <td id="p02"></td>
+                    <td id="p03"></td>
+                </tr>
+                <tr>
+                    <td id="p10"></td>
+                    <td id="p11"></td>
+                    <td id="p12"></td>
+                    <td id="p13"></td>
+                </tr>
+                <tr>
+                    <td id="p20"></td>
+                    <td id="p21"></td>
+                    <td id="p22"></td>
+                    <td id="p23"></td>
+                </tr>
+                <tr>
+                    <td id="p30"></td>
+                    <td id="p31"></td>
+                    <td id="p32"></td>
+                    <td id="p33"></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="components">
+            <p>Object Translate Matrix</p>
+            <table>
+                <tr>
+                    <td id="t00"></td>
+                    <td id="t01"></td>
+                    <td id="t02"></td>
+                    <td id="t03"></td>
+                </tr>
+                <tr>
+                    <td id="t10"></td>
+                    <td id="t11"></td>
+                    <td id="t12"></td>
+                    <td id="t13"></td>
+                </tr>
+                <tr>
+                    <td id="t20"></td>
+                    <td id="t21"></td>
+                    <td id="t22"></td>
+                    <td id="t23"></td>
+                </tr>
+                <tr>
+                    <td id="t30"></td>
+                    <td id="t31"></td>
+                    <td id="t32"></td>
+                    <td id="t33"></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="components">
+            <p>Object Rotate Matrix</p>
+            <table>
+                <tr>
+                    <td id="r00"></td>
+                    <td id="r01"></td>
+                    <td id="r02"></td>
+                    <td id="r03"></td>
+                </tr>
+                <tr>
+                    <td id="r10"></td>
+                    <td id="r11"></td>
+                    <td id="r12"></td>
+                    <td id="r13"></td>
+                </tr>
+                <tr>
+                    <td id="r20"></td>
+                    <td id="r21"></td>
+                    <td id="r22"></td>
+                    <td id="r23"></td>
+                </tr>
+                <tr>
+                    <td id="r30"></td>
+                    <td id="r31"></td>
+                    <td id="r32"></td>
+                    <td id="r33"></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="components">
+            <p>Object Scale Matrix</p>
+            <table>
+                <tr>
+                    <td id="s00"></td>
+                    <td id="s01"></td>
+                    <td id="s02"></td>
+                    <td id="s03"></td>
+                </tr>
+                <tr>
+                    <td id="s10"></td>
+                    <td id="s11"></td>
+                    <td id="s12"></td>
+                    <td id="s13"></td>
+                </tr>
+                <tr>
+                    <td id="s20"></td>
+                    <td id="s21"></td>
+                    <td id="s22"></td>
+                    <td id="s23"></td>
+                </tr>
+                <tr>
+                    <td id="s30"></td>
+                    <td id="s31"></td>
+                    <td id="s32"></td>
+                    <td id="s33"></td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+</body>
+</html>

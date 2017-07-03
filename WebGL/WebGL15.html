@@ -1,0 +1,210 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WebGL15 - Stencil Buffer</title>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+attribute vec2 aVertexPosition;
+
+varying vec4 vVertexColor;
+
+void main(void) {
+    gl_Position = vec4(aVertexPosition, 0, 1);
+
+    vVertexColor = vec4(1.0, 0.0, 0.0, 1.0);
+}
+</script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+precision mediump float;
+
+varying vec4 vVertexColor;
+
+void main(void) {
+    gl_FragColor = vVertexColor;
+}
+</script>
+
+
+<script src="WebGLTools.js"></script>
+
+<script type="text/javascript">
+    var gl;
+
+    function webGLStart() {
+        var canvas = document.getElementById("myCanvas");
+
+        // Without {stencil: true}, gl.getParameter(gl.STENCIL_TEST) = 0,
+        // i.e. no stencil buffer is present.
+        gl = canvas.getContext("experimental-webgl", {stencil: true});
+
+        // Shaders
+        // =======
+        // Use a common library to load the vertex and fragment (pixel)
+        // shaders into a program.  The ids must be as named above.
+
+        var shaderProgram = loadShaderProgram(gl);
+        gl.useProgram(shaderProgram);
+
+        // Vertices - stencil
+        // ========
+
+        var stencilBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, stencilBuffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                -1.0, -1.0,
+                +1.0, -1.0,
+                 0.0, +1.0,
+            ]),
+            gl.STATIC_DRAW);
+
+        var positionLocation = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+        // Draw - stencil
+        // ====
+
+        // Draw a triangle into the stencil buffer.
+        gl.enable(gl.STENCIL_TEST);
+
+        // Make the color buffer read-only.  Turn off each of R, G, B, A for writing.
+        // We want to write to the stencil buffer instead.
+        gl.colorMask(false, false, false, false);
+
+        // Cause the stencil test to fail, independent of the value in the buffer.
+        // Below we specify what to do if the test fails, i.e. REPLACE the value
+        // in the stencil buffer.  The replacement value is the second parameter
+        // to stencilFunc.  
+        // The comparison value is used as the 
+        gl.stencilFunc(
+            gl.NEVER,       // Comparison function for the stencil test.
+            64,             // Comparison value for the stencil test.
+            0xff);          // Mask that is ANDed with the bits in the stencil buffer.
+
+        // What to do with the values in the stencil buffer when different
+        // tests pass or fail.  REPLACE means to set the stencil value to
+        // the "ref" value (the second parameter) of stencilFunc.
+        gl.stencilOp(
+            gl.REPLACE,     // If stencil test fails.
+            gl.REPLACE,     // If stencil test passes, but z-test fails.
+            gl.REPLACE);    // If stencil test passes, and z-test passes.
+
+        // Assuming 8-bits in the stencil mask, enable all bits for writing.
+        gl.stencilMask(0xff);
+
+        // The value to put in the stencil buffer when cleared.  The maximum
+        // value depends on the number m of stencil buffer bits [0, 2^m-1].
+        // The default value is 0.
+        gl.clearStencil(0);
+
+        // Fill the stencil buffer with 0's.  StencilMask needs to be 1's
+        // to be writeable.
+        gl.clear(gl.STENCIL_BUFFER_BIT);
+
+        // Whatever is drawn by the triangle geometry is placed in the stencil buffer.
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+        // Show some info. in the log.
+        console.log("gl.STENCIL_TEST = " + gl.getParameter(gl.STENCIL_TEST));
+        console.log("gl.STENCIL_BITS = " + gl.getParameter(gl.STENCIL_BITS));
+        console.log("gl.DEPTH_BITS = " + gl.getParameter(gl.DEPTH_BITS));
+
+        // Vertices - entire canvas
+        // ========
+
+        // Try to draw to the entire color buffer.  The triangle put into the stencil
+        // buffer above will limit us to drawing a triangle.
+        canvasBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, canvasBuffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                -1.0, -1.0,
+                -1.0, +1.0,
+                +1.0, -1.0,
+                +1.0, +1.0,
+            ]),
+            gl.STATIC_DRAW);
+
+        var positionLocation = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+        // Draw - entire canvas
+        // ====
+
+        // Turn the color buffer back on.  Note: gl.TRUE and gl.FALSE are not defined?
+        gl.colorMask(true, true, true, true);
+
+        // Turn off writing to the stencil buffer.
+        gl.stencilMask(0);
+
+        // The stencil test passes and the color buffer is written if the value in the
+        // stencil buffer is equal to the ref value.  Try changing to NOTEQUAL.
+        gl.stencilFunc(gl.EQUAL, 64, 0xff);
+
+        // Make the background gray.
+
+        gl.clearColor(0.5, 0.5, 0.5, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+
+        // Cleanup
+        // =======
+
+        removeShaderProgram(gl);
+        gl.deleteBuffer(stencilBuffer);
+        gl.deleteBuffer(canvasBuffer);
+    }
+</script>
+
+</head>
+<body onload="webGLStart();">
+
+    <canvas id="myCanvas" width="640" height="480"></canvas>
+
+    <div style="width: 640px">
+        
+        <p>
+            OpenGL ES 2.0 provides a mechanism known as a stencil buffer to control whether or
+            not the color buffer is updated.  Importantly, the values in the stencil buffer do
+            not directly interact with the values int the color buffer.  Instead, the stencil buffer
+            contains a value and when drawing occurs the per-pixel value in the stencil buffer is
+            compared to determine whether or not the color is processed.  When retrieving a GL
+            context, you must specify {stencil: true} for GL to allocate a stencil buffer.  Then
+            it is enabled using gl.enable(gl.STENCIL_TEST);
+        </p>    
+
+        <p>
+            Thus, two passes are generally used: 1) populate the stencil buffer, 2) draw image
+            data dependent on the values in the stencil buffer.
+        </p>
+
+        <p>
+            First, we address how to put values in the stencil buffer.  The entire buffer can
+            be set to a single value using the common clear technique, in this case clearStencil(val)
+            clears to the value val which is on the range of 0 to 2^m-1 for an m-bit stencil buffer.
+            The call clear(STENCIL_BUFFER_BIT); causes the actual clear.  Note that all of the bits
+            must be made allowable for writing, caused be stencilMask(mask) where mask is all 1's.
+        </p>
+
+        <p>
+            At a local level, the stencil buffer positions that are written to are controlled by
+            specifying drawing geometry as when drawing to the color buffer.  First, turn off writing
+            to the color buffer by calling gl.colorMask(false, false, false, false);  Open GL allows
+            specification of what to do to the stencil buffer in the event that the stencil test fails,
+            such as replace the value of the stencil buffer or to interact with and modifiy the value
+            of the stencil buffer.  Further, we can define the nature of the test, including to
+            cause the test to NEVER pass.  The simplest technique is then to call stencilOp(REPLACE,
+            REPLACE, REPLACE) to cause the stencil value at each pixel to be replaced, then call stencilFunc(NEVER,
+            val, ff...) with the value val that we want to put in the stencil buffer by artifically
+            causing the stencil test to fail.
+        </p>
+    </div>
+</body>
+</html>

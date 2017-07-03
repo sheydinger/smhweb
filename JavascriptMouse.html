@@ -1,0 +1,50 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Javascript Mouse</title>
+
+<script type="text/javascript">
+
+    function doOnClick() {
+        console.log("onclick");
+    }
+
+    function doOnDblClick() {
+        console.log("ondblclick");
+    }
+    
+    function doOnMouseDown() {
+        console.log("onmousedown");
+    }
+    
+    function doOnMouseMove(e) {
+        console.log("onmousemove " + e.clientX + "," + e.clientY + " " + e.screenX + "," + e.screenY);
+    }
+    
+    function doOnMouseOver(e) {
+        console.log("onmouseover " + e.clientX + "," + e.clientY + " " + e.screenX + "," + e.screenY);
+    }
+    
+    function doOnMouseOut() {
+        console.log("onmouseout");
+    }
+    
+    function doOnMouseUp() {
+        console.log("onmouseup");
+    }
+</script>
+
+</head>
+<body>
+
+    <div style="background-color: gray; width: 640px; height: 480px"
+            onclick="doOnClick();"
+            ondblclick="doOnDblClick();"
+            onmousedown="doOnMouseDown();"
+            onmousemove="doOnMouseMove(event);"
+            onmouseover="doOnMouseOver(event);"
+            onmouseout="doOnMouseOut();"
+            onmouseup="doOnMouseUp();">Look at this page in FireFox and watch the web console.</div>
+
+</body>
+</html>

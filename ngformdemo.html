@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en" ng-app="myApp">
+    <head>
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js"></script>
+
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    </head>
+
+    <body ng-controller="myController">
+
+        <style>
+            /* Form elements are automatically either valid or invalid */
+            .ng-invalid { background-color: lightpink; }
+            .ng-valid   { background-color: lightgreen; }
+            span.error  { color: red; }
+        </style>
+
+        <!-- Use novalidate to cause Angular to do validation, not HTML -->
+        <div class="container">
+            <form name="myForm" novalidate>
+
+                <div class="row">
+                <div class="col-md-3">
+
+                <div class="form-group">
+                    <label>Name</label>
+                    <input name="name" class="form-control" ng-model="data.name" required />
+                    <span class="error" ng-show="myForm.name.$error.required">Required</span>
+                </div>
+
+                <div class="checkbox">
+                    <label>
+                        <input name="thecheckbox" type="checkbox" ng-model="data.thecheck" />Check me!
+                    </label>
+                </div>
+                <div class="text-center">
+                    <button class="btn btn-primary" ng-disabled="myForm.$invalid" ng-click="doDone(data)">Done</button>
+                </div>
+
+                </div>
+                </div>
+
+            </form>
+        </div>
+
+        <script type="text/javascript">
+            var myAppModule = angular.module("myApp", []);
+
+            myAppModule.config(function() {
+            });
+
+            myAppModule.controller("myController", function($scope) {
+
+                $scope.doDone = function(thedata) {
+                    console.log("thedata " + thedata.name + " " + thedata.thecheck);
+
+                    // Should use routing to go to a complete page.
+                }
+
+            });
+
+        </script>
+    </body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>A simple font size web page demo</title>
+
+<style type="text/css">
+
+* {
+    color: black;   /* Make all text black */
+}
+
+body {
+    background-color: silver;
+}
+
+</style>
+</head>
+
+<body>
+
+    <h1>A browser has a default font size</h1>
+    <p>To change the efault font size:</p>
+    <ul>
+        <li>Firefox: Tools -> Options, Content.  Change the default font size (FF is 16).</li>
+        <li>Chrome: Settings -> Show Advanced Settings, Web Content: Font Size (default is 16).</li>
+        <li>Internet Explorer: Tools -> Internet Options, Accessibility, "Ignore font styles specified on web page", b) View -> Text size (pick one).</li>
+    </ul>
+
+    <p id="plaintext">This is just text.  Here is an 'm'.  Be sure to refresh the page if changing the browser font-size.  Chnage
+    the default font size and not which types change (%, em) and which don't (pt, px).</p>
+    <script>
+        var el = document.getElementById('plaintext');
+        var style = window.getComputedStyle(el, null).getPropertyValue('font-size');
+        var fontSize = parseFloat(style);
+        document.writeln("The browser font-size is " + (fontSize) + " px.");
+    </script>
+
+    <hr />
+
+    <h1>By %</h1>
+    <p id="text150pct" style="font-size: 150%">I'm 150% text.</p>
+    <script>
+        var el = document.getElementById('text150pct');
+        var style = window.getComputedStyle(el, null).getPropertyValue('font-size');
+        var fontSize = parseFloat(style);
+        document.writeln("<p style='font-size: 16px'>The font-size is " + (fontSize) + " px.</p>");
+    </script>
+
+    <hr />
+
+    <h1>By pt</h1>
+    <p id="text18pt" style="font-size: 18pt">I'm 18pt text.</p>
+    <script>
+        var el = document.getElementById('text18pt');
+        var style = window.getComputedStyle(el, null).getPropertyValue('font-size');
+        var fontSize = parseFloat(style);
+        document.writeln("<p style='font-size: 16px'>The font-size is " + (fontSize) + " px.</p>");
+    </script>
+    
+    <hr />
+
+    <h1>By em</h1>
+    <p id="text15em" style="font-size: 1.5em">I'm 1.5em text.</p>
+    <script>
+        var el = document.getElementById('text15em');
+        var style = window.getComputedStyle(el, null).getPropertyValue('font-size');
+        var fontSize = parseFloat(style);
+        document.writeln("<p style='font-size: 16px'>The font-size is " + (fontSize) + " px.</p>");
+    </script>
+    
+    <hr />
+    
+    <h1>By px</h1>
+    <p id="text24px" style="font-size: 24px">I'm 24px text.</p>
+    <script>
+        var el = document.getElementById('text24px');
+        var style = window.getComputedStyle(el, null).getPropertyValue('font-size');
+        var fontSize = parseFloat(style);
+        document.writeln("<p style='font-size: 16px'>The font-size is " + (fontSize) + " px.</p>");
+    </script>
+
+</body>
+</html>

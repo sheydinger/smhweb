@@ -1,0 +1,113 @@
+<html>
+<head>
+<title>WebGLState</title>
+
+<script type="text/javascript">
+    var gl;
+    
+    function isEnabled() {
+        // The default capabilities are all gl.FALSE, except for
+        // gl.DITHER which is set to gl.TRUE
+        if (gl.isEnabled(gl.BLEND)) {
+            document.getElementById("blend").innerHTML = "gl.BLEND - <span style='color: green'>enabled</span>";
+        } else {
+            document.getElementById("blend").innerHTML = "gl.BLEND - <span style='color: red'>disabled</span>";
+        }
+
+        if (gl.isEnabled(gl.CULL_FACE)) {
+            document.getElementById("cullface").innerHTML = "gl.CULL_FACE - <span style='color: green'>enabled</span>";
+        } else {
+            document.getElementById("cullface").innerHTML = "gl.CULL_FACE - <span style='color: red'>disabled</span>";
+        }
+
+        if (gl.isEnabled(gl.DEPTH_TEST)) {
+            document.getElementById("depthtest").innerHTML = "gl.DEPTH_TEST - <span style='color: green'>enabled</span>";
+        } else {
+            document.getElementById("depthtest").innerHTML = "gl.DEPTH_TEST - <span style='color: red'>disabled</span>";
+        }
+
+        if (gl.isEnabled(gl.DITHER)) {
+            document.getElementById("dither").innerHTML = "gl.DITHER - <span style='color: green'>enabled</span>";
+        } else {
+            document.getElementById("dither").innerHTML = "gl.DITHER - <span style='color: red'>disabled</span>";
+        }
+
+        if (gl.isEnabled(gl.POLYGON_OFFSET_FILL)) {
+            document.getElementById("polygonoffsetfill").innerHTML = "gl.POLYGON_OFFSET_FILL - <span style='color: green'>enabled</span>";
+        } else {
+            document.getElementById("polygonoffsetfill").innerHTML = "gl.POLYGON_OFFSET_FILL - <span style='color: red'>disabled</span>";
+        }
+
+        if (gl.isEnabled(gl.GL_SAMPLE_ALPHA_TO_COVERAGE)) {
+            document.getElementById("samplealphatocoverage").innerHTML = "gl.GL_SAMPLE_ALPHA_TO_COVERAGE - <span style='color: green'>enabled</span>";
+        } else {
+            document.getElementById("samplealphatocoverage").innerHTML = "gl.GL_SAMPLE_ALPHA_TO_COVERAGE - <span style='color: red'>disabled</span>";
+        }
+
+        if (gl.isEnabled(gl.SAMPLE_COVERAGE)) {
+            document.getElementById("samplecoverage").innerHTML = "gl.SAMPLE_COVERAGE - <span style='color: green'>enabled</span>";
+        } else {
+            document.getElementById("samplecoverage").innerHTML = "gl.SAMPLE_COVERAGE - <span style='color: red'>disabled</span>";
+        }
+
+        if (gl.isEnabled(gl.GL_SCISSOR_TEST)) {
+            document.getElementById("scissortest").innerHTML = "gl.SCISSOR_TEST - <span style='color: green'>enabled</span>";
+        } else {
+            document.getElementById("scissortest").innerHTML = "gl.SCISSOR_TEST - <span style='color: red'>disabled</span>";
+        }
+
+        if (gl.isEnabled(gl.STENCIL_TEST)) {
+            document.getElementById("stenciltest").innerHTML = "gl.STENCIL_TEST - <span style='color: green'>enabled</span>";
+        } else {
+            document.getElementById("stenciltest").innerHTML = "gl.STENCIL_TEST - <span style='color: red'>disabled</span>";
+        }
+    }
+
+    function webGLStart() {
+        var canvas = document.getElementById("myCanvas");
+        gl = canvas.getContext("experimental-webgl");
+        
+        isEnabled();
+    }
+
+    function Enable(which) {
+        if (gl.isEnabled(which)) {
+            gl.disable(which)
+        } else {
+            gl.enable(which);
+        }
+
+        isEnabled();
+    }
+</script>
+
+</head>
+<body onload="webGLStart();">
+
+    <canvas id="myCanvas" width="320" height="240" style="background-color: gray"></canvas>
+
+    <h2>gl.isEnabled()</h2>
+    <ul>
+    <li id="blend"></li>
+    <li id="cullface"></li>
+    <li id="depthtest"></li>
+    <li id="dither"></li>
+    <li id="polygonoffsetfill"></li>
+    <li id="samplealphatocoverage"></li>
+    <li id="samplecoverage"></li>
+    <li id="scissortest"></li>
+    <li id="stenciltest"></li>
+    </ul>
+    
+    <h2>gl.enable() / gl.disable()</h2>
+    <input type="button" value="gl.BLEND" onClick="Enable(gl.BLEND);" />
+    <input type="button" value="gl.CULL_FACE" onClick="Enable(gl.CULL_FACE);" />
+    <input type="button" value="gl.DEPTH_TEST" onClick="Enable(gl.DEPTH_TEST);" />
+    <input type="button" value="gl.DITHER" onClick="Enable(gl.DITHER);" />
+    <input type="button" value="gl.POLYGON_OFFSET_FILL" onClick="Enable(gl.POLYGON_OFFSET_FILL);" />
+    <input type="button" value="gl.SAMPLE_ALPHA_TO_COVERAGE" onClick="Enable(gl.SAMPLE_ALPHA_TO_COVERAGE);" />
+    <input type="button" value="gl.SAMPLE_COVERAGE" onClick="Enable(gl.SAMPLE_COVERAGE);" />
+    <input type="button" value="gl.SCISSOR_TEST" onClick="Enable(gl.SCISSOR_TEST);" />
+    <input type="button" value="gl.STENCIL_TEST" onClick="Enable(gl.STENCIL_TEST);" />
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>A simple responsive web page demo</title>
+
+<!-- Do this for Apple so that iOS won't automatically scale to fit. -->
+<meta name="viewport" content="width=device-width; initial-scale=1.0">
+  
+<style type="text/css">
+
+* {
+    margin: 0 auto;
+    padding: 0;
+}
+
+body {
+}
+
+#container {
+    background-color: #e0e0e0;
+    width: 960px;
+}
+
+.col2 {
+    width: 50%;
+    float: left;
+    background-image: url('checkerboardred.jpg');
+    text-align: justify;
+}
+
+.col3 {
+    width: 33.333333333333%;
+    float: left;
+    background-color: #fff0f0;
+    text-align: justify;
+}
+
+@media screen and (max-width: 960px) {
+    body {
+        font-size: 0.8em;
+    }
+  
+    #container {
+        margin: 5px;
+        width: auto;
+    }
+
+    .col2 {
+        background-image: url('checkerboardgreen.jpg');
+    }
+
+    .col3 {
+        background-color: #f0fff0;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    body {
+        font-size: 0.7em;
+    }
+
+    #container {
+        margin: 15px;
+        width: auto;
+    }
+  
+    .col2 {
+        margin-top: 5px;
+        background-image: url('checkerboardblue.jpg');
+        width: auto;
+        float: none;
+    }
+
+    .col3 {
+        margin-top: 5px;
+        background-color: #f0f0ff;
+        width: auto;
+        float: none;
+    }
+}
+
+.row {
+    margin-top: 25px;
+}
+
+.myinfo {
+    padding: 10px;
+    border: dashed 1px #000000;
+}
+
+p {
+    background-color: red;
+}
+
+img {
+    max-width: 100%;
+    pdading-bottom: 0;
+}
+</style>
+
+<!-- something below crashes the Android browser! -->
+<!--
+<script type="text/javascript">
+    window.onresize = function(event) {
+        document.getElementById('theSize').innerHTML=
+            'screen.width = ' + screen.width + '   height = ' + screen.height + '<br />' +
+            'screen.availWidth = ' + screen.availWidth + '   availHeight = ' + screen.availHeight + '<br />' +
+            'window.innerWidth = ' + window.innerWidth + '   innerHeight = ' + window.innerHeight + '<br />' +
+            'document.body.clientWidth = ' + document.body.clientWidth + '   clientHeight = ' + document.body.clientHeight + '<br />'
+            ;
+    }
+</script>
+-->
+
+</head>
+<body>
+    <div id="theSize">(No size info yet)</div>
+
+    <div id="container">
+
+        <div class="row">
+            <div class="col2">
+                <div class="myinfo">
+                    left column 1 of 2.
+                </div>
+            </div>
+            <div class="col2">
+                <div class="myinfo">
+                    right column 2 of 2.
+                </div>
+            </div>
+        </div>
+        <div style="clear: both; height: 0px;"></div>
+
+        <div class="row">
+            <div class="col3" style="">
+                <div class="myinfo">
+                    left column 1 of 3.<br />
+                    "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+                </div>
+            </div>
+            <div class="col3">
+                <div class="myinfo">
+                    middle column 2 of 3.
+                </div>
+                <img src="scalable_background.jpg" />
+            </div>
+            <div class="col3">
+                <div class="myinfo">
+                    right column 3 of 3.
+                </div>
+            </div>
+        </div>
+        <div style="clear: both; height: 0px;"></div>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!doctype html>
+<html ng-app="myApp" lang="en">
+    <head>
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js"></script>
+
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+        <script type="text/javascript">
+            var myAppModule = angular.module("myApp", []);
+
+            myAppModule.constant("jsonLocation", "kids.json");
+
+/*
+            myAppModule.run(function($http, jsonLocation) {
+                $http.get(jsonLocation)
+                .success(function(data) {
+                    console.log("Successfully read JSON file " + jsonLocation);
+                    myData.family.kids = data;
+                    console.log("myData = " + myData);
+                })
+                .error(function(data, status, message) {
+                    console.log("Failed to read JSON file");
+                    console.log("  data=" + data);
+                    console.log("  status=" + status);
+                    console.log("  message=" + message);
+//                    console.log("  headers=" + headers("x"));
+                })
+            });
+*/
+
+            var myData =
+            {
+                family: {
+                    id: "Smith038",
+                    name: "Smith",
+                    guardians: [
+                        { name: "Dick Smith", cell: "867-5309", email: "dsmith@myjob.com" },
+                        { name: "Jane Smith", cell: "867-5309", email: "jsmith@gmail.com" }
+                    ],
+/*
+                    // Note: In the JSON file the words "name", "gender", and "birthdate"
+                    // must be in quotes for the JSON parser to work.
+                    kids: [
+                        { name: "Annie Smith", gender: true, birthdate: 1288323623006 },
+                        { name: "Katie Smith", gender: true, birthdate: 1288323623006 },
+                        { name: "Johnny Smith", gender: false, birthdate: 1288323623006 }
+                    ],
+*/
+                    phone: "867-5309",
+                },
+
+                types: [
+                    { id: "eng", pref: true, name: "Engineering", count: 0 },
+                    { id: "phy", pref: true, name: "Physics", count: 0 },
+                    { id: "art", pref: false, name: "Art", count: 0 },
+                    { id: "dan", pref: true, name: "Dancing", count: 0 }
+                ],
+
+                providers: [
+                    { id: "293", pref: true, name: "Newton's Attic" },
+                    { id: "894", pref: true, name: "Kentucky Science Center" },
+                    { id: "736", pref: true, name: "Parks & Recreation" },
+                ],
+
+                camps: [
+                    { id: "10016", providerid: "293", types: ["eng", "phy"], name: "Robotics", agelo: 8, agehi: 16, price: 100},
+                    { id: "10023", providerid: "736", types: ["art"], name: "Arts in the Park", agelo: 5, agehi: 9, price: 120},
+                    { id: "10024", providerid: "736", types: ["art"], name: "Arts in the Park Middle School", agelo: 11, agehi: 14, price: 100.3}
+                ]
+            }
+
+
+            myAppModule.controller("myController", function ($scope, $http, jsonLocation)
+            {
+                $scope.model = myData;
+
+                // Set to true upon success, false upon failure.
+                $scope.httpSuccess = false;
+
+                $http.get(jsonLocation)
+                    .success(function(data, status) {
+                        $scope.httpSuccess = true;
+                        console.log("Successfully read JSON file " + jsonLocation);
+                        console.log("httpSuccess=" + $scope.httpSuccess);
+                        myData.family.kids = data;
+                        console.log("  data=" + data);
+                        console.log("  status=" + status);
+                    })
+                    .error(function(data, status) {
+                        $scope.httpSuccess = false;
+                        console.log("Failed to read JSON file");
+                        console.log("  data=" + data);
+                        console.log("  status=" + status);
+                    });
+
+                // For each camp type, determine the number of camps offered.
+                $scope.countTypes = function() {
+                    var count = 0;
+
+                    // Reset
+                    angular.forEach($scope.model.types, function(type) {
+                        type.count = 0;
+                    });
+
+                    // Loop slowest through all camps.
+                    angular.forEach($scope.model.camps, function(camp) {
+
+                        // Check if this camp has at least one preferred type.
+                        var flag = false; // For each camp, see if it fits at least one type.
+
+                        // Loop next through all of the types in this camp.
+                        angular.forEach(camp.types, function (camptype) {
+
+                            // Search through the list of all type to increment the correct one.
+                            angular.forEach($scope.model.types, function(type) {
+
+                                if (type.id == camptype) {
+                                    type.count++;
+                                    if (type.pref == true) {
+                                        flag = true;
+                                    }
+                                }
+                            });
+                        });
+
+                        // If this camp has at least one type, increment count.
+                        if (flag) {
+                            count++;
+                        }
+                    });
+
+                    return count;
+                };
+
+                $scope.addNewCamp = function(newCamp) {
+                    console.log("New Camp: " + newCamp.name);
+                    $scope.model.camps.push({
+                        id: "10000",
+                        name: newCamp.name
+                    });
+                }
+
+                $scope.addCamper = function(newCamper) {
+                    console.log("New Camper: " + newCamper);
+                    $scope.model.family.kids.push({
+                        name: newCamper
+                    });
+                }
+
+                // Return the name of a class.  Could be label-default, label-primary,
+                // label-success, label-info, label-warning, label-danger.  Should
+                // depend on something rather than be hardcoded.
+                $scope.getColor = function() {
+                    return "label-info";
+                }
+                
+                // These need to be explicitly add to the model and initialized here,
+                // otherwise the first call to the filter has them as "undefined".  This
+                // also causes the checkboxes to be checked by default.
+                $scope.showGirls = true;
+                $scope.showBoys = true;
+            });
+
+            // Filter out the desired genders.  Apparently, the order kids, showBoys and
+            // showGirls is automatic.
+            myAppModule.filter("genderFilter", function() {
+                return function (kidList, boys, girls) {
+                    console.log("Filtering kids by gender: boys=" + boys + " girls=" + girls);
+                    var resultArray = [];
+                    angular.forEach(kidList, function(kid) {
+                        if ((kid.gender && girls) || (!kid.gender && boys)) {
+                            resultArray.push(kid);
+                        }
+                    });
+                    return resultArray;
+                }
+            });
+
+        </script>
+
+    </head>
+    <body ng-controller="myController">
+
+        <div class="container">
+
+            <div class="navbar">
+                <a class="navbar-brand navbar-inverse" href="#">CAMP FINDER</a>
+            </div>
+
+            <div class="page-header">
+                <h1>Welcome {{ model.family.name }} family</h1>
+            </div>
+
+            {{ model.family.id }} {{ model.family.guardians.length }} {{ model.family.guardians[0] }}
+
+            <h2>Campers</h2>
+
+            <div>
+                <label class="checkbox-inline"><input type="checkbox" ng-model="showBoys"> Show Boys</label>
+                <label class="checkbox-inline"><input type="checkbox" ng-model="showGirls"> Show Girls</label>
+            </div>
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Birthdate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="kid in model.family.kids | genderFilter:showBoys:showGirls | orderBy:'name' ">
+                        <td >{{ kid.name }}</td>
+                        <td >{{ kid.gender ? "Girl" : "Boy" }}</td>
+                        <td >{{ kid.birthdate | date: "MM/dd/yyyy" }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="alert alert-danger" ng-hide="httpSuccess">
+                <p>Error: No camper information found.</p>
+            </div>
+
+            <div class="input-group col-sm-4">
+                <input class="form-control" ng-model="newCamper" />
+                <span class="input-group-btn">
+                    <button class="btn btn-default" ng-click="addCamper(newCamper)">Add</button>
+                </span>
+            </div>
+
+            <div>
+                <h2>Camp Types <span class="label label-default" ng-class="getColor()" ng-hide="countTypes() == 0">{{ countTypes() }}</span>
+                </h2>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Preference</th>
+                            <th>Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="type in model.types">
+                            <td >{{ type.name }}</td>
+                            <td><input type="checkbox" ng-model="type.pref"</td>
+                            <td>{{ type.count }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>Camps</h2>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Name</th>
+                            <th>Age Range</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="camp in model.camps">
+                            <td>Provided by</td>
+                            <td>{{ camp.name }}</td>
+                            <td>{{ camp.agelo + "-" + camp.agehi }}</td>
+                            <td>{{ camp.price | currency }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            
+                <h3>Add Camp</h3>
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Provider</label>
+                        <div class="col-sm-4">
+                            <p class="form-control-static">Parks & Recreation</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">Title</label>
+                        <div class="col-sm-3">
+                            <input type="email" class="form-control" id="inputEmail3">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">Minimum Age</label>
+                        <div class="col-sm-1">
+                            <input type="email" class="form-control" id="inputEmail3">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">Maximum Age</label>
+                        <div class="col-sm-1">
+                            <input type="email" class="form-control" id="inputEmail3">
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+
+        </div> <!-- container -->
+
+        <script type="text/javascript">
+            var dt = new Date(2014, 11, 27, 0, 0, 0, 0);
+            document.writeln(dt.toDateString());
+        </script>
+    </body>
+</html>

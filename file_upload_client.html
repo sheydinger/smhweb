@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Upload a file using POST</title>
+</head>
+<body>
+
+<p>See <a href="http://www.w3schools.com/php/php_file_upload.asp">W3Schools PHP File Upload</a></p>
+<form action="file_upload_server.php" method="post" enctype="multipart/form-data">
+    <label for="file">Filename:</label>
+    <input type="file" name="file" id="file"><br>
+    <input type="submit" name="submit" value="Submit">
+    <input type="hidden" name="ThisIsHiddenName" value="ThisIsHiddenValue">
+</form>
+
+</body>
+</html> 

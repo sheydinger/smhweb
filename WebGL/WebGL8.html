@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WebGL8 - Texture Blur</title>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+// These are sent in through buffers and vary per vertex.
+attribute vec3 aVertexPosition;
+
+// An interpolated texture coordinate.  Pass it on to the vertex shader.
+attribute vec2 aTexCoordinate;
+varying   vec2 vTexCoordinate;
+
+void main(void) {
+    // At a minimum, a vertex shader must set gl_position.
+    // The position has four values (x,y,z) and and appended w=1.
+    gl_Position = vec4(aVertexPosition, 1);
+
+    // Pass the texture coordinate to the fragment shader.
+    vTexCoordinate = aTexCoordinate;
+}
+</script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+// Take this out and get "No precision specified for (float)".
+precision mediump float;
+
+// From the vertex shader.
+varying vec2 vTexCoordinate;
+
+// This is the texture.
+uniform sampler2D theImage;
+
+// The size of the texture in pixels.
+uniform vec2 uTextureSize;
+
+void main(void) {
+    vec2 onePixel = vec2(1.0, 1.0) / uTextureSize;
+
+    // Use the coordinates from the vertex shader to pick a point from the texture.
+    gl_FragColor = ((texture2D(theImage, vTexCoordinate) +
+                     texture2D(theImage, vTexCoordinate + onePixel) + 
+                     texture2D(theImage, vTexCoordinate - onePixel))) / 3.0;
+
+//    gl_FragColor = texture2D(theImage, vTexCoordinate);
+}
+</script>
+
+
+<script src="WebGLTools.js"></script>
+
+<script type="text/javascript">
+
+    function getImage() {
+        var theImage = new Image();
+
+        // Wait until the image is loaded to begin the GL stuff.
+        theImage.onload = function() {
+            console.log("Image loaded.");
+            webGLStart(theImage);
+        }
+
+        theImage.onerror = function() {
+            console.log("Failed to load image.");
+        }
+
+        // This should be AFTER setting the onload callback.
+        theImage.src = "MI6_2048x2048.jpg";
+    }
+
+    function webGLStart(theImage) {
+        var canvas = document.getElementById("myCanvas");
+        var gl = canvas.getContext("experimental-webgl");
+
+        // Shaders
+        // =======
+        // Use a common library to load the vertex and fragment (pixel)
+        // shaders into a program.  The ids must be as named above.
+
+        var shaderProgram = loadShaderProgram(gl);
+        gl.useProgram(shaderProgram);
+
+        // Vertices
+        // ========
+
+        // Create a buffer with three vertices.  The numbers must be
+        // in the range of -1.0 to +1.0.  Make a TRIANGLE.
+
+        var buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                -1.0, -1.0, 0.0,
+                -1.0, +1.0, 0.0,
+                +1.0, +1.0, 0.0,
+
+                -1.0, -1.0, 0.0,
+                +1.0, -1.0, 0.0,
+                +1.0, +1.0, 0.0
+            ]),
+            gl.STATIC_DRAW);
+
+        // Send the three (x,y,z) triangle coordinates in the buffer to the vertex shader.
+
+        var positionLocation = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(
+            positionLocation,   // index of the generic vertex attribute to be modified
+            3,                  // number of components per generic vertex attribute
+            gl.FLOAT,           // type of each data component in the array
+            false,              // whether the fixed point data values should be normalized to -1 to 1 when converted to float
+            0,                  // offset between consecutive generic vertex attributes.  0 means tightly packed
+            0);                 // pointer to the first component of the first vertex attribute in the array
+
+        // Textures
+        // ========
+
+        var textureBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                0.0, 1.0,
+                0.0, 0.0,
+                1.0, 0.0,
+                0.0, 1.0,
+                1.0, 1.0,
+                1.0, 0.0
+            ]),
+            gl.STATIC_DRAW);
+
+        var textureLocation = gl.getAttribLocation(shaderProgram, "aTexCoordinate");
+        gl.enableVertexAttribArray(textureLocation);
+        gl.vertexAttribPointer(
+            textureLocation,    // index of the generic vertex attribute to be modified
+            2,                  // number of components per generic vertex attribute
+            gl.FLOAT,           // type of each data component in the array
+            false,              // whether the fixed point data values should be normalized to -1 to 1 when converted to float
+            0,                  // offset between consecutive generic vertex attributes.  0 means tightly packed
+            0);                 // pointer to the first component of the first vertex attribute in the array
+
+        // Pass the texture size to the fragment shader.
+        var textureSizeLocation = gl.getUniformLocation(shaderProgram, "uTextureSize");
+        gl.uniform2f(textureSizeLocation, 2048, 2048);
+
+        // Create Texture
+        // ==============
+
+        var texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+
+        gl.texImage2D(
+            gl.TEXTURE_2D,          // A 2-D, as opposed to cube, texture.
+            0,                      // Mip level, where 0 is the base.
+            gl.RGBA,
+            gl.RGBA,
+            gl.UNSIGNED_BYTE,
+            theImage);
+
+        // See https://www.opengl.org/wiki/Common_Mistakes#Automatic_mipmap_generation
+        // to get the proper order of function calls.  Do this BEFORE texParameter().
+        gl.generateMipmap(gl.TEXTURE_2D);
+
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+        // Draw
+        // ====
+
+        // Make the background magenta.
+        gl.clearColor(1.0, 0.0, 1.0, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+        removeShaderProgram(gl);
+        gl.deleteBuffer(buffer);
+        gl.deleteBuffer(textureBuffer);
+        gl.deleteTexture(texture);
+    }
+</script>
+
+</head>
+<body onload="getImage();">
+
+    <canvas id="myCanvas" width="512" height="512"></canvas>
+
+</body>
+</html>

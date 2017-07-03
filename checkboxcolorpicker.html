@@ -1,0 +1,124 @@
+<html>
+<head>
+  <!-- Standard Meta -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Checkbox Font Awesome</title>
+  <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+
+<script>
+$(document).ready(function() {
+
+    $('input').click(function() {
+        console.log('checked' + " " + this.checked + " " + this.id + " " + this.value + " " + this.name);
+    });
+});
+</script>
+  
+<style>
+    
+@import url(https://netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css);
+/*         https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css  */
+
+body {
+    background-color: #eee;
+}
+
+.radio {
+    position: relative;
+    background-color: #fee;
+}
+
+input[type=radio] {
+    position: absolute;
+    left: -9999px
+}
+
+input[type=radio] ~ label:before {
+    font-family: FontAwesome;
+    content: "\f10c";
+    padding-right: 0.5em;
+}
+
+input[type=radio]:checked ~ label:before {
+    content: "\f111";
+}
+
+.cc353green ~ label:before {
+    color: #7dbb00;
+}
+
+.cc353magenta ~ label:before {
+    color: #d93197;
+}
+
+.cc353blue ~ label:before {
+    color: #029be9;
+}
+
+.cc353orange ~ label:before {
+    color: #fa5f22;
+}
+
+.cc353yellow ~ label:before {
+    color: #febb00;
+}
+
+</style>
+
+
+</head>
+<body style="margin: 100px">
+
+    <div class="radio">
+        <input type="radio" id="cc535grn" class="cc353green" name="cc535" value="7dbb00" />
+        <label for="cc535grn">7dbb00</label>
+    </div>
+
+    <div class="radio">
+        <input type="radio" id="cc535mag" class="cc353magenta" name="cc535" value="d93197" checked="checked" />
+        <label for="cc535mag">d93197</label>
+    </div>
+
+    <div class="radio">
+        <input type="radio" id="cc535blu" class="cc353blue" name="cc535" value="029be9" />
+        <label for="cc535blu">029be9</label>
+    </div>
+
+    <div class="radio">
+        <input type="radio" id="cc535ora" class="cc353orange" name="cc535" value="fa5f22" />
+        <label for="cc535ora">fa5f22</label>
+    </div>
+
+    <div class="radio">
+        <input type="radio" id="cc535yel" class="cc353yellow" name="cc535" value="febb00" />
+        <label for="cc535yel">febb00</label>
+    </div>
+
+    
+<!--    
+        <input type="radio" id="cc535grn" class="cc353green" name="cc535" value="7dbb00" />
+        <label for="cc535grn">7dbb00</label>
+
+        <input type="radio" id="cc535mag" class="cc353magenta" name="cc535" value="d93197" checked="checked" />
+        <label for="cc535mag">d93197</label>
+
+        <input type="radio" id="cc535blu" class="cc353blue" name="cc535" value="029be9" />
+        <label for="cc535blu">029be9</label>
+
+        <input type="radio" id="cc535ora" class="cc353orange" name="cc535" value="fa5f22" />
+        <label for="cc535ora">fa5f22</label>
+
+        <input type="radio" id="cc535yel" class="cc353yellow" name="cc535" value="febb00" />
+        <label for="cc535yel">febb00</label>
+-->
+    
+    <p>Trick: Control the spacing between the circles and the label text via padding: right on label:before.</p>
+    
+</body>
+</html>
+
+
+

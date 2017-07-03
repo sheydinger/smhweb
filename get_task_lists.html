@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd" >
+<html>
+<head>
+    <script>
+        function auth() {
+            var config = {
+                'client_id': '61273843281-rvu24no1is4eqg7j0qbto5929tb27oh8.apps.googleusercontent.com',
+//                'client_id': '662159824355-ja64kgl2ud17vfppvh4rtdpf8q5adsh4.apps.googleusercontent.com',
+                'scope': 'https://www.googleapis.com/auth/tasks'
+            };
+
+            gapi.auth.authorize(config, function(token) {
+                console.log('login complete');
+                console.log(gapi.auth.getToken());
+                console.log("access_token: " + token.access_token);
+                console.log("error:        " + token.error);
+                console.log("expires_in:   " + token.expires_in);
+                console.log("state:        " + token.state);
+
+                task_REST();
+            });
+            
+            // Don't put this here! It will likely get called before gapi.auth.authorize() completes!
+            // task_REST();
+        }
+    </script>
+    <script>
+        // JSON_RPC
+        function task_JSON_RPC() {
+            gapi.client.load('tasks', 'v1', function() {
+
+                // For a list of what can appear as METHOD_NAME in gapi.client.{METHOD_NAME}
+                //    see https://developers.google.com/apis-explorer/#p/tasks/v1/
+                var request = gapi.client.tasks.tasklists.list();
+                console.log("request");
+                console.log(request);
+
+                request.execute(function(response) {
+                    console.log("response");
+                    console.log(response);
+                });
+
+            });
+        }
+    </script>
+    <script>
+        // REST uses gapi.client.request
+        function task_REST() {
+            gapi.client.load('tasks', 'v1', function() {
+
+                // See
+                // https://developers.google.com/api-client-library/javascript/reference/referencedocs#gapiclientrequest
+                // https://developers.google.com/google-apps/tasks/v1/reference/tasklists/list
+                var request = gapi.client.request({
+                    'path': '/tasks/v1/users/@me/lists'
+                });
+                console.log("request");
+                console.log(request);
+
+                request.execute(function(response) {
+                    console.log("response");
+                    console.log(response);
+                });
+
+            });
+        }
+    </script>
+    
+    <!-- This must be down here, below the declaration of auth(). -->
+    <script src="https://apis.google.com/js/client.js?onload=auth"></script>
+</head>
+
+<body>
+    
+    <h1>Using the Google JavaScript API Library to access the Tasks API</h1>
+    <h2>Background</h2>
+    <p>This page shows how to call a Google API by using the
+    <a href="https://developers.google.com/api-client-library/javascript/">Google
+    APIs Client Library for JavaScript</a> to retrieve a list of Google
+    Tasks task lists.  Note that it includes buttons to call the authentication
+    and Google Tasks APIs directly, but also uses onload=auth to execute the
+    functionality automatically on page load rather than make the user take
+    the steps manually.</p>
+    
+    <p><button onclick="auth();">Authorize</button></p>
+    <p><button onclick="task_JSON_RPC();">Tasks Lists (JSON-RPC)</button></p>
+    <p><button onclick="task_REST();">Tasks Lists (REST)</button></p>
+</body>
+</html>

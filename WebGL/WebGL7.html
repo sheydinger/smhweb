@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WebGL7 - Framebuffer with Texture</title>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+// These are sent in through buffers and vary per vertex.
+attribute vec3 aVertexPosition;
+
+varying vec2 vTexCoordinate;
+
+void main(void) {
+    // At a minimum, a vertex shader must set gl_position.
+    // The position has four values (x,y,z) and and appended w=1.
+    gl_Position = vec4(aVertexPosition, 1);
+    
+    // The drawing range is -1 to +1.  Texture boundaries are 0 to +1.
+    vTexCoordinate = aVertexPosition.xy * 0.5 + 0.5;
+}
+</script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+// Take this out and get "No precision specified for (float)".
+precision mediump float;
+
+uniform sampler2D texture;
+
+varying vec2 vTexCoordinate;
+
+void main(void) {
+    // At a minimum, a fragment shader must set gl_FragColor.
+    gl_FragColor = texture2D(texture, vTexCoordinate);
+}
+</script>
+
+<script src="WebGLTools.js"></script>
+
+<script type="text/javascript">
+    // Call this to check the framebuffer status at multiple times.
+    function checkFramebufferStatus(gl, prelude) {
+
+        // OPTIONAL: Check the framebuffer status.
+        var status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+        switch (status)
+        {
+            case gl.FRAMEBUFFER_COMPLETE:
+                console.log(prelude + " checkFrameBufferStatus() = FRAMEBUFFER_COMPLETE");
+                break;
+            case gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+                console.log(prelude + " checkFrameBufferStatus() = FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
+                break;
+            case gl.FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT :
+                console.log(prelude + " checkFrameBufferStatus() = FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT ");
+                break;
+            case gl.FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
+                console.log(prelude + " checkFrameBufferStatus() = FRAMEBUFFER_INCOMPLETE_DIMENSIONS");
+                break;
+            case gl.FRAMEBUFFER_UNSUPPORTED:
+                console.log(prelude + " checkFrameBufferStatus() = FRAMEBUFFER_UNSUPPORTED");
+                break;
+            default:
+                console.log(prelude + " checkFrameBufferStatus() = " + status);
+                break;
+        }
+    }
+
+    function webGLStart() {
+        var canvas = document.getElementById("myCanvas");
+        var gl = canvas.getContext("experimental-webgl");
+
+        // Shaders
+        // =======
+        // Use a common library to load the vertex and fragment (pixel)
+        // shaders into a program.  The ids must be as named above.
+
+        var shaderProgram = loadShaderProgram(gl);
+        gl.useProgram(shaderProgram);
+
+        // Frame Buffer
+        // ============
+
+        // createFramebuffer is specific to WebGL.  In OpenGL ES 2.0, genFramebuffers()
+        // is standard.  In WebGL we only create one (hence singular).
+        var framebuffer = gl.createFramebuffer();
+
+        // OPTIONAL:  Is this a Framebuffer object?  Returns false if the object's
+        // invalidated flag is set.  Here, result = false.
+        console.log("(1) isFramebuffer() = " + gl.isFramebuffer(framebuffer));
+
+        // Write to our custom frame buffer instead of the default.  It
+        // won't be visible.  Make ours the current Framebuffer object.
+        // Draw to our frame buffer instead of the screen!
+        gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+
+        // OPTIONAL:  Is this a Framebuffer object?  After binding, result = true.
+        console.log("(2) isFramebuffer() = " + gl.isFramebuffer(framebuffer));
+
+        // A frame buffer doesn't "have" memory allocated by default.  Instead,
+        // we create a texture and use the texture memory for the frame buffer.
+        // This texture is NOT used in the same manner as loading a texture
+        // from a JPG file.  Instead, it is where the rendered content goes.
+
+        // Create a texture to be used as an offscreen color buffer.
+        var texture = gl.createTexture();
+
+        // The texture must be bound in order to operate on it.
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+
+        // Now that the texture is bound to a particular texture target, next
+        // we "load" the image data (actually, the last parameter is null so
+        // that the image is generated, not read from file).
+        gl.texImage2D(
+            gl.TEXTURE_2D,          // A 2-D, as opposed to cube, texture.
+            0,                      // Mip level, where 0 is the base.
+            gl.RGBA,                // Internal format of the storage.
+            640, 480,               // Width and height, in pixels.
+            0,                      // Border, ignored in GL ES, should be 0.
+            gl.RGBA,                // Format of the incoming data, must match the internal format.
+            gl.UNSIGNED_BYTE,       // Type of the incoming pixel data.
+            null);                  // Width * Height pixel data, or null to create dynamically.
+
+        // Don't need TEXTURE_MAG_FILTER since minimizing.
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        
+        // OPTIONAL: Without a texture, result = FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT.
+        checkFramebufferStatus(gl, "(a)");
+
+        // Attach the texture to the framebuffer as a color buffer.
+        gl.framebufferTexture2D(
+            gl.FRAMEBUFFER,         // Must be FRAMEBUFFER.
+            gl.COLOR_ATTACHMENT0,   // A color (COLOR_ATTACHMENT0) or depth (DEPTH_ATTACHMENT) buffer.
+            gl.TEXTURE_2D,          // The texture target (equal to 1st arg of texImage2D)
+            texture,                // The texture object.
+            0);                     // The mip-level.
+
+        // OPTIONAL: Now good, result = FRAMEBUFFER_COMPLETE.
+        checkFramebufferStatus(gl, "(b)");
+
+        // Vertices
+        // ========
+
+        // Create a buffer with three vertices.  The numbers must be
+        // in the range of -1.0 to +1.0.
+
+        var buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                -1.0, -1.0, 0.0,
+                +1.0, -1.0, 0.0,
+                 0.0, +1.0, 0.0,
+            ]),
+            gl.STATIC_DRAW);
+
+        // Send the three (x,y,z) triangle coordinates in the buffer to the vertex shader.
+
+        var positionLocation = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(
+            positionLocation,   // index of the generic vertex attribute to be modified
+            3,                  // number of components per generic vertex attribute
+            gl.FLOAT,           // type of each data component in the array
+            false,              // whether the fixed point data values should be normalized to -1 to 1 when converted to float
+            0,                  // offset between consecutive generic vertex attributes.  0 means tightly packed
+            0);                 // pointer to the first component of the first vertex attribute in the array
+
+        // Draw
+        // ====
+
+        // Make the background magenta.  This doesn't "draw" through
+        // the shaders.  It just sets the entire texture to a solid color.
+        // If we see magenta later we know it came from the texture.  The
+        // results are written to a texture here, not the screen.
+        gl.clearColor(1.0, 0.0, 1.0, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        // Unbind the frame buffer.  Further drawing is to the screen.
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+        // Make the background yellow and draw a triangle using
+        // the shaders.  The fragment shader should read from the
+        // previously drawn texture, which is magenta.
+        gl.clearColor(1.0, 1.0, 0.0, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+        // Need to clean up!
+        gl.deleteBuffer(buffer);
+        gl.deleteFramebuffer(framebuffer);
+        gl.deleteTexture(texture);
+
+        // Call the program helper library to delete the shaders and program.
+        removeShaderProgram(gl);
+
+        console.log("Done!");
+    }
+</script>
+
+</head>
+<body onload="webGLStart();">
+
+    <canvas id="myCanvas" width="640" height="480"></canvas>
+
+    <p>Create a Framebuffer, attach a texture, and draw magenta to the texture offscreen.</p>
+    <p>Then, draw using the texture to see that it was originally written to offscreen.</p>
+</body>
+</html>
+
+
+
+
+
+
+

@@ -1,0 +1,116 @@
+/* From HTML5 Doctor CSS reset */
+html, body, div, span, 
+blockquote, pre,
+img, b, i, dl, dt, dd, ol, ul, li,
+table, caption, tbody, tfoot, thead, tr, th, td
+{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    background: transparent;
+}
+
+body {
+    line-height:1.5em;
+}
+
+a {
+    margin: 0;
+    padding: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    background: transparent;
+}
+
+table {
+    border-collapse:collapse;
+    border-spacing:0;
+}
+/* end reset */
+
+
+
+body {
+    background: #fffff;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    color: #757E82;
+}
+
+h1, h2, h3, h4 {
+    color: #AA2808;
+}
+
+h1, h2, h3, h4, hr {
+    color: #AA2808;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+h2 {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+h3 {
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+h4 {
+    margin-bottom: 5px;
+}
+
+p, blockquote, ul, ol {
+    margin-bottom: 15px;
+    line-height: 1.5em;
+}
+
+form {
+    margin-bottom: 20px
+}
+
+hr {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+ul {
+    margin-left: 30px;
+}
+
+.entry  {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+textarea {
+    resize: none;
+}
+
+input {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+table {
+    border-collapse:collapse;
+    margin-bottom: 20px;
+}
+
+td, th {
+    padding:3px 7px 2px 7px;
+    border:1px solid #98bf21;
+}
+
+#page {
+    width: 960px;
+    margin: 0 auto;
+    background: #f0f0f0;
+    padding: 20px 10px 200px 10px;
+}

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Responsive Navbar Demo</title>
+
+    <!-- Do this for Apple so that iOS won't automatically scale to fit. -->
+    <!--meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/-->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<style type="text/css">
+/* From HTML5 Doctor CSS reset */
+html, body, div, span, 
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+img, b, i, dl, dt, dd, ol, ul, li,
+table, caption, tbody, tfoot, thead, tr, th, td
+{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    background: transparent;
+}
+
+body {
+
+    line-height:1.5em;
+}
+
+a {
+    margin:0;
+    padding:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+
+table {
+    border-collapse:collapse;
+    border-spacing:0;
+}
+/* end reset */
+
+
+
+body {
+    background: url(grachecker.jpg);
+}
+
+#wrapper
+{
+    width: 960px;
+    background-color: white;
+    margin: 0 auto;
+}
+
+#banner
+{
+    width: 960px;
+    height: 200px;
+    background: url(cyachecker.jpg);
+}
+
+#navbar_960 ul, #navbar_768 ul, #navbar_480 ul, #navbar_320 ul {
+    list-style: none;
+}
+
+#navbar_768, #navbar_320, #navbar_480 {
+    display: none;
+}
+
+#navbar_960 {
+    display: block;
+    height: 60px;
+}
+
+
+#navbar_960 ul {
+}
+
+#navbar_960 li {
+    float: left;
+    margin: 130px 0px 0px 40px;
+}
+
+#navbar_960 a {
+    height: 60px;
+    display: block;
+}
+
+.nav_960 a {
+    width: 160px;
+    background: url("navbardemo.jpg") -10px -10px;
+}
+
+.nav_960 a:hover, .nav_960 a:active { 
+    background: url("navbardemo.jpg") -10px -70px;
+}
+
+
+@media only screen and (min-width: 768px) and (max-width: 959px) {
+
+    #navbar_960, #navbar_320, #navbar_480 {
+        display: none;
+    }
+
+    #navbar_768 {
+        display: block;
+        height: 40px;    
+    }
+
+    #wrapper
+    {
+        width: 768px;
+    }
+    
+    #banner
+    {
+        width: 768px;
+        height: 160px;
+        background: url(magchecker.jpg);
+    }
+
+    #navbar_768 ul {
+    }
+    
+    #navbar_768 li {
+        float: left;
+        margin: 110px 0px 0px 20px;
+    }
+    
+    #navbar_768 a {
+        height: 40px;
+        display: block;
+    }
+    
+    .nav_768 a {
+        width: 120px;
+        background: url("navbardemo.jpg") -170px -10px;
+    }
+    
+    .nav_768 a:hover, .nav_768 a:active { 
+        background: url("navbardemo.jpg") -170px -70px;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+
+    #navbar_960, #navbar_768, #navbar_480 {
+        display: none;
+    }
+
+    #navbar_320 {
+        display: block;
+        margin: 10px 10px 10px 10px; 
+    }
+
+    #wrapper
+    {
+        width: 320px;
+    }
+    
+    #banner
+    {
+        width: 320px;
+        height: 135px;
+        background: url(grnchecker.jpg);
+    }
+
+    #navbar_320 ul {
+        background: url(bluchecker.jpg);
+    }
+    
+    #navbar_320 li {
+        margin-top: 20px;
+    }
+    
+    #navbar_320 a {
+        height: 60px;
+        display: block;
+    }
+    
+    .nav_320 a {
+        width: 140px;
+        background: url("navbardemo.jpg") -170px -10px;
+    }
+    
+    .nav_320 a:hover, .nav_320 a:active { 
+        background: url("navbardemo.jpg") -170px -70px;
+    }
+}
+
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+
+    #navbar_960, #navbar_768, #navbar_320 {
+        display: none;
+    }
+
+    #navbar_480 {
+        display: block;
+        margin: 10px 10px 10px 10px; 
+    }
+
+    #wrapper
+    {
+        width: 480px;
+    }
+
+    #banner
+    {
+        width: 480px;
+        height: 200px;
+        background: url(redchecker.jpg);
+    }
+
+    #navbar_480 ul {
+        background: url(bluchecker.jpg);
+    }
+    
+    #navbar_480 li {
+        margin-top: 20px;
+    }
+    
+    #navbar_480 a {
+        height: 60px;
+        display: block;
+    }
+    
+    .nav_480 a {
+        width: 160px;
+        background: url("navbardemo.jpg") -330px -10px;
+    }
+    
+    .nav_480 a:hover, .nav_320 a:active { 
+        background: url("navbardemo.jpg") -330px -70px;
+    }
+}
+</style>
+</head>
+<body>
+<div id="wrapper">
+
+    <div id="box"></div>
+
+    <div id="banner">
+        <div id="navbar_768">
+	    <ul>
+		<li><div class="nav_768"><a href="http://www.yahoo.com">a 768</a></div></li>
+		<li><div class="nav_768"><a href="http://www.yahoo.com">b 768</a></div></li>
+		<li><div class="nav_768"><a href="http://www.yahoo.com">c 768</a></div></li>
+	    </ul>
+        </div>
+	<div id="navbar_960">
+	    <ul>
+		<li><div class="nav_960"><a href="http://www.yahoo.com">a 960</a></div></li>
+		<li><div class="nav_960"><a href="http://www.yahoo.com">b 960</a></div></li>
+		<li><div class="nav_960"><a href="http://www.yahoo.com">c 960</a></div></li>
+	    </ul>
+	</div>
+	<div style="clear: both; height: 0px;"></div>
+    </div>
+
+    <div id="content">
+        <p>This web page includes a responsive navigation bar which changes to buttons.
+        Try resizing your browser!</p>
+
+        <div id="navbar_320">
+	    <ul>
+		<li><div class="nav_320"><a href="http://www.yahoo.com">a 320</a></div></li>
+		<li><div class="nav_320"><a href="http://www.yahoo.com">b 320</a></div></li>
+		<li><div class="nav_320"><a href="http://www.yahoo.com">c 320</a></div></li>
+	    </ul>
+        </div>
+        <div id="navbar_480">
+	    <ul>
+		<li><div class="nav_480"><a href="http://www.yahoo.com">a 480</a></div></li>
+		<li><div class="nav_480"><a href="http://www.yahoo.com">b 480</a></div></li>
+		<li><div class="nav_480"><a href="http://www.yahoo.com">c 480</a></div></li>
+	    </ul>
+        </div>
+
+        <p>There you have it!</p>
+    </div>
+</div>
+</body>
+</html>

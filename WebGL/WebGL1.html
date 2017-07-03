@@ -1,0 +1,107 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WebGL1 - Simple Triangle</title>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+// These are sent in through buffers and vary per vertex.
+attribute vec2 aVertexPosition;
+
+void main(void) {
+    // At a minimum, a vertex shader must set gl_position.
+    // The position has four values (x,y,z) and an appended w=1.
+    gl_Position = vec4(aVertexPosition, 0, 1);
+}
+</script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+// Take this out and get "No precision specified for (float)".
+precision mediump float;
+
+void main(void) {
+    // At a minimum, a fragment shader must set gl_FragColor.
+    // Make the vertices green, alpha=1.
+    gl_FragColor = vec4(0, 1, 0, 1);
+}
+</script>
+
+
+<script src="WebGLTools.js"></script>
+
+<script type="text/javascript">
+    var gl;
+
+    function webGLStart() {
+        var canvas = document.getElementById("myCanvas");
+        gl = canvas.getContext("experimental-webgl");
+
+        // Shaders
+        // =======
+        // Use a common library to load the vertex and fragment (pixel)
+        // shaders into a program.  The ids must be as named above.
+
+        var shaderProgram = loadShaderProgram(gl);
+        gl.useProgram(shaderProgram);
+
+        // Vertices
+        // ========
+
+        // Create a buffer with three vertices.  The numbers must be
+        // in the range of -1.0 to +1.0.
+
+        var buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                -1.0, -1.0,
+                +1.0, -1.0,
+                 0.0, +1.0,
+            ]),
+            gl.STATIC_DRAW);
+
+        // Send the three (x,y) triangle coordinates in the buffer to the vertex shader.
+
+        // Find out where the aVertexPosition connection to the program is made.
+        var positionLocation = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+
+        // Specify the use of vertex array vertex attribute (enabled) instead of
+        // a constant vertex array attribute (disabled).
+        gl.enableVertexAttribArray(positionLocation);
+
+        // When using a vertex array vertex attribute, we specify data for each vertex,
+        // in contrast to a constant vertex attribute that applies to all vertices of
+        // a primitive.  A constant vertex attribute is specified via vertexAttrib().
+        gl.vertexAttribPointer(
+            positionLocation,   // index of the generic vertex attribute to be modified
+            2,                  // number of components per generic vertex attribute
+            gl.FLOAT,           // type of each data component in the array
+            false,              // whether the fixed point data values should be normalized to -1 to 1 when converted to float
+            0,                  // offset between consecutive generic vertex attributes.  0 means tightly packed
+            0);                 // pointer to the first component of the first vertex attribute in the array
+
+        // Draw
+        // ====
+
+        // Make the background magenta.  clear() sets the color to the color
+        // specified via clearColor().
+        gl.clearColor(1.0, 0.0, 1.0, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+        // Cleanup
+        // =======
+
+        removeShaderProgram(gl);
+        gl.deleteBuffer(buffer);
+    }
+</script>
+
+</head>
+<body onload="webGLStart();">
+
+    <canvas id="myCanvas" width="640" height="480"></canvas>
+
+</body>
+</html>

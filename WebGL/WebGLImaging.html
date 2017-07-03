@@ -1,0 +1,249 @@
+<html>
+<head>
+<title>WebGL - Imaging</title>
+
+<script id="vertexShader" type="x-shader/x-vertex">
+attribute vec2 aVertexPosition;
+
+varying   vec2 vTexCoordinate;
+
+void main(void) {
+    gl_Position = vec4(aVertexPosition, 0, 1);
+
+    // Flip y, but not x.
+    vTexCoordinate = vec2(0.0, 1.0) - vec2(-1.0, 1.0) * (aVertexPosition * 0.5 + 0.5);
+}
+</script>
+
+
+<script id="originalImageFragment" type="x-shader/x-fragment">
+precision mediump float;
+
+varying vec2 vTexCoordinate;
+
+uniform vec2 uDimensions;
+uniform sampler2D theImage;
+
+void main(void) {
+    vec2 onePixel = vec2(0.0, 0.0) / uDimensions;
+
+    gl_FragColor = texture2D(theImage, vTexCoordinate);
+}
+</script>
+
+
+
+<script id="blurFragment" type="x-shader/x-fragment">
+precision mediump float;
+
+varying vec2 vTexCoordinate;
+
+uniform vec2 uDimensions;
+uniform sampler2D theImage;
+
+void main(void) {
+
+    vec3 sum = vec3(0.0, 0.0, 0.0);
+
+    vec2 right = vec2(1.0, 0.0) / uDimensions;
+    vec2 down  = vec2(0.0, 1.0) / uDimensions;
+
+    sum += texture2D(theImage, vTexCoordinate - right - down).rgb;
+    sum += texture2D(theImage, vTexCoordinate         - down).rgb;
+    sum += texture2D(theImage, vTexCoordinate + right - down).rgb;
+
+    sum += texture2D(theImage, vTexCoordinate - right       ).rgb;
+    sum += texture2D(theImage, vTexCoordinate               ).rgb;
+    sum += texture2D(theImage, vTexCoordinate + right       ).rgb;
+
+    sum += texture2D(theImage, vTexCoordinate - right + down).rgb;
+    sum += texture2D(theImage, vTexCoordinate         + down).rgb;
+    sum += texture2D(theImage, vTexCoordinate + right + down).rgb;
+
+    sum /= (9.0, 9.0, 9.0);
+    
+    gl_FragColor = vec4(sum, 1.0);
+}
+</script>
+
+
+
+<script id="inverseFragment" type="x-shader/x-fragment">
+precision mediump float;
+
+varying vec2 vTexCoordinate;
+
+uniform vec2 uDimensions;
+uniform sampler2D theImage;
+
+void main(void) {
+    vec3 rgb = texture2D(theImage, vTexCoordinate).rgb;
+    vec3 inv = vec3(1.0, 1.0, 1.0) - rgb;
+
+    gl_FragColor = vec4(inv, 1);
+}
+</script>
+
+
+
+<script id="edgeFragment" type="x-shader/x-fragment">
+precision mediump float;
+
+varying vec2 vTexCoordinate;
+
+uniform vec2 uDimensions;
+uniform sampler2D theImage;
+
+void main(void) {
+
+    vec2 right = vec2(1.0, 0.0) / uDimensions;
+
+    vec3 rgbThis  = texture2D(theImage, vTexCoordinate).rgb;
+    vec3 rgbRight = texture2D(theImage, vTexCoordinate + right).rgb;
+
+    vec3 diff  = vec3(5.0, 5.0, 5.0) * (rgbThis - rgbRight);
+    
+    diff = abs(diff);
+    
+    gl_FragColor = vec4(diff, 1.0);
+}
+</script>
+
+
+
+<script src="loadShaderProgram.js"></script>
+
+<script type="text/javascript">
+    var gl;
+    
+    var theImage;
+
+    function getImage() {
+        theImage = new Image();
+
+        // Wait until the image is loaded to begin the GL stuff.
+        theImage.onload = function() {
+            console.log("Image loaded.");
+            webGLStart(theImage);
+        }
+
+        theImage.onerror = function() {
+            console.log("Failed to load image.");
+        }
+
+        // This should be AFTER setting the onload callback.
+//        theImage.src = "rgby.jpg";
+        theImage.src = "MI6_512x512.jpg";
+    }
+
+    function originalImage()
+    {
+        var shaderProgram = loadShaderProgramById(gl, "vertexShader", "originalImageFragment");
+        gl.useProgram(shaderProgram);
+
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+
+    function inverse()
+    {
+        var shaderProgram = loadShaderProgramById(gl, "vertexShader", "inverseFragment");
+        gl.useProgram(shaderProgram);
+
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+
+    function blurIt()
+    {
+        var shaderProgram = loadShaderProgramById(gl, "vertexShader", "blurFragment");
+        gl.useProgram(shaderProgram);
+
+        dimensionsLocation = gl.getUniformLocation(shaderProgram, "uDimensions");
+        gl.uniform2f(dimensionsLocation, 512, 512);
+
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+
+    function edge()
+    {
+        var shaderProgram = loadShaderProgramById(gl, "vertexShader", "edgeFragment");
+        gl.useProgram(shaderProgram);
+
+        dimensionsLocation = gl.getUniformLocation(shaderProgram, "uDimensions");
+        gl.uniform2f(dimensionsLocation, 512, 512);
+
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+
+    function webGLStart(theImage) {
+        var canvas = document.getElementById("myCanvas");
+        gl = canvas.getContext("experimental-webgl");
+
+        // Shaders
+        // =======
+        // Use a common library to load the vertex and fragment (pixel)
+        // shaders into a program.  The ids must be as named above.
+
+        var shaderProgram = loadShaderProgramById(gl, "vertexShader", "originalImageFragment");
+        gl.useProgram(shaderProgram);
+
+        // Vertices
+        // ========
+
+        // Create a buffer with three vertices.  The numbers must be
+        // in the range of -1.0 to +1.0.  Make a TRIANGLE.
+
+        var buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                -1.0, -1.0,
+                +1.0, -1.0,
+                -1.0, +1.0,
+                +1.0, +1.0
+            ]),
+            gl.STATIC_DRAW);
+
+        var positionLocation = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(
+            positionLocation,   // index of the generic vertex attribute to be modified
+            2,                  // number of components per generic vertex attribute
+            gl.FLOAT,           // type of each data component in the array
+            false,              // whether the fixed point data values should be normalized to -1 to 1 when converted to float
+            0,                  // offset between consecutive generic vertex attributes.  0 means tightly packed
+            0);                 // pointer to the first component of the first vertex attribute in the array
+
+        // Create Texture
+        // ==============
+
+        var texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, theImage);
+
+        // Draw
+        // ====
+
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+</script>
+
+</head>
+<body onload="getImage();">
+
+    <canvas id="myCanvas" width="512" height="512"></canvas>
+    
+    <br />
+
+    <input id="inverse"  type="button" value="Inverse"  onclick="inverse();" />
+    <input id="blur"  type="button" value="Blur"  onclick="blurIt();" />
+    <input id="edge"  type="button" value="Edge"  onclick="edge();" />
+    <input id="originalImage"  type="button" value="Original Image"  onclick="originalImage();" />
+
+</body>
+</html>

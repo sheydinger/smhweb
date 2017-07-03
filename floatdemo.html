@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>A simple float web page demo</title>
+
+<style type="text/css">
+
+* {
+    margin: 0px;    /* Give EVERYTHING a margin of 0 */
+    color: white;   /* Make all text white */
+}
+
+body {
+    background-color: silver; 
+}
+
+p {
+    margin-bottom: 10px;
+}
+
+.outerbox {
+    margin-bottom: 20px;
+    height: 200px;
+    width: 400px;
+    background-color: lightgray;
+    border: dotted 1px black;
+    overflow-y: hidden;
+}
+
+.redbox {
+    width: 96px;
+    height: 96px;
+    background-color: red;
+    border: dotted 2px black;
+}
+
+/* What if the floated thing has no width? */
+.bluebox {
+    height: 96px;
+    background-color: blue;
+    border: dotted 2px black;
+}
+
+b {
+    color: black;
+}
+</style>
+
+</head>
+<body>
+
+    <div class="outerbox">
+        <div class="redbox">1</div>
+        <p>"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+
+    <div class="outerbox">
+        <div class="redbox" style="float: left">2 - floatleft</div>
+        <p>"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+
+    <div class="outerbox">
+        <div class="redbox" style="float: left">3A - floatleft</div>
+        <div class="redbox" style="float: left">3B - floatleft</div>
+        <div class="redbox" style="float: left">3C - floatleft</div>
+        <div class="redbox" style="float: left">3D - floatleft</div>
+        <div class="redbox" style="float: left">3E - floatleft</div>
+        <p>"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+
+    <div class="outerbox">
+        <div class="redbox" style="float: right">4 - floatright</div>
+        <p>"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+
+    <div class="outerbox">
+        <div class="redbox" style="float: left">5 - floatleft</div>
+        <div class="redbox" style="float: right">5 - floatright</div>
+        <p>"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+
+    <div class="outerbox">
+        <div class="redbox" style="float: left">6 - floatleft</div>
+        <p>"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p style="clear: left"><b>clear: left</b> Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+
+    <div class="outerbox">
+        <div class="redbox" style="float: left">7 - floatleft</div>
+        <p>"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p style="clear: right"><b>clear: right</b> Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+
+    <div class="outerbox">
+        <div class="redbox" style="float: left">8 - floatleft</div>
+        <p>"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p style="clear: both"><b>clear: both</b> Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+
+    <div class="outerbox">
+        <div class="redbox" style="float: right">9 - floatright</div>
+        <p>"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p style="clear: left"><b>clear: left</b> Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+
+    <div class="outerbox">
+        <div class="redbox" style="float: right">10 - floatright</div>
+        <p>"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p style="clear: right"><b>clear: right</b> Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+
+    <div class="outerbox">
+        <div class="redbox" style="float: right">11 - floatright</div>
+        <p>"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p style="clear: both"><b>clear: both</b> Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+
+
+
+
+
+    <div class="outerbox">
+        <div class="bluebox">12</div>
+        <p>"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+
+
+
+</body>
+</html>

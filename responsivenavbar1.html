@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Responsive Navigation Bar</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <script type="text/javascript">
+        function Toggle() {
+            if (document.getElementById("menu").className == "hide")
+                document.getElementById("menu").className = "show";
+            else
+                document.getElementById("menu").className = "hide";
+        }
+    </script>
+    
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            background: url('turtle400x300.jpg');
+            background-position: center;
+            background-size: cover;
+        }
+
+        #topbar {
+            height: 80px;
+            background-color: #a3d824;
+        }
+
+        .section {
+        }
+
+        .wrapper {
+            max-width: 960px;
+            min-width: 320px;
+            margin: 0 auto;
+        }
+
+        .content {
+            padding: 40px 10px 40px 10px;
+            
+            /* These are all "inherited" by the p and h1 inside the .content div. */
+            line-height: 130%;
+            text-align: justify;
+            color: white;
+            font-family: arial;
+            font-size: 14px;
+            background: rgba(0,0,0,0.75);
+        }
+        
+        .content p, .content h1 {
+            margin-bottom: 20px;
+        }
+
+        .navwrapper {
+            height: 80px;
+            background: url('b2consulting.jpg');
+            background-repeat: no-repeat;
+            position: relative;
+        }
+
+        .navwrapper button {
+            position: absolute;
+            right: 0px;
+            height: 80px;
+            width: 80px;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            background: url('hamburgerGreen.jpg');
+        }
+
+        .navwrapper button:hover {
+            background: url('hamburgerCyan.jpg');
+        }
+
+        /* Mobile (and common) */
+        .navwrapper ul {
+            position: absolute;
+            right: 0px;
+            list-style-type: none;
+    
+            width: 100%;    /* Desktop = initial */
+            top: 80px;      /* Desktop = 0px     */
+        }
+
+        .navwrapper li {
+            float: none;
+            border-bottom: solid 1px #ffffff;
+            background-color: rgba(0,0,0,0.7); /* rgba(16, 178, 169, 0.8); #10b2a9; */
+        }
+
+        .navwrapper a {
+            display: block;
+            padding-left: 10px;
+            padding-right: 10px;
+            text-align: center;
+            text-decoration: none;
+            font-family: arial;
+            font-size: 18px;
+            color: white;
+            line-height: 80px;
+        }
+
+        .navwrapper a:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .show {
+            display: block;
+        }
+
+        /* Desktop */
+/*        @media (min-width: 481px) { */
+        @media (min-width: 769px) {
+
+            .navwrapper button {
+                display: none;
+            }
+
+            .navwrapper ul {
+                width: initial;
+                top: 0px;
+            }
+
+            .navwrapper li {
+                float: right;
+                border-bottom: none;
+                background-color: initial;
+            }
+
+            .navwrapper a {
+                -webkit-transition: background-color .5s ease;
+                   -moz-transition: background-color .5s ease;
+                    -ms-transition: background-color .5s ease;
+                     -o-transition: background-color .5s ease;
+                        transition: background-color .5s ease;
+            }
+
+            .navwrapper a:hover {
+                background-color: rgba(0, 0, 0, 0.3);
+            }
+
+            /* On the desktop, ALWAYS show! */    
+            .hide, .show {
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="topbar">
+
+        <div class="wrapper navwrapper">
+            <button onclick="Toggle();"></button>
+            <ul class="hide" id="menu">
+                <li><a href="www.yahoo.com">Yahoo</a></li>
+                <li><a href="www.google.com">Google</a></li>
+                <li><a href="www.bing.com">Bing</a></li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="section">
+        <div class="wrapper">
+            <div class="content">
+                <h1>Responsive Nav Bar</h1>
+                <p>Resize your browser and note that the navigation bar changes to a "hamburger" button for mobile.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras condimentum urna id arcu finibus sodales. Phasellus finibus odio at nisi imperdiet ultricies. Nulla sit amet nisl fermentum, venenatis risus non, mollis velit. Quisque posuere vestibulum mi. Donec iaculis, metus nec aliquam euismod, erat nisl varius lorem, ac maximus lacus velit quis tortor. Praesent risus erat, ultricies non tellus vulputate, luctus pretium ipsum. Nunc venenatis molestie est quis imperdiet. Aliquam erat volutpat. Pellentesque in enim gravida, viverra ante vel, condimentum mi. Cras non libero sit amet eros porta commodo. Fusce placerat elit dui, vel convallis justo bibendum at. Integer tincidunt porta mauris eget commodo. Donec lorem neque, auctor non ante vitae, venenatis molestie mi.</p>
+                <p>Nam rutrum justo non urna dignissim consectetur. Aliquam sagittis rutrum arcu ac laoreet. Nulla posuere ac arcu sit amet fermentum. Ut tristique risus id enim congue dignissim. Morbi rutrum sollicitudin ornare. Suspendisse et condimentum sapien, sit amet pretium ipsum. Sed sed eros ut diam volutpat commodo. Aliquam quis maximus neque. Quisque porta felis ac mauris maximus, sed faucibus urna eleifend. Nullam condimentum convallis velit, sed euismod velit hendrerit ut. Praesent porta nulla nec urna semper convallis a ut turpis. Aenean pulvinar id nulla et feugiat. Morbi eu rhoncus orci, ac facilisis elit. Morbi rutrum augue sit amet tortor tincidunt interdum. Etiam id lorem ut purus aliquam accumsan. Sed egestas, metus at consectetur ullamcorper, quam odio dapibus diam, ut interdum leo lorem ac nunc.</p>
+                <p>http://www.greywyvern.com/?post=337</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

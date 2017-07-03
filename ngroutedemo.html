@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en" ng-app="myApp">
+    <head>
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-route.js"></script>
+    </head>
+
+    <body ng-controller="myController">
+
+        <p>Location = {{ thelocation }}</p>
+        <p>Pick one:</p>
+
+        <input type="button" ng-click="gotoa()" value="A" />
+        <input type="button" ng-click="gotob()" value="B" />
+        <input type="button" ng-click="gotoc()" value="C" />
+
+        <a href="#/routea">Pick a</a>
+        <a href="#/routeb">Pick b</a>
+        <a href="#/routec">Pick c</a>
+
+        <div ng-view></div>
+
+        <script type="text/javascript">
+            var myAppModule = angular.module("myApp", ["ngRoute"]);
+
+            myAppModule.config(function($routeProvider) {
+
+                $routeProvider.when('/routea', {
+                    templateUrl: 'a.html',
+                    controller: 'myController'
+                });
+
+                $routeProvider.when('/routeb', {
+                    templateUrl: 'b.html',
+                    controller: 'myController'
+                });
+
+                $routeProvider.otherwise({
+                    redirectTo: '/'
+                });
+            });
+
+            myAppModule.controller("myController", function($scope, $location) {
+
+                $scope.thelocation = "?";
+
+                $scope.gotoa = function() {
+                    console.log("going to a");
+                    $location.path("/routea")
+                }
+
+                $scope.gotob = function() {
+                    console.log("going to b");
+                    $location.path("/routeb")
+                }
+
+                $scope.gotoc = function() {
+                    console.log("going to c");
+                    $location.path("/routec")
+                }
+
+                $scope.$on("$routeChangeStart", function() {
+                    console.log("routeChangeStart");
+                });
+
+                $scope.$on("$routeChangeUpdate", function() {
+                    console.log("routeChangeUpdate");
+                });
+
+                $scope.$on("$routeChangeSuccess", function() {
+                    console.log("routeChangeSuccess " + $location.path());
+                    $scope.thelocation = $location.path();
+                });
+
+                $scope.$on("$routeChangeChangeError", function() {
+                    console.log("routeChangeChangeError");
+                });
+
+            })
+
+        </script>
+    </body>
+</html>

@@ -1,0 +1,165 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WebGL11 - Culling</title>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+attribute vec3 aVertexPosition;
+attribute vec4 aVertexColor;
+
+// Send out to fragment (pixel) shader, interpolated.
+varying vec4 vVertexColor;
+
+void main(void) {
+    // At a minimum, a vertex shader must set gl_position.
+    // The position has four values (x,y,z) and and appended w=1.
+    gl_Position = vec4(aVertexPosition, 1);
+
+    // Can also output stuff other than vertex positions.  Send
+    // an interpolated color to the fragment shader.
+    vVertexColor = aVertexColor;
+}
+</script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+precision mediump float;
+
+// Interpolated, from the vertex shader.
+varying vec4 vVertexColor;
+
+void main(void) {
+    gl_FragColor = vVertexColor;
+}
+</script>
+
+
+<script src="WebGLTools.js"></script>
+
+<script type="text/javascript">
+    var gl;
+
+    function webGLStart(cull) {
+        var canvas = document.getElementById("myCanvas");
+        gl = canvas.getContext("experimental-webgl");
+
+        // Shaders
+        // =======
+        // Use a common library to load the vertex and fragment (pixel)
+        // shaders into a program.  The ids must be as named above.
+
+        var shaderProgram = loadShaderProgram(gl);
+        gl.useProgram(shaderProgram);
+
+        // Vertices
+        // ========
+
+        // Create a buffer with three vertices.  The numbers must be
+        // in the range of -1.0 to +1.0.
+
+        // Draw the front item (z=-0.5, RGB) first, then the back item,
+        // (z=+0.5, CMY).  If the depth test works the front item (RGB) will
+        // appear.  If it fails, the last drawn item (CMY) will appear.
+
+        var buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                // Clockwise.
+                -1.0, -1.0,
+                -0.5, +1.0,
+                 0.0, -1.0,
+
+                // Counterclockwise.
+                +1.0, -1.0,
+                +0.5, +1.0,
+                 0.0, -1.0,
+            ]),
+            gl.STATIC_DRAW);
+
+        // Send the three (x,y) triangle coordinates in the buffer to the vertex shader.
+
+        var positionLocation = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(
+            positionLocation,   // index of the generic vertex attribute to be modified
+            2,                  // number of components per generic vertex attribute
+            gl.FLOAT,           // type of each data component in the array
+            false,              // whether the fixed point data values should be normalized to -1 to 1 when converted to float
+            0,                  // offset between consecutive generic vertex attributes.  0 means tightly packed
+            0);                 // pointer to the first component of the first vertex attribute in the array
+
+        // Colors
+        // ======
+
+        // Create three colors in a buffer.
+
+        var colorBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                1.0, 0.0, 0.0, 1.0, // red
+                0.0, 1.0, 0.0, 1.0, // green
+                0.0, 0.0, 1.0, 1.0, // blue
+
+                0.0, 1.0, 1.0, 1.0, // cyan
+                1.0, 0.0, 1.0, 1.0, // magenta
+                1.0, 1.0, 0.0, 1.0  // yellow
+            ]),
+            gl.STATIC_DRAW);
+
+        // Pass the colors to GL.
+        var colorLocation = gl.getAttribLocation(shaderProgram, "aVertexColor");
+        gl.enableVertexAttribArray(colorLocation);
+        gl.vertexAttribPointer(colorLocation, 4, gl.FLOAT, false, 0, 0);
+
+        // Culling
+        // =======
+
+        gl.enable(gl.CULL_FACE);
+        switch (cull)
+        {
+        default:
+        case 0:
+            gl.cullFace(gl.BACK);
+            break;
+        case 1:
+            gl.cullFace(gl.FRONT);
+            break;
+        case 2:
+            gl.cullFace(gl.FRONT_AND_BACK);
+            break;
+        }
+
+        // Draw
+        // ====
+
+        // Make the background gray.
+        gl.clearColor(0.5, 0.5, 0.5, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+        // Cleanup
+        // =======
+
+        removeShaderProgram(gl);
+        gl.deleteBuffer(buffer);
+        gl.deleteBuffer(colorBuffer);
+    }
+</script>
+
+</head>
+<body onload="webGLStart(0);">
+
+    <canvas id="myCanvas" width="640" height="480"></canvas>
+
+    <br />
+
+    <input type="button" value="cullFace(BACK)" onclick="webGLStart(0)" />
+    <input type="button" value="cullFace(FRONT)" onclick="webGLStart(1)" />
+    <input type="button" value="cullFace(FRONT_AND_BACK)" onclick="webGLStart(2)" />
+
+</body>
+</html>

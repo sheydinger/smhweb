@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Display vs. Float Demo</title>
+
+<style>
+a {
+    background-color: #f0f0f0;
+}
+
+.container {
+    border: solid 1px red;
+}
+
+h2 {
+    margin-top: 50px;
+}
+</style>
+</head>
+
+<body>
+
+<p>Reference: <a href="http://designshack.net/articles/css/whats-the-deal-with-display-inline-block/">What's the deal with display inline-block?</a></p>
+
+<p>Look at the elements in the Chrome developer tools.</p>
+
+<h2>1. Change an inline element to a block element</h2>
+<p>Normally, anchors are inline, such as:</p>
+<a href="http://www.yahoo.com">Yahoo</a>
+<a href="http://www.google.com">Google</a>
+<a href="http://www.bing.com">Bing</a>
+
+<p>These anchors have display:block and margint-top: 10px.  Note that you can click anywhere along the horizontal to follow the link.</p>
+<a href="http://www.yahoo.com" style="display: block; margin-top: 10px;">Yahoo</a>
+<a href="http://www.google.com" style="display: block; margin-top: 10px;">Google</a>
+<a href="http://www.bing.com" style="display: block; margin-top: 10px;">Bing</a>
+
+
+<h2>2. Change a block element to an inline element</h2>
+<p>All paragraphs below have width: 960px.</p>
+<p>Normally, paragraphs are block elements.  Note the background width is consistent for each row.</p>
+<p style="width: 960px; background-color: #f0f0f0">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In condimentum tortor non lectus gravida tempor. Suspendisse interdum odio felis, vitae tristique turpis finibus pulvinar. Morbi tincidunt bibendum interdum. Nunc tortor nisi, hendrerit a risus rutrum, tincidunt viverra tellus. Sed quam erat, hendrerit sed eros eget, congue condimentum mauris. Duis semper lorem ligula, eget consectetur libero auctor quis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer scelerisque rhoncus nisl, vel pulvinar magna ornare ac. Proin libero neque, aliquam at sem fringilla, scelerisque rutrum quam. Praesent elementum neque at consectetur iaculis. Etiam porta quam ex, non varius ante rhoncus sit amet.</p>
+<p style="width: 960px; background-color: #f0f0f0">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In condimentum tortor non lectus gravida tempor. Suspendisse interdum odio felis, vitae tristique turpis finibus pulvinar. Morbi tincidunt bibendum interdum. Nunc tortor nisi, hendrerit a risus rutrum, tincidunt viverra tellus. Sed quam erat, hendrerit sed eros eget, congue condimentum mauris. Duis semper lorem ligula, eget consectetur libero auctor quis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer scelerisque rhoncus nisl, vel pulvinar magna ornare ac. Proin libero neque, aliquam at sem fringilla, scelerisque rutrum quam. Praesent elementum neque at consectetur iaculis. Etiam porta quam ex, non varius ante rhoncus sit amet.</p>
+
+<p>These paragraphs have display: inline.  You may expect them to appear side-by-side, but they run together.  Note the varying widths and that width: 960px is ignored.</p>
+<p style="width: 960px; background-color: #f0f0f0; display: inline">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In condimentum tortor non lectus gravida tempor. Suspendisse interdum odio felis, vitae tristique turpis finibus pulvinar. Morbi tincidunt bibendum interdum. Nunc tortor nisi, hendrerit a risus rutrum, tincidunt viverra tellus. Sed quam erat, hendrerit sed eros eget, congue condimentum mauris. Duis semper lorem ligula, eget consectetur libero auctor quis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer scelerisque rhoncus nisl, vel pulvinar magna ornare ac. Proin libero neque, aliquam at sem fringilla, scelerisque rutrum quam. Praesent elementum neque at consectetur iaculis. Etiam porta quam ex, non varius ante rhoncus sit amet.</p>
+<p style="width: 960px; background-color: #f0f0f0; display: inline">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In condimentum tortor non lectus gravida tempor. Suspendisse interdum odio felis, vitae tristique turpis finibus pulvinar. Morbi tincidunt bibendum interdum. Nunc tortor nisi, hendrerit a risus rutrum, tincidunt viverra tellus. Sed quam erat, hendrerit sed eros eget, congue condimentum mauris. Duis semper lorem ligula, eget consectetur libero auctor quis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer scelerisque rhoncus nisl, vel pulvinar magna ornare ac. Proin libero neque, aliquam at sem fringilla, scelerisque rutrum quam. Praesent elementum neque at consectetur iaculis. Etiam porta quam ex, non varius ante rhoncus sit amet.</p>
+
+<h2>3. Float two paragraphs next to one another</h2>
+<p>The two paragraphs below have width: 480px and float: left.  They are in a container with a solid 1 px red border.  Note that the border is collapsed!</p>
+<div class="container">
+    <p style="width: 480px; float: left; margin-right: 10px; background-color: #f0f0f0;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In condimentum tortor non lectus gravida tempor. Suspendisse interdum odio felis, vitae tristique turpis finibus pulvinar. Morbi tincidunt bibendum interdum.</p>
+    <p style="width: 480px; float: left; margin-right: 10px; background-color: #f0f0f0;">Nunc tortor nisi, hendrerit a risus rutrum, tincidunt viverra tellus. Sed quam erat, hendrerit sed eros eget, congue condimentum mauris. Duis semper lorem ligula, eget consectetur libero auctor quis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer scelerisque rhoncus nisl, vel pulvinar magna ornare ac. Proin libero neque, aliquam at sem fringilla, scelerisque rutrum quam. Praesent elementum neque at consectetur iaculis. Etiam porta quam ex, non varius ante rhoncus sit amet.</p>
+</div>
+<div style="clear: both"></div>
+
+<h2>4. Float two paragraphs next to one another, with clear</h2>
+<p>The two paragraphs below have width: 480px and float: left.  They are in a container with a solid 1 px red border.  Note that the border is not collapsed when float is cleared.</p>
+<div class="container">
+    <p style="width: 480px; float: left; margin-right: 10px; background-color: #f0f0f0;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In condimentum tortor non lectus gravida tempor. Suspendisse interdum odio felis, vitae tristique turpis finibus pulvinar. Morbi tincidunt bibendum interdum.</p>
+    <p style="width: 480px; float: left; margin-right: 10px; background-color: #f0f0f0;">Nunc tortor nisi, hendrerit a risus rutrum, tincidunt viverra tellus. Sed quam erat, hendrerit sed eros eget, congue condimentum mauris. Duis semper lorem ligula, eget consectetur libero auctor quis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer scelerisque rhoncus nisl, vel pulvinar magna ornare ac. Proin libero neque, aliquam at sem fringilla, scelerisque rutrum quam. Praesent elementum neque at consectetur iaculis. Etiam porta quam ex, non varius ante rhoncus sit amet.</p>
+    <div style="clear: both"></div>
+</div>
+
+<h2>5. Place two paragraphs next to one another using display:inline-block</h2>
+<p>The two paragraphs below have width: 480px and display: inline-block.  They are in a container with a solid 1 px red border which is not collapsed.  Note the bottom alignment.</p>
+<div class="container">
+    <p style="width: 480px; display: inline-block; margin-right: 10px; background-color: #f0f0f0;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In condimentum tortor non lectus gravida tempor. Suspendisse interdum odio felis, vitae tristique turpis finibus pulvinar. Morbi tincidunt bibendum interdum.</p>
+    <p style="width: 480px; display: inline-block; margin-right: 10px; background-color: #f0f0f0;">Nunc tortor nisi, hendrerit a risus rutrum, tincidunt viverra tellus. Sed quam erat, hendrerit sed eros eget, congue condimentum mauris. Duis semper lorem ligula, eget consectetur libero auctor quis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer scelerisque rhoncus nisl, vel pulvinar magna ornare ac. Proin libero neque, aliquam at sem fringilla, scelerisque rutrum quam. Praesent elementum neque at consectetur iaculis. Etiam porta quam ex, non varius ante rhoncus sit amet.</p>
+</div>
+
+<h2>6. Adjust display:inline-block using vertical-align: top</h2>
+<p>The two paragraphs below have an added vertical-align: top property.  This "fixes" the bottom alignment of the previous example.</p>
+<div class="container">
+    <p style="width: 480px; display: inline-block; vertical-align: top; margin-right: 10px; background-color: #f0f0f0;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In condimentum tortor non lectus gravida tempor. Suspendisse interdum odio felis, vitae tristique turpis finibus pulvinar. Morbi tincidunt bibendum interdum.</p>
+    <p style="width: 480px; display: inline-block; vertical-align: top; margin-right: 10px; background-color: #f0f0f0;">Nunc tortor nisi, hendrerit a risus rutrum, tincidunt viverra tellus. Sed quam erat, hendrerit sed eros eget, congue condimentum mauris. Duis semper lorem ligula, eget consectetur libero auctor quis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer scelerisque rhoncus nisl, vel pulvinar magna ornare ac. Proin libero neque, aliquam at sem fringilla, scelerisque rutrum quam. Praesent elementum neque at consectetur iaculis. Etiam porta quam ex, non varius ante rhoncus sit amet.</p>
+</div>
+
+<h2>7. Whitespace in the HTML file</h2>
+<p>Some elements show a spacing if the HTML file has white space.   The names below are li elements that have display: inline-block.</p>
+<ul>
+    <li style="display: inline-block; background-color: #f0f0f0">Larry</li>
+    <li style="display: inline-block; background-color: #f0f0f0">Curly</li>
+    <li style="display: inline-block; background-color: #f0f0f0">Moe</li>
+</ul>
+
+<p>These li elements appear on the same line in the source HTML file.  See the source.</p>
+<ul>
+    <li style="display: inline-block; background-color: #f0f0f0">Larry</li><li style="display: inline-block; background-color: #f0f0f0">Curly</li><li style="display: inline-block; background-color: #f0f0f0">Moe</li>
+</ul>
+
+</body>
+</html>
